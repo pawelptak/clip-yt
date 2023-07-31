@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipYT", "ClipYT.csproj", "{A1EEAB31-B4BE-4E4C-BE80-16FDF197DA40}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A1EEAB31-B4BE-4E4C-BE80-16FDF197DA40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1EEAB31-B4BE-4E4C-BE80-16FDF197DA40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1EEAB31-B4BE-4E4C-BE80-16FDF197DA40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1EEAB31-B4BE-4E4C-BE80-16FDF197DA40}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {21873392-D046-4BDD-A242-1D864360CCA5}
+	EndGlobalSection
+EndGlobal
