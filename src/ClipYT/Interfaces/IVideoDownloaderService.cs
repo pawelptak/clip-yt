@@ -1,7 +1,9 @@
-﻿namespace ClipYT.Interfaces
+﻿using ClipYT.Models;
+
+namespace ClipYT.Interfaces
 {
     public interface IVideoDownloaderService
     {
-        Task DownloadYoutubeVideoFromUrlAsync(string url);
+        Task<FileModel> DownloadYoutubeVideoFromUrlAsync(string url);
     }
 }

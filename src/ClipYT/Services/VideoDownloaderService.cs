@@ -1,4 +1,5 @@
 ﻿using ClipYT.Interfaces;
+using ClipYT.Models;
 using YoutubeDLSharp;
 
 namespace ClipYT.Services
@@ -10,7 +11,7 @@ namespace ClipYT.Services
         {
             _configuration = configuration;
         }
-        async Task IVideoDownloaderService.DownloadYoutubeVideoFromUrlAsync(string url)
+        async Task<FileModel> IVideoDownloaderService.DownloadYoutubeVideoFromUrlAsync(string url)
         {
             var ytdl = new YoutubeDL
             {
@@ -19,7 +20,17 @@ namespace ClipYT.Services
                 OutputFolder = _configuration["Config:OutputFolder"]
             };
             var res = await ytdl.RunVideoDownload(url);
-            string path = res.Data;
+            var fileData = File.ReadAllBytes(res.Data);
+
+            var file = new FileModel
+            {
+                Data = fileData,
+                Name = Path.GetFileName(res.Data)
+            };
+
+            File.Delete(res.Data);
+
+            return file;
         }
     }
 }
