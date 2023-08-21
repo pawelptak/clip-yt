@@ -18,8 +18,14 @@ namespace ClipYT.Controllers
 
         public IActionResult Index()
         {
-            _videoDownloaderService.DownloadYoutubeVideoFromUrlAsync("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
             return View();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DownloadVideo(VideoModel model)
+        {
+            var file = await _videoDownloaderService.DownloadYoutubeVideoFromUrlAsync(model.Url);
+            return File(file.Data, System.Net.Mime.MediaTypeNames.Application.Octet, file.Name);
         }
 
         public IActionResult Privacy()
