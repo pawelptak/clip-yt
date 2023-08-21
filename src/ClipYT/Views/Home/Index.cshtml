@@ -12,4 +12,8 @@
 {
     <span>Paste url:</span> @Html.TextBoxFor(m => m.Url)
     <input id="Submit" type="submit" value="submit" />
+    <br />
+    <span>From:</span> @Html.TextBoxFor(m => m.From, new { placeholder = "00:00"})
+    <br />
+    <span>To:</span> @Html.TextBoxFor(m => m.To, new { placeholder = "00:00"})
 }
