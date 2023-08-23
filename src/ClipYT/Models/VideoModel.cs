@@ -5,7 +5,7 @@ namespace ClipYT.Models
     public class VideoModel
     {
         [Required]
-        [Url]
+        [RegularExpression(@"^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$")]
         public Uri Url { get; set; }
 
         [RegularExpression(@"^(?:[01][0-9]|2[0-3]):[0-0][0-0]:[0-0][0-0]$", ErrorMessage = "Invalid time format and hh:mm:ss values.")]
