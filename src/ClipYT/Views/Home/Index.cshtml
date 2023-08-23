@@ -15,11 +15,11 @@
     <br />
     <span class="text-danger">@Html.ValidationMessageFor(m => m.Url)</span>
     <br />
-    <span>From:</span> @Html.TextBoxFor(m => m.Start, new { placeholder = "00:00"})
+    <span>From:</span> @Html.TextBoxFor(m => m.Start, new { placeholder = "hh:mm:ss"})
     <br />
     <span class="text-danger">@Html.ValidationMessageFor(m => m.Start)</span>
     <br />
-    <span>To:</span> @Html.TextBoxFor(m => m.End, new { placeholder = "00:00"})
+    <span>To:</span> @Html.TextBoxFor(m => m.End, new { placeholder = "hh:mm:ss"})
     <br />
     <span class="text-danger">@Html.ValidationMessageFor(m => m.End)</span>
 }
