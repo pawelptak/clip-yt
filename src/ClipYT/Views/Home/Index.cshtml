@@ -38,13 +38,7 @@
 
             function isYoutubeUrlValid(url) {
                 var regex = @Html.Raw(Json.Serialize(RegexConstants.YoutubeUrlRegex));
-                var match = url.match(regex);
-
-                if (match) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return url.match(regex);
             }
 
             function getIdFromYoutubeUrl(url) {
