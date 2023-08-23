@@ -3,7 +3,7 @@
     public class VideoModel
     {
         public Uri Url { get; set; }
-        public string? From { get; set; }
-        public string? To { get; set; }
+        public TimeSpan? Start { get; set; }
+        public TimeSpan? End { get; set; }
     }
 }

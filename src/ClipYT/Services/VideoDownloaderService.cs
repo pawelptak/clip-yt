@@ -1,6 +1,7 @@
 ﻿using ClipYT.Interfaces;
 using ClipYT.Models;
 using YoutubeDLSharp;
+using YoutubeDLSharp.Options;
 
 namespace ClipYT.Services
 {
@@ -19,9 +20,17 @@ namespace ClipYT.Services
             };
         }
 
-        public async Task<FileModel> DownloadYoutubeVideoFromUrlAsync(Uri url)
+        public async Task<FileModel> DownloadYoutubeVideoFromUrlAsync(VideoModel model)
         {
-            var res = await _youtubeDl.RunVideoDownload(url.ToString());
+            var options = new OptionSet()
+            {
+                RecodeVideo = VideoRecodeFormat.Mp4,
+                Format = "best",
+                Downloader = "ffmpeg",
+                DownloaderArgs = $"ffmpeg_i:-ss {model.Start} -to {model.End}"
+            };
+
+            var res = await _youtubeDl.RunVideoDownload(model.Url.ToString(), overrideOptions: options);
             var fileData = File.ReadAllBytes(res.Data);
 
             var file = new FileModel

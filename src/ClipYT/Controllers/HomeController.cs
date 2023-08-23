@@ -24,7 +24,7 @@ namespace ClipYT.Controllers
         [HttpPost]
         public async Task<ActionResult> DownloadVideo(VideoModel model)
         {
-            var file = await _videoDownloaderService.DownloadYoutubeVideoFromUrlAsync(model.Url);
+            var file = await _videoDownloaderService.DownloadYoutubeVideoFromUrlAsync(model);
             return File(file.Data, System.Net.Mime.MediaTypeNames.Application.Octet, file.Name);
         }
 
