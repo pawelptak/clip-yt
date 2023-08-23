@@ -1,4 +1,5 @@
-﻿@model VideoModel
+﻿@using ClipYT.Constants;
+@model VideoModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -10,7 +11,7 @@
 
 @using (Html.BeginForm("DownloadVideo", "Home", FormMethod.Post))
 {
-    <span>Paste url:</span> @Html.TextBoxFor(m => m.Url)
+    <span>Paste url:</span> @Html.TextBoxFor(m => m.Url, new { id = "urlInput" })
     <input id="Submit" type="submit" value="submit" />
     <br />
     <span class="text-danger">@Html.ValidationMessageFor(m => m.Url)</span>
@@ -22,4 +23,26 @@
     <span>To:</span> @Html.TextBoxFor(m => m.End, new { placeholder = "hh:mm:ss"})
     <br />
     <span class="text-danger">@Html.ValidationMessageFor(m => m.End)</span>
+}
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#urlInput").on('input', function () {
+                validateYouTubeUrl($(this).val());
+            });
+
+            function validateYouTubeUrl(url) {
+                var regex = @Html.Raw(Json.Serialize(RegexConstants.YoutubeUrlRegex));
+                var match = url.match(regex);
+
+                if (match) {
+                    console.log("Valid YouTube URL");
+                } else {
+                    console.log("Invalid YouTube URL");
+                }
+            }
+        });
+    </script>
 }
