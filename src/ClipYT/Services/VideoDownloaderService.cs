@@ -25,10 +25,13 @@ namespace ClipYT.Services
             var options = new OptionSet()
             {
                 RecodeVideo = VideoRecodeFormat.Mp4,
-                Format = "best",
-                Downloader = "ffmpeg",
-                DownloaderArgs = $"ffmpeg_i:-ss {model.Start} -to {model.End}"
+                Format = "best"
             };
+
+            if (!string.IsNullOrEmpty(model.Start) && !string.IsNullOrEmpty(model.End)) {
+                options.Downloader = "ffmpeg";
+                options.DownloaderArgs = $"ffmpeg_i:-ss {model.Start} -to {model.End}";
+            }
 
             var res = await _youtubeDl.RunVideoDownload(model.Url.ToString(), overrideOptions: options);
             var fileData = File.ReadAllBytes(res.Data);
