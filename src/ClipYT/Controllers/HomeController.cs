@@ -24,10 +24,8 @@ namespace ClipYT.Controllers
         [HttpPost]
         public async Task<ActionResult> DownloadVideo(VideoModel model)
         {
-
             if (!ModelState.IsValid)
             {
-                // If model is not valid, return the View with validation errors
                 return View("Index", model);
             }
 
