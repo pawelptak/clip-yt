@@ -32,12 +32,15 @@
 
     <script>
         var player;
+        var playerReady = false;
+
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
                 height: '390',
                 width: '640',
                 events: {
-                    'onStateChange': onPlayerTimeChange
+                    'onStateChange': onPlayerTimeChange,
+                    'onReady': () => { playerReady = true; }
                 }
             });
         }
@@ -84,10 +87,22 @@
                 return (match && match[7].length == 11) ? match[7] : false;
             }
 
-            function updateVideoFrame(videoUrl) {
+            async function updateVideoFrame(videoUrl) {
+                await waitForPlayerToBeLoaded();
                 var videoId = getIdFromYoutubeUrl(videoUrl);
                 player.cueVideoById(videoId);
                 $("#player").show();
+            }
+
+            function waitForPlayerToBeLoaded() {
+                return new Promise(resolve => {
+                    const interval = setInterval(() => {
+                        if (playerReady === true) {
+                            clearInterval(interval);
+                            resolve();
+                        }
+                    }, 100);
+                });
             }
         });
     </script>
