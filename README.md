@@ -3,6 +3,8 @@
 </p>
 
 # ClipYT
+[![Build](https://github.com/pawelptak/clip-yt/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/pawelptak/clip-yt/actions/workflows/dotnet.yml)
+
 An ASP.NET Core MVC web application for creating clips from YouTube videos.
 
 ## Getting Started
