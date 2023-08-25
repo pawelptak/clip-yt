@@ -1,5 +1,5 @@
 <p align="center">
-  <img height="60" src="https://github.com/pawelptak/clip-yt/assets/52631916/260e525c-0c20-401a-8bb4-5208e2084cd2">
+  <img height="100" src="https://github.com/pawelptak/clip-yt/assets/52631916/260e525c-0c20-401a-8bb4-5208e2084cd2">
 </p>
 
 # ClipYT
