@@ -1,6 +1,6 @@
-<a href="this will be the url to ClipYT web address">
-    <img src="https://github.com/pawelptak/clip-yt/assets/52631916/260e525c-0c20-401a-8bb4-5208e2084cd2" alt="ClipYT logo" title="ClipYT" align="right" height="60" />
-</a>
+<p align="center">
+  <img height="60" src="https://github.com/pawelptak/clip-yt/assets/52631916/260e525c-0c20-401a-8bb4-5208e2084cd2">
+</p>
 
 # ClipYT
 An ASP.NET Core MVC web application for creating clips from YouTube videos.
