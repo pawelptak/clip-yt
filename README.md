@@ -15,7 +15,7 @@ An ASP.NET Core MVC web application for creating clips from YouTube videos.
 - Paste the URL address of a YouTube video.
 - Select the desired output file format.
 - (Optional) Select the start and end timestamp if you'd like to download a section of the whole video.
-- Start processing and download file.
+- Press the button to start processing and download the file.
 
 ## Credits
 Special thanks to the creator of [YoutubeDLSharp](https://github.com/Bluegrams/YoutubeDLSharp) :).
