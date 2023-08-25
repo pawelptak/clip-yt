@@ -397,8 +397,8 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-Output/*
-!Output/.gitkeep 
+src/ClipYT/Output/*
+!src/ClipYT/Output/.gitkeep 
 
-Utilities/*
-!Utilities/.gitkeep 
+src/ClipYT/Utilities/*
+!src/ClipYT/Utilities/.gitkeep 
