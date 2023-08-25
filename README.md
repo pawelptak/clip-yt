@@ -18,4 +18,4 @@ An ASP.NET Core MVC web application for creating clips from YouTube videos.
 - Press the button to start processing and download the file.
 
 ## Credits
-Special thanks to the creator of [YoutubeDLSharp](https://github.com/Bluegrams/YoutubeDLSharp) :).
+Special thanks to the creators of [YoutubeDLSharp](https://github.com/Bluegrams/YoutubeDLSharp) :).
