@@ -7,7 +7,7 @@ on:
   push:
     branches: [ "main" ]
     paths:
-      - ./src/ClipYT/**
+      - './src/ClipYT/**'
   pull_request:
     branches: [ "main" ]
 
