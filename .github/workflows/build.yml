@@ -10,6 +10,8 @@ on:
       - 'src/ClipYT/**'
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'src/ClipYT/**'
 
 jobs:
   build:
