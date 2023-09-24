@@ -18,7 +18,9 @@ namespace ClipYT.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var model = new VideoModel();
+
+            return View(model);
         }
 
         [HttpPost]

@@ -17,42 +17,68 @@
     <br />
     <span class="text-danger">@Html.ValidationMessageFor(m => m.Url)</span>
     <br />
-    <span>From:</span> @Html.TextBoxFor(m => m.Start, new { id = "videoStartInput", placeholder = "hh:mm:ss"})
+    <span>From:</span> @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss"})
     <br />
-    <span class="text-danger">@Html.ValidationMessageFor(m => m.Start)</span>
+    <span class="text-danger">@Html.ValidationMessageFor(m => m.StartTimestamp)</span>
     <br />
-    <span>To:</span> @Html.TextBoxFor(m => m.End, new { placeholder = "hh:mm:ss"})
+    <span>To:</span> @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss"})
     <br />
-    <span class="text-danger">@Html.ValidationMessageFor(m => m.End)</span>
+    <span class="text-danger">@Html.ValidationMessageFor(m => m.EndTimestamp)</span>
+    <br />
+    <span>Length (s):</span> @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput"})
+    <br />
+    <span class="text-danger">@Html.ValidationMessageFor(m => m.ClipLength)</span>
+    <br />
 }
 
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
     <script src="https://www.youtube.com/iframe_api"></script>
 
     <script>
         var player;
         var playerReady = false;
+        var lastTimeUpdate = 0;
+        var iframeWindow;
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
                 height: '390',
                 width: '640',
                 events: {
-                    'onStateChange': onPlayerTimeChange,
-                    'onReady': () => { playerReady = true; }
+                    'onReady': () => {
+                        playerReady = true;
+                        iframeWindow = player.getIframe().contentWindow;
+                    }
                 }
             });
         }
 
-        function onPlayerTimeChange(event) {
-            if (event.data == YT.PlayerState.PLAYING) {
-                setInterval(function () {
-                    var currentTime = player.getCurrentTime();
-                    $("#videoStartInput").val(convertToTimestampFormat(currentTime));
-                }, 1000); // Check every 1000 ms
-            }
+        // Listen to player time change
+        window.addEventListener("message", function (event) {
+            if (event.source === iframeWindow) {
+                var data = JSON.parse(event.data);
 
+                if (data.event === "infoDelivery" && data.info && data.info.currentTime
+                ) {
+                    var time = Math.floor(data.info.currentTime);
+
+                    if (time !== lastTimeUpdate) {
+                        lastTimeUpdate = time;
+                        updateVideoStartInput(time);
+                    }
+                }
+            }
+        });
+
+        function updateVideoStartInput(timeInSeconds) {
+            const element = document.querySelector('#videoStartInput')
+            element.value = convertToTimestampFormat(timeInSeconds);
+
+            const e = new Event("change");
+            element.dispatchEvent(e); // manually trigger the 'change' event
         }
 
         function convertToTimestampFormat(seconds) {
@@ -78,12 +104,14 @@
 
             function isYoutubeUrlValid(url) {
                 var regex = @Html.Raw(Json.Serialize(RegexConstants.YoutubeUrlRegex));
+
                 return url.match(regex);
             }
 
             function getIdFromYoutubeUrl(url) {
                 var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
                 var match = url.match(regExp);
+
                 return (match && match[7].length == 11) ? match[7] : false;
             }
 
@@ -104,6 +132,54 @@
                     }, 100);
                 });
             }
+
+            function isValidTimeFormat(timeStr) {
+                const timeFormatRegex = @Html.Raw(Json.Serialize(RegexConstants.TimeFormatRegex));
+
+                return timeStr.match(timeFormatRegex);
+            }
+
+            function updateVideoLengthInput() {
+                const startTimeStr = document.getElementById("videoStartInput").value;
+                const endTimeStr = document.getElementById("videoEndInput").value;
+
+                if (!isValidTimeFormat(startTimeStr) || !isValidTimeFormat(endTimeStr)) {
+                    return;
+                }
+
+                const startTime = new Date(`1970-01-01T${startTimeStr}`);
+                const endTime = new Date(`1970-01-01T${endTimeStr}`);
+
+                const timeDifference = (endTime - startTime) / 1000;
+
+                document.getElementById("videoLengthInput").value = timeDifference;
+            }
+
+            document.getElementById("videoEndInput").addEventListener("change", updateVideoLengthInput);
+
+            function updateVideoEndInput() {
+                const startTimeStr = document.getElementById("videoStartInput").value;
+                const videoLengthStr = document.getElementById("videoLengthInput").value;
+
+                if (!isValidTimeFormat(startTimeStr) || isNaN(videoLengthStr)) {
+                    return;
+                }
+
+                const startTime = new Date(`1970-01-01T${startTimeStr}`);
+
+                const videoLengthSeconds = parseInt(videoLengthStr);
+
+                const endTimeMilliseconds = startTime.getTime() + (videoLengthSeconds * 1000);
+
+                const endTime = new Date(endTimeMilliseconds);
+
+                const endTimeFormatted = `${String(endTime.getHours()).padStart(2, '0')}:${String(endTime.getMinutes()).padStart(2, '0')}:${String(endTime.getSeconds()).padStart(2, '0')}`;
+
+                document.getElementById("videoEndInput").value = endTimeFormatted;
+            }
+
+            document.getElementById("videoStartInput").addEventListener("change", updateVideoEndInput);
+            document.getElementById("videoLengthInput").addEventListener("change", updateVideoEndInput);
         });
     </script>
 }
