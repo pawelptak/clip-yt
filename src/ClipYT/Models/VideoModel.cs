@@ -5,14 +5,22 @@ namespace ClipYT.Models
 {
     public class VideoModel
     {
+        public VideoModel()
+        {
+            ClipLength = 10;
+        }
+
         [Required]
         [RegularExpression(RegexConstants.YoutubeUrlRegex, ErrorMessage = "The provided input is not a valid YouTube URL.")]
-        public Uri Url { get; set; }
+        public Uri? Url { get; set; }
 
-        [RegularExpression(RegexConstants.TimeformatRegex, ErrorMessage = "Invalid time format.")]
-        public string? Start { get; set; }
+        [RegularExpression(RegexConstants.TimeFormatRegex, ErrorMessage = "Invalid time format.")]
+        public string? StartTimestamp { get; set; }
 
-        [RegularExpression(RegexConstants.TimeformatRegex, ErrorMessage = "Invalid time format.")]
-        public string? End { get; set; }
+        [RegularExpression(RegexConstants.TimeFormatRegex, ErrorMessage = "Invalid time format.")]
+        public string? EndTimestamp { get; set; }
+
+        [Range(1, int.MaxValue, ErrorMessage = "Incorrect value.")]
+        public int ClipLength { get; set; }
     }
 }

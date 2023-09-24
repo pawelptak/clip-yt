@@ -28,9 +28,9 @@ namespace ClipYT.Services
                 Format = "best"
             };
 
-            if (!string.IsNullOrEmpty(model.Start) && !string.IsNullOrEmpty(model.End)) {
+            if (!string.IsNullOrEmpty(model.StartTimestamp) && !string.IsNullOrEmpty(model.EndTimestamp)) {
                 options.Downloader = "ffmpeg";
-                options.DownloaderArgs = $"ffmpeg_i:-ss {model.Start} -to {model.End}";
+                options.DownloaderArgs = $"ffmpeg_i:-ss {model.StartTimestamp} -to {model.EndTimestamp}";
             }
 
             var res = await _youtubeDl.RunVideoDownload(model.Url.ToString(), overrideOptions: options);
