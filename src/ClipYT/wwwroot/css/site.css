@@ -1,3 +1,11 @@
+:root {
+    --background-color-top: #252525;
+    --background-color-bottom: #000000;
+    --dark-grey: #3c3c3c;
+    --light-grey: #8a8987;
+    --accent-color: #f2205f;
+}
+
 html {
   font-size: 14px;
 }
@@ -14,5 +22,8 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    color: white;
+    /*background-color: var(--background-color-bottom);*/
+    background-image: linear-gradient(var(--background-color-top), var(--background-color-bottom));
 }
