@@ -11,19 +11,12 @@
 
     @using (Html.BeginForm("DownloadVideo", "Home", FormMethod.Post))
     {
-        <div class="d-flex gap-2 mb-4 align-items-center">
+        <div class="d-flex gap-3 mb-4 align-items-center">
             <div class="d-flex flex-column" style="width: 100%">
                 @Html.TextBoxFor(m => m.Url, new { id = "urlInput", placeholder = "Paste YouTube video URL" })
-                <span class="text-danger">@Html.ValidationMessageFor(m => m.Url)</span>
+                <span class="text-danger">@Html.ValidationMessageFor(m => m.Url)</span> @* TODO: fix position of this message *@
             </div>
-            <div class="submitButton">
-                <input type="submit" name="" value="">
-            </div>
-
-            @* <input id="submitButton" type="submit" value="submit"> *@
-            @*             <button id="submitButton" type="submit">
-        <img src="~/images/play_button.png" width="50" height="50" alt="submit" />
-        </button> *@
+            <button class="play-button"><i class="bi bi-play-circle-fill"></i></button>
         </div>
 
         @* Todo: make these visible along with the video player *@
@@ -59,6 +52,26 @@
 
 @* TODO: move style to separate file *@
 <style>
+    .play-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 35px;
+        height: 35px;
+        border: none;
+        background-color: transparent;
+    }
+
+        .play-button i {
+            color: var(--accent-color);
+            font-size: 30pt;
+            transition: filter 0.3s;
+        }
+
+            .play-button i:hover {
+                filter: brightness(0.8);
+            }
+
     .content {
         margin-top: 50px;
     }
@@ -99,21 +112,6 @@
 
         input[type=text]::placeholder {
             color: var(--light-grey);
-        }
-
-
-    /*         Todo: change the button to not use png */
-    .submitButton {
-        height: 50px;
-    }
-
-        .submitButton input {
-            background: url(/images/play_button.png) no-repeat;
-            background-size: 50px;
-            width: 50px;
-            height: 50px;
-            cursor: pointer;
-            border: none;
         }
 </style>
 
