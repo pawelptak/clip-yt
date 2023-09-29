@@ -5,12 +5,14 @@
 }
 
 <div class="d-flex flex-column align-items-center content">
-    <div class="mb-4" id="player"></div>
+    <div class="mb-4" id="player-container">
+        <div id="player"></div>
+    </div>
 
     @using (Html.BeginForm("DownloadVideo", "Home", FormMethod.Post))
     {
-        <div class="d-flex justify-content-center gap-2 mb-4 align-items-center">
-            <div class="d-flex flex-column align-items-center">
+        <div class="d-flex gap-2 mb-4 align-items-center">
+            <div class="d-flex flex-column" style="width: 100%">
                 @Html.TextBoxFor(m => m.Url, new { id = "urlInput", placeholder = "Paste YouTube video URL" })
                 <span class="text-danger">@Html.ValidationMessageFor(m => m.Url)</span>
             </div>
@@ -63,11 +65,13 @@
 
     #player {
         border-radius: 12px;
-        display: none;
     }
 
-    #urlInput {
-        min-width: 400px;
+    #player-container {
+        width: 100%;
+        max-width: 640px;
+        height: 360px;
+        display: none;
     }
 
     .timeInput {
@@ -98,7 +102,7 @@
         }
 
 
-/*         Todo: change the button to not use png */
+    /*         Todo: change the button to not use png */
     .submitButton {
         height: 50px;
     }
@@ -127,8 +131,8 @@
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
-                height: '390',
-                width: '640',
+                height: '100%',
+                width: '100%',
                 events: {
                     'onReady': () => {
                         playerReady = true;
@@ -201,7 +205,7 @@
                 await waitForPlayerToBeLoaded();
                 var videoId = getIdFromYoutubeUrl(videoUrl);
                 player.cueVideoById(videoId);
-                $("#player").show();
+                $("#player-container").show();
             }
 
             function waitForPlayerToBeLoaded() {
