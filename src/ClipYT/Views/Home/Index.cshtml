@@ -16,7 +16,7 @@
                 @Html.TextBoxFor(m => m.Url, new { id = "urlInput", placeholder = "Paste YouTube video URL" })
                 <span class="text-danger">@Html.ValidationMessageFor(m => m.Url)</span> @* TODO: fix position of this message *@
             </div>
-            <button class="play-button"><i class="bi bi-play-circle-fill"></i></button>
+            <button class="play-button"><i class="bi bi-play-circle-fill"></i></button> @* TODO: Add visual indication of click *@
         </div>
 
         @* Todo: make these visible along with the video player *@
