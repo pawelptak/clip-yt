@@ -14,7 +14,7 @@
         <div class="d-flex flex-column gap-1 mb-4">
             <div class="d-flex gap-3">
                 @Html.TextBoxFor(m => m.Url, new { id = "urlInput", placeholder = "Paste YouTube video URL" })
-                <button class="play-button"><i class="bi bi-play-circle-fill"></i></button>
+                <button title="Generate clip" class="play-button"><i class="bi bi-play-circle-fill"></i></button>
             </div>
             <span class="text-danger validation-message">@Html.ValidationMessageFor(m => m.Url)</span>
         </div>
@@ -25,16 +25,18 @@
                     <div>
                         <span>From:</span>
                         @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "timeInput"})
+                        <button type="button" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoStartInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                     </div>
-                    <span class="text-danger">@Html.ValidationMessageFor(m => m.StartTimestamp)</span>
+                    <span class="text-danger fixed-validation-message">@Html.ValidationMessageFor(m => m.StartTimestamp)</span>
                 </div>
 
                 <div class="d-flex flex-column align-items-center">
                     <div>
                         <span>To:</span>
                         @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "timeInput"})
+                        <button type="button" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoEndInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                     </div>
-                    <span class="text-danger">@Html.ValidationMessageFor(m => m.EndTimestamp)</span>
+                    <span class="text-danger fixed-validation-message">@Html.ValidationMessageFor(m => m.EndTimestamp)</span>
                 </div>
 
                 <div class="d-flex flex-column align-items-center">
@@ -42,7 +44,7 @@
                         <span>Length (sec):</span>
                         @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput"})
                     </div>
-                    <span class="text-danger">@Html.ValidationMessageFor(m => m.ClipLength)</span>
+                    <span class="text-danger fixed-validation-message">@Html.ValidationMessageFor(m => m.ClipLength)</span>
                 </div>
             </div>
         </div>
@@ -73,26 +75,10 @@
             });
         }
 
-        // Listen to player time change
-        window.addEventListener("message", function (event) {
-            if (event.source === iframeWindow) {
-                var data = JSON.parse(event.data);
-
-                if (data.event === "infoDelivery" && data.info && data.info.currentTime
-                ) {
-                    var time = Math.floor(data.info.currentTime);
-
-                    if (time !== lastTimeUpdate) {
-                        lastTimeUpdate = time;
-                        updateVideoStartInput(time);
-                    }
-                }
-            }
-        });
-
-        function updateVideoStartInput(timeInSeconds) {
-            const element = document.querySelector('#videoStartInput')
-            element.value = convertToTimestampFormat(timeInSeconds);
+        function updateInputFromPlayer(inputElementId) {
+            var currentTime = player.getCurrentTime();
+            const element = document.getElementById(inputElementId);
+            element.value = convertToTimestampFormat(currentTime);
 
             const e = new Event("change");
             element.dispatchEvent(e); // manually trigger the 'change' event
@@ -174,6 +160,7 @@
             }
 
             document.getElementById("videoEndInput").addEventListener("change", updateVideoLengthInput);
+            document.getElementById("videoStartInput").addEventListener("change", updateVideoLengthInput);
 
             function updateVideoEndInput() {
                 const startTimeStr = document.getElementById("videoStartInput").value;

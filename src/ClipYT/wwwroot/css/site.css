@@ -4,6 +4,7 @@
     --dark-grey: #3c3c3c;
     --light-grey: #8a8987;
     --accent-color: #f2205f;
+    --accent-color-dark: #91143a;
 }
 
 html {
@@ -51,10 +52,15 @@ body {
     background-color: transparent;
 }
 
+    .play-button:focus {
+        outline: none;
+    }
+
     .play-button i {
         color: var(--accent-color);
         font-size: 30pt;
         transition: filter 0.3s;
+        line-height: 0;
     }
 
         .play-button i:hover {
@@ -63,6 +69,11 @@ body {
 
     .play-button:active i {
         filter: brightness(0.5);
+    }
+
+    .play-button:focus i {
+        outline: 2px solid var(--accent-color-dark);
+        border-radius: 100px;
     }
 
 .content {
@@ -100,9 +111,32 @@ input[type=text] {
 
     input[type=text]:focus {
         outline: none !important;
-        border: 1px solid var(--accent-color);
+        border: 2px solid var(--accent-color);
     }
 
     input[type=text]::placeholder {
         color: var(--light-grey);
     }
+
+.standard-btn {
+    background-color: var(--accent-color);
+    border: none;
+    border-radius: 100px;
+    color: black;
+    vertical-align: baseline;
+}
+
+    .standard-btn:hover {
+        filter: brightness(0.8);
+    }
+
+    .standard-btn:focus, .standard-btn:active {
+        box-shadow: none;
+        outline: 2px solid var(--accent-color-dark);
+    }
+
+.fixed-validation-message {
+    position: absolute;
+    margin-left: -60px;
+    margin-top: 40px;
+}
