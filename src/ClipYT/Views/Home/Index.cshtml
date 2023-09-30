@@ -9,112 +9,45 @@
         <div id="player"></div>
     </div>
 
-    @using (Html.BeginForm("DownloadVideo", "Home", FormMethod.Post))
+    @using (Html.BeginForm("DownloadVideo", "Home", FormMethod.Post, new { id = "app-form" }))
     {
-        <div class="d-flex gap-3 mb-4 align-items-center">
-            <div class="d-flex flex-column" style="width: 100%">
+        <div class="d-flex flex-column gap-1 mb-4">
+            <div class="d-flex gap-3">
                 @Html.TextBoxFor(m => m.Url, new { id = "urlInput", placeholder = "Paste YouTube video URL" })
-                <span class="text-danger">@Html.ValidationMessageFor(m => m.Url)</span> @* TODO: fix position of this message *@
+                <button class="play-button"><i class="bi bi-play-circle-fill"></i></button>
             </div>
-            <button class="play-button"><i class="bi bi-play-circle-fill"></i></button> @* TODO: Add visual indication of click *@
+            <span class="text-danger validation-message">@Html.ValidationMessageFor(m => m.Url)</span>
         </div>
 
-        @* Todo: make these visible along with the video player *@
-        <div class="d-flex align-items-center gap-3">
-            <div class="d-flex flex-column align-items-center">
-                <div>
-                    <span>From:</span>
-                    @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "timeInput"})
+        <div id="video-details">
+            <div class="d-flex align-items-center gap-3 justify-content-between">
+                <div class="d-flex flex-column align-items-center">
+                    <div>
+                        <span>From:</span>
+                        @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "timeInput"})
+                    </div>
+                    <span class="text-danger">@Html.ValidationMessageFor(m => m.StartTimestamp)</span>
                 </div>
-                <span class="text-danger">@Html.ValidationMessageFor(m => m.StartTimestamp)</span>
-            </div>
 
-            <div class="d-flex flex-column align-items-center">
-                <div>
-                    <span>To:</span>
-                    @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "timeInput"})
+                <div class="d-flex flex-column align-items-center">
+                    <div>
+                        <span>To:</span>
+                        @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "timeInput"})
+                    </div>
+                    <span class="text-danger">@Html.ValidationMessageFor(m => m.EndTimestamp)</span>
                 </div>
-                <span class="text-danger">@Html.ValidationMessageFor(m => m.EndTimestamp)</span>
-            </div>
 
-            <div class="d-flex flex-column align-items-center">
-                <div>
-                    <span>Length (sec):</span>
-                    @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput"})
+                <div class="d-flex flex-column align-items-center">
+                    <div>
+                        <span>Length (sec):</span>
+                        @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput"})
+                    </div>
+                    <span class="text-danger">@Html.ValidationMessageFor(m => m.ClipLength)</span>
                 </div>
-                <span class="text-danger">@Html.ValidationMessageFor(m => m.ClipLength)</span>
             </div>
-
         </div>
     }
 </div>
-
-
-@* TODO: move style to separate file *@
-<style>
-    .play-button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 35px;
-        height: 35px;
-        border: none;
-        background-color: transparent;
-    }
-
-        .play-button i {
-            color: var(--accent-color);
-            font-size: 30pt;
-            transition: filter 0.3s;
-        }
-
-            .play-button i:hover {
-                filter: brightness(0.8);
-            }
-
-    .content {
-        margin-top: 50px;
-    }
-
-    #player {
-        border-radius: 12px;
-    }
-
-    #player-container {
-        width: 100%;
-        max-width: 640px;
-        height: 360px;
-        display: none;
-    }
-
-    .timeInput {
-        max-width: 110px;
-    }
-
-    #videoLengthInput {
-        max-width: 80px;
-    }
-
-    input[type=text] {
-        border-radius: 20px;
-        padding: .3em;
-        padding-left: 20px;
-        padding-right: 20px;
-        border: 1px solid transparent;
-        background-color: var(--dark-grey);
-        color: white;
-    }
-
-        input[type=text]:focus {
-            outline: none !important;
-            border: 1px solid var(--accent-color);
-        }
-
-        input[type=text]::placeholder {
-            color: var(--light-grey);
-        }
-</style>
-
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
@@ -204,6 +137,7 @@
                 var videoId = getIdFromYoutubeUrl(videoUrl);
                 player.cueVideoById(videoId);
                 $("#player-container").show();
+                $("#video-details").show();
             }
 
             function waitForPlayerToBeLoaded() {

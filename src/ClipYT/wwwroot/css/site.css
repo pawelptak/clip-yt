@@ -7,18 +7,18 @@
 }
 
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
@@ -27,3 +27,82 @@ body {
     /*background-color: var(--background-color-bottom);*/
     background-image: linear-gradient(var(--background-color-top), var(--background-color-bottom));
 }
+
+#app-form {
+    width: 100%;
+    max-width: 640px;
+}
+
+#video-details {
+    display: none;
+}
+
+#urlInput {
+    width: 100%;
+}
+
+.play-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    border: none;
+    background-color: transparent;
+}
+
+    .play-button i {
+        color: var(--accent-color);
+        font-size: 30pt;
+        transition: filter 0.3s;
+    }
+
+        .play-button i:hover {
+            filter: brightness(0.8);
+        }
+
+    .play-button:active i {
+        filter: brightness(0.5);
+    }
+
+.content {
+    margin-top: 50px;
+}
+
+#player {
+    border-radius: 12px;
+}
+
+#player-container {
+    width: 100%;
+    max-width: 640px;
+    height: 360px;
+    display: none;
+}
+
+.timeInput {
+    max-width: 110px;
+}
+
+#videoLengthInput {
+    max-width: 80px;
+}
+
+input[type=text] {
+    border-radius: 20px;
+    padding: .3em;
+    padding-left: 20px;
+    padding-right: 20px;
+    border: 1px solid transparent;
+    background-color: var(--dark-grey);
+    color: white;
+}
+
+    input[type=text]:focus {
+        outline: none !important;
+        border: 1px solid var(--accent-color);
+    }
+
+    input[type=text]::placeholder {
+        color: var(--light-grey);
+    }
