@@ -21,6 +21,6 @@ namespace ClipYT.Models
         public string? EndTimestamp { get; set; }
 
         [Range(1, int.MaxValue, ErrorMessage = "Incorrect value.")]
-        public int ClipLength { get; set; }
+        public int? ClipLength { get; set; }
     }
 }
