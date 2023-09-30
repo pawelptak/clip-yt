@@ -141,12 +141,16 @@ input[type=text] {
     margin-top: 40px;
 }
 
-.form-check-input:checked {
-    background-color: var(--accent-color);
-    border-color: var(--accent-color);
+.form-check-input {
+    background-color: var(--dark-grey);
 }
 
-.form-check-input:focus {
-    box-shadow: none;
-    outline: 2px solid var(--accent-color-dark);
-}
+    .form-check-input:checked {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+    }
+
+    .form-check-input:focus {
+        box-shadow: none;
+        outline: 2px solid var(--accent-color-dark);
+    }
