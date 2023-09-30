@@ -1,4 +1,5 @@
 ﻿using ClipYT.Constants;
+using ClipYT.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace ClipYT.Models
@@ -12,7 +13,7 @@ namespace ClipYT.Models
 
         [Required]
         [RegularExpression(RegexConstants.YoutubeUrlRegex, ErrorMessage = "The provided input is not a valid YouTube URL.")]
-        public Uri? Url { get; set; }
+        public Uri Url { get; set; }
 
         [RegularExpression(RegexConstants.TimeFormatRegex, ErrorMessage = "Invalid time format.")]
         public string? StartTimestamp { get; set; }
@@ -22,5 +23,7 @@ namespace ClipYT.Models
 
         [Range(1, int.MaxValue, ErrorMessage = "Incorrect value.")]
         public int? ClipLength { get; set; }
+
+        public Format Format { get; set; }
     }
 }

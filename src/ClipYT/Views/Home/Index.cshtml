@@ -20,11 +20,11 @@
         </div>
 
         <div id="video-details">
-            <div class="d-flex align-items-center gap-3 justify-content-between">
+            <div class="d-flex align-items-center gap-3 justify-content-between mb-4">
                 <div class="d-flex flex-column align-items-center">
                     <div>
                         <span>From:</span>
-                        @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "timeInput"})
+                        @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "timeInput" })
                         <button type="button" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoStartInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                     </div>
                     <span class="text-danger fixed-validation-message">@Html.ValidationMessageFor(m => m.StartTimestamp)</span>
@@ -33,7 +33,7 @@
                 <div class="d-flex flex-column align-items-center">
                     <div>
                         <span>To:</span>
-                        @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "timeInput"})
+                        @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "timeInput" })
                         <button type="button" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoEndInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                     </div>
                     <span class="text-danger fixed-validation-message">@Html.ValidationMessageFor(m => m.EndTimestamp)</span>
@@ -42,10 +42,20 @@
                 <div class="d-flex flex-column align-items-center">
                     <div>
                         <span>Length (sec):</span>
-                        @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput"})
+                        @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput" })
                     </div>
                     <span class="text-danger fixed-validation-message">@Html.ValidationMessageFor(m => m.ClipLength)</span>
                 </div>
+            </div>
+
+            <div class="d-flex gap-3">
+                @foreach (var value in Enum.GetValues(typeof(ClipYT.Enums.Format)))
+                {
+                    <div>
+                        @Html.RadioButtonFor(m => m.Format, value, new { @class = "form-check-input" })
+                        @Html.Label(value.ToString())
+                    </div>
+                }
             </div>
         </div>
     }

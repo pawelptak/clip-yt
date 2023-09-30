@@ -24,7 +24,8 @@ namespace ClipYT.Services
         {
             var options = new OptionSet()
             {
-                RecodeVideo = VideoRecodeFormat.Mp4,
+                RecodeVideo = model.Format == Enums.Format.MP4 ? VideoRecodeFormat.Mp4 : VideoRecodeFormat.None,
+                AudioFormat = AudioConversionFormat.Mp3,
                 Format = "best"
             };
 
@@ -33,7 +34,10 @@ namespace ClipYT.Services
                 options.DownloaderArgs = $"ffmpeg_i:-ss {model.StartTimestamp} -to {model.EndTimestamp}";
             }
 
-            var res = await _youtubeDl.RunVideoDownload(model.Url.ToString(), overrideOptions: options);
+            var res = model.Format == Enums.Format.MP4 ? 
+                await _youtubeDl.RunVideoDownload(model.Url.ToString(), overrideOptions: options) : 
+                await _youtubeDl.RunAudioDownload(model.Url.ToString(), overrideOptions: options);
+
             var fileData = File.ReadAllBytes(res.Data);
 
             var file = new FileModel

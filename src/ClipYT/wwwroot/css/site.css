@@ -140,3 +140,13 @@ input[type=text] {
     margin-left: -60px;
     margin-top: 40px;
 }
+
+.form-check-input:checked {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.form-check-input:focus {
+    box-shadow: none;
+    outline: 2px solid var(--accent-color-dark);
+}
