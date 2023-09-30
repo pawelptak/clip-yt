@@ -4,33 +4,50 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <div id="player" style="display: none"></div>
+<div class="d-flex flex-column align-items-center content">
+    <div class="mb-4" id="player-container">
+        <div id="player"></div>
+    </div>
+
+    @using (Html.BeginForm("DownloadVideo", "Home", FormMethod.Post, new { id = "app-form" }))
+    {
+        <div class="d-flex flex-column gap-1 mb-4">
+            <div class="d-flex gap-3">
+                @Html.TextBoxFor(m => m.Url, new { id = "urlInput", placeholder = "Paste YouTube video URL" })
+                <button class="play-button"><i class="bi bi-play-circle-fill"></i></button>
+            </div>
+            <span class="text-danger validation-message">@Html.ValidationMessageFor(m => m.Url)</span>
+        </div>
+
+        <div id="video-details">
+            <div class="d-flex align-items-center gap-3 justify-content-between">
+                <div class="d-flex flex-column align-items-center">
+                    <div>
+                        <span>From:</span>
+                        @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "timeInput"})
+                    </div>
+                    <span class="text-danger">@Html.ValidationMessageFor(m => m.StartTimestamp)</span>
+                </div>
+
+                <div class="d-flex flex-column align-items-center">
+                    <div>
+                        <span>To:</span>
+                        @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "timeInput"})
+                    </div>
+                    <span class="text-danger">@Html.ValidationMessageFor(m => m.EndTimestamp)</span>
+                </div>
+
+                <div class="d-flex flex-column align-items-center">
+                    <div>
+                        <span>Length (sec):</span>
+                        @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput"})
+                    </div>
+                    <span class="text-danger">@Html.ValidationMessageFor(m => m.ClipLength)</span>
+                </div>
+            </div>
+        </div>
+    }
 </div>
-
-@using (Html.BeginForm("DownloadVideo", "Home", FormMethod.Post))
-{
-    <span>Paste url:</span> @Html.TextBoxFor(m => m.Url, new { id = "urlInput" })
-    <input id="Submit" type="submit" value="submit" />
-    <br />
-    <span class="text-danger">@Html.ValidationMessageFor(m => m.Url)</span>
-    <br />
-    <span>From:</span> @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss"})
-    <br />
-    <span class="text-danger">@Html.ValidationMessageFor(m => m.StartTimestamp)</span>
-    <br />
-    <span>To:</span> @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss"})
-    <br />
-    <span class="text-danger">@Html.ValidationMessageFor(m => m.EndTimestamp)</span>
-    <br />
-    <span>Length (s):</span> @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput"})
-    <br />
-    <span class="text-danger">@Html.ValidationMessageFor(m => m.ClipLength)</span>
-    <br />
-}
-
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
@@ -45,8 +62,8 @@
 
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
-                height: '390',
-                width: '640',
+                height: '100%',
+                width: '100%',
                 events: {
                     'onReady': () => {
                         playerReady = true;
@@ -119,7 +136,8 @@
                 await waitForPlayerToBeLoaded();
                 var videoId = getIdFromYoutubeUrl(videoUrl);
                 player.cueVideoById(videoId);
-                $("#player").show();
+                $("#player-container").show();
+                $("#video-details").show();
             }
 
             function waitForPlayerToBeLoaded() {
