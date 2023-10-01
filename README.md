@@ -1,5 +1,5 @@
 <p align="center">
-  <img height="100" src="https://github.com/pawelptak/clip-yt/assets/52631916/260e525c-0c20-401a-8bb4-5208e2084cd2">
+  <img height="100" src="https://github.com/pawelptak/clip-yt/assets/52631916/5f6176d5-a57d-4095-bd4d-9f6405b457c3">
 </p>
 
 # ClipYT
@@ -14,8 +14,11 @@ An ASP.NET Core MVC web application for creating clips from YouTube videos.
 ## Usage
 - Paste the URL address of a YouTube video.
 - Select the desired output file format.
-- (Optional) Select the start and end timestamp if you'd like to download a section of the whole video.
+- Select the start and end timestamp if you'd like to download a section of the whole video.
 - Press the button to start processing and download the file.
+
+ <img height="500" src="https://github.com/pawelptak/clip-yt/assets/52631916/b1d956f8-bf3d-4a20-9e57-cbc239e9e090">
+
 
 ## Credits
 Special thanks to the creators of [YoutubeDLSharp](https://github.com/Bluegrams/YoutubeDLSharp) :).
