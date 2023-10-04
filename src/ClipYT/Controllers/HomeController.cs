@@ -8,12 +8,12 @@ namespace ClipYT.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IVideoDownloaderService _videoDownloaderService;
+        private readonly IVideoProcessingService _videoProcessingService;
 
-        public HomeController(ILogger<HomeController> logger, IVideoDownloaderService videoDownloaderService)
+        public HomeController(ILogger<HomeController> logger, IVideoProcessingService videoProcessingService)
         {
             _logger = logger;
-            _videoDownloaderService = videoDownloaderService;
+            _videoProcessingService = videoProcessingService;
         }
 
         public IActionResult Index()
@@ -31,7 +31,7 @@ namespace ClipYT.Controllers
                 return View("Index", model);
             }
 
-            var file = await _videoDownloaderService.DownloadYoutubeVideoFromUrlAsync(model);
+            var file = await _videoProcessingService.ProcessYoutubeVideoAsync(model);
 
             return File(file.Data, System.Net.Mime.MediaTypeNames.Application.Octet, file.Name);
         }
