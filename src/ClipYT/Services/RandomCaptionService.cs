@@ -9,6 +9,7 @@ namespace ClipYT.Services
         {
             _random = new Random();
         }
+
         public IList<string> Captions => new List<string> {
             "Believe in yourself.",
             "Think about it.",
