@@ -7,6 +7,11 @@
     --accent-color-dark: #91143a;
 }
 
+@font-face {
+    font-family: 'Pixelated';
+    src: url('../fonts/PixeloidMono.ttf');
+}
+
 html {
     font-size: 14px;
 }
@@ -154,3 +159,13 @@ input[type=text] {
         box-shadow: none;
         outline: 2px solid var(--accent-color-dark);
     }
+
+
+.thick {
+    font-weight: bold;
+}
+
+.pixelated {
+    font-family: Pixelated;
+    font-size: x-small;
+}
