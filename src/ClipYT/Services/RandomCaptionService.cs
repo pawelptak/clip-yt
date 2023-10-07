@@ -18,7 +18,13 @@ namespace ClipYT.Services
             "It just works.",
             "Broadcast yourself.",
             "I drive.",
-            "Dame da ne."
+            "We have to go back.",
+            "Dame da ne.",
+            "You picked the wrong house.",
+            "Get some help.",
+            "Wake up.",
+            "Finish him.",
+            "Mr. Salieri sends his regards."
         };
 
         public string GetRandomCaption() => Captions[_random.Next(Captions.Count)];
