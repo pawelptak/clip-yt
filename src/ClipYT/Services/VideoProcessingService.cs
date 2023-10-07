@@ -22,7 +22,7 @@ namespace ClipYT.Services
         {
             ClearOutputDirectory();
 
-            var filePath = DownloadYoutubeVideo(model.Url.ToString(), model.Format);
+            var filePath = DownloadYoutubeVideo(model.Url.ToString(), model.Format, model.Quality);
 
             if (!string.IsNullOrEmpty(model.StartTimestamp) && !string.IsNullOrEmpty(model.EndTimestamp))
             {
@@ -93,7 +93,7 @@ namespace ClipYT.Services
             File.Replace(outputArg, filePath, null);
         }
 
-        private string DownloadYoutubeVideo(string videoUrl, Format outputFormat)
+        private string DownloadYoutubeVideo(string videoUrl, Format outputFormat, Quality outputQuality)
         {
             var argsList = new List<string>();
 
@@ -107,6 +107,12 @@ namespace ClipYT.Services
             {
                 var audioArg = "-x --audio-format mp3";
                 argsList.Add(audioArg);
+            }
+
+            if (outputQuality == Quality.Enough)
+            {
+                var qualityArg = "-S res:360"; // 360p
+                argsList.Add(qualityArg);
             }
 
             var argsString = string.Join(" ", argsList);
