@@ -111,7 +111,7 @@ namespace ClipYT.Services
 
             if (outputQuality == Quality.Enough)
             {
-                var qualityArg = "-S res:360";
+                var qualityArg = "-S res:360"; // 360p
                 argsList.Add(qualityArg);
             }
 

@@ -2,7 +2,7 @@
 {
     public enum Quality
     {
-        Enough, // 360p
+        Enough,
         Best
     }
 }
