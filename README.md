@@ -43,7 +43,8 @@ dotnet run
 ```
 ngrok http https://localhost:<clipyt_port> --host-header="localhost:<clipyt_port>"
 ```
-7. The running app will be redirected to a public web address.
+
+The running app will be redirected to a public web address.
 
 ## Credits
 Special thanks to the creators of [FFmpeg](https://ffmpeg.org/) and [yt-dlp](https://github.com/yt-dlp/yt-dlp) :).
