@@ -27,6 +27,13 @@ An ASP.NET Core MVC web application for creating clips from YouTube videos.
 ```
 ngrok config add-authtoken <your_auth_token>
 ```
+4. Run the `RunAndPublish.ps1` script located in the ClipYt directory. Script usage:
+```
+RunAndPublish.ps1 <optional app port - defaults to 7068>
+```
+
+OR (manually)
+
 4. Open cmd and go to the ClipYT solution directory.
 5. Run the app locally:
 ```
