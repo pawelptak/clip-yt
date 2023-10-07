@@ -12,6 +12,11 @@
     src: url('../fonts/PixeloidMono.ttf');
 }
 
+@font-face {
+    font-family: 'Nekst';
+    src: url('../fonts/Nekst.otf');
+}
+
 html {
     font-size: 14px;
 }
