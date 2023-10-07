@@ -25,5 +25,7 @@ namespace ClipYT.Models
         public int? ClipLength { get; set; }
 
         public Format Format { get; set; }
+
+        public Quality Quality { get; set; }
     }
 }
