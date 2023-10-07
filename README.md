@@ -20,6 +20,23 @@ An ASP.NET Core MVC web application for creating clips from YouTube videos.
 
  <img height="500" src="https://github.com/pawelptak/clip-yt/assets/52631916/b1d956f8-bf3d-4a20-9e57-cbc239e9e090">
 
+ ## Run the app locally and redirect to a public address
+1. Create an [ngrok](https://ngrok.com/) account.
+2. Install ngrok.
+3. Connect your account:
+```
+ngrok config add-authtoken <your_auth_token>
+```
+4. Open cmd and go to the ClipYT solution directory.
+5. Run the app locally:
+```
+dotnet run
+```
+6. Run ngrok:
+```
+ngrok http https://localhost:<clipyt_port> --host-header="localhost:<clipyt_port>"
+```
+7. The running app will be redirected to a public web address.
 
 ## Credits
 Special thanks to the creators of [FFmpeg](https://ffmpeg.org/) and [yt-dlp](https://github.com/yt-dlp/yt-dlp) :).
