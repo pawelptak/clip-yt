@@ -22,7 +22,7 @@ An ASP.NET Core MVC web application for creating clips from YouTube videos.
 
  ## Run the app locally and redirect to a public address
 1. Create an [ngrok](https://ngrok.com/) account.
-2. Install ngrok.
+2. Install ngrok and add it to the path to be able to run it globally.
 3. Connect your account:
 ```
 ngrok config add-authtoken <your_auth_token>
