@@ -29,11 +29,6 @@ namespace ClipYT.Services
                 CutAndConvertFile(filePath, model.StartTimestamp, model.EndTimestamp);
             }
 
-            if (string.Equals(Path.GetExtension(filePath), ".webm"))
-            {
-                filePath = ChangeExtensionToMp4(filePath);
-            }
-
             var fileBytes = await File.ReadAllBytesAsync(filePath);
 
             var fileModel = new FileModel
@@ -108,11 +103,18 @@ namespace ClipYT.Services
                 var audioArg = "-x --audio-format mp3";
                 argsList.Add(audioArg);
             }
-
-            if (outputQuality == Quality.Enough)
+            else
             {
-                var qualityArg = "-S res:360"; // 360p
-                argsList.Add(qualityArg);
+                if (outputQuality == Quality.Enough)
+                {
+                    var qualityArg = "-S  vcodec:h264,res:360,ext:mp4:m4a --recode mp4"; // 360p
+                    argsList.Add(qualityArg);
+                }
+                else
+                {
+                    var qualityArg = "-S vcodec:h264,res,ext:mp4:m4a --recode mp4"; // this wont download 4k. 4k is only available in webm format
+                    argsList.Add(qualityArg);
+                }
             }
 
             var argsString = string.Join(" ", argsList);
@@ -146,15 +148,6 @@ namespace ClipYT.Services
                     file.Delete();
                 }
             }
-        }
-
-        private static string ChangeExtensionToMp4(string filePath)
-        {
-            var targetExtension = nameof(Format.MP4).ToLower();
-            var targetPath = Path.ChangeExtension(filePath, targetExtension);
-            File.Move(filePath, targetPath);
-
-            return targetPath;
         }
 
         private static string AddOneSecond(string timeStamp)
