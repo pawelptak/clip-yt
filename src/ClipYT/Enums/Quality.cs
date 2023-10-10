@@ -3,6 +3,6 @@
     public enum Quality
     {
         Enough,
-        Best
+        High
     }
 }
