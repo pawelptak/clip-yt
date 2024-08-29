@@ -8,9 +8,18 @@
 An ASP.NET Core MVC web application for creating clips from YouTube videos.
 
 ## Getting Started
+### Windows
 - Download yt-dlp and FFmpeg [[yt-dlp Download]](https://github.com/yt-dlp/yt-dlp/releases/latest) [[FFmpeg Download]](https://ffmpeg.org/download.html) and put them into the `Utilites` directory.
-- Build and run the solution using Visual Studio.
 - The default path configurations can be changed in `appsettings.json`.
+- Build and run the solution.
+
+### Linux
+- Download and install yt-dlp and FFmpeg on your system.
+- Change the path configurations of yt-dlp and FFmpeg in `appsettings.json` to `yt-dlp` and `ffmpeg`.
+- Build and run the solution.
+
+### Linux Docker
+- Build and run from Visual Studio using the Dockerfile
 
 ## Usage
 - Paste the URL address of a YouTube video.
