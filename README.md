@@ -19,7 +19,7 @@ An ASP.NET Core MVC web application for creating clips from YouTube videos.
 - Build and run the solution.
 
 ### Linux Docker
-- Build and run from Visual Studio using the Dockerfile
+- Build and run from Visual Studio using the Dockerfile.
 
 ## Usage
 - Paste the URL address of a YouTube video.
