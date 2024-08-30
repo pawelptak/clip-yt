@@ -7,8 +7,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IVideoProcessingService, VideoProcessingService>();
 builder.Services.AddSingleton<IRandomCaptionService, RandomCaptionService>();
-
 var app = builder.Build();
+
+var basePath = builder.Configuration.GetValue<string>("Config:BasePath");
+
+if (!string.IsNullOrEmpty(basePath))
+{
+    app.UsePathBase(basePath);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
