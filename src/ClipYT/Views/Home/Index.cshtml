@@ -213,4 +213,49 @@
             document.getElementById("videoLengthInput").addEventListener("change", updateVideoEndInput);
         });
     </script>
+
+    <script>
+        $(document).ready(function () {
+            $('form').on('submit', function (e) {
+                e.preventDefault();
+
+                if (!$(this).valid()) {
+                    return;
+                }
+
+                var $button = $('#submit-button');
+                $button.addClass('rotating');
+
+                var basePath = '@ViewData["BasePath"]';
+
+                $.ajax({
+                    url: basePath + '/Home/DownloadVideo',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    xhrFields: {
+                        responseType: 'blob'
+                    },
+                    success: function (data, status, xhr) {
+                        var disposition = xhr.getResponseHeader('Content-Disposition');
+                        var filename = disposition.match(/filename="(.+)"/)[1];
+
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(data);
+                        link.download = filename;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+
+                        $button.removeClass('rotating');
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('AJAX Request failed:', status, error);
+                        console.error('Response Text:', xhr.responseText);
+
+                        $button.removeClass('rotating');
+                    }
+                });
+            });
+        });
+    </script>
 }

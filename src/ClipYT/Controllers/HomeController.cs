@@ -9,15 +9,18 @@ namespace ClipYT.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IVideoProcessingService _videoProcessingService;
+        private readonly string _basePath;
 
-        public HomeController(ILogger<HomeController> logger, IVideoProcessingService videoProcessingService)
+        public HomeController(ILogger<HomeController> logger, IVideoProcessingService videoProcessingService, IConfiguration configuration)
         {
             _logger = logger;
             _videoProcessingService = videoProcessingService;
+            _basePath = configuration["Config:BasePath"];
         }
 
         public IActionResult Index()
         {
+            ViewData["BasePath"] = _basePath;
             var model = new VideoModel();
 
             return View(model);
