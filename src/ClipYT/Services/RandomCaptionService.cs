@@ -10,6 +10,7 @@ namespace ClipYT.Services
             _random = new Random();
         }
 
+        // Do not put captions with apostrophes because the used font does not support them :)
         public IList<string> Captions => new List<string> {
             "Believe in yourself.",
             "Think about it.",
