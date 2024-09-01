@@ -174,3 +174,19 @@ input[type=text] {
     font-family: Pixelated;
     font-size: x-small;
 }
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.rotating {
+    animation: rotate 2s linear infinite;
+    pointer-events: none;
+    opacity: 0.5;
+}

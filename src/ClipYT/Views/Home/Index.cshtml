@@ -6,12 +6,11 @@
         <div id="player"></div>
     </div>
 
-    @using (Html.BeginForm("DownloadVideo", "Home", FormMethod.Post, new { id = "app-form" }))
-    {
+    <form id="app-form" method="post">
         <div class="d-flex flex-column gap-1 mb-4">
             <div class="d-flex gap-3">
                 @Html.TextBoxFor(m => m.Url, new { id = "urlInput", placeholder = "Paste YouTube video URL" })
-                <button title="Generate clip" class="play-button"><i class="bi bi-play-circle-fill"></i></button>
+                <button title="Generate clip" id="submit-button" class="play-button"><i class="bi bi-play-circle-fill"></i></button>
             </div>
             <span class="text-danger validation-message">@Html.ValidationMessageFor(m => m.Url)</span>
         </div>
@@ -75,7 +74,7 @@
                 </div>
             </div>
         </div>
-    }
+    </form>
 </div>
 
 @section Scripts {
