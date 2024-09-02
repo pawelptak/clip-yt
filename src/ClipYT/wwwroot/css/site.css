@@ -1,8 +1,11 @@
 :root {
-    --background-color-top: #252525;
-    --background-color-bottom: #000000;
+    --background-color-top-darkmode: #252525;
+    --background-color-bottom-darkmode: #000000;
+    --background-color-top-lightmode: #e5e5e5;
+    --background-color-bottom-lightmode: white;
     --dark-grey: #3c3c3c;
     --light-grey: #8a8987;
+    --lighter-grey: #c3c3c3;
     --accent-color: #f2205f;
     --accent-color-dark: #91143a;
 }
@@ -30,7 +33,7 @@ html {
 body {
     color: white;
     /*background-color: var(--background-color-bottom);*/
-    background-image: linear-gradient(var(--background-color-top), var(--background-color-bottom));
+    background-image: linear-gradient(var(--background-color-top-lightmode), var(--background-color-bottom-lightmode));
 }
 
 #app-form {
@@ -104,9 +107,8 @@ input[type=text] {
     padding: .3em;
     padding-left: 20px;
     padding-right: 20px;
-    border: 2px inset var(--light-grey);
-    background-color: var(--dark-grey);
-    color: white;
+    border: 2px inset white;
+    background-color: var(--lighter-grey);
 }
 
     input[type=text]:focus {
@@ -242,3 +244,17 @@ input[type=text] {
         color: var(--font-color-light);
         transition: 0.25s cubic-bezier(0, 0, 0, 1);
     }
+
+
+/*@media (prefers-color-scheme: dark) {
+    body {
+        background-image: linear-gradient(var(--background-color-top-darkmode), var(--background-color-bottom-darkmode));
+        color: white;
+    }
+
+    input[type=text] {
+        border: 2px inset var(--light-grey);
+        background-color: var(--dark-grey);
+        color: white;
+    }
+}*/
