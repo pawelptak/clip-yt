@@ -105,7 +105,7 @@ namespace ClipYT.Services
             }
             else
             {
-                if (outputQuality == Quality.Enough)
+                if (outputQuality == Quality.Minimal)
                 {
                     var qualityArg = "-S  vcodec:h264,res:360,ext:mp4:m4a --recode mp4"; // 360p
                     argsList.Add(qualityArg);
