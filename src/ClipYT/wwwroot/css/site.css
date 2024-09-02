@@ -8,11 +8,6 @@
 }
 
 @font-face {
-    font-family: 'Pixelated';
-    src: url('../fonts/PixelifySans.ttf');
-}
-
-@font-face {
     font-family: 'Nekst';
     src: url('../fonts/Nekst.otf');
 }
@@ -85,10 +80,6 @@ body {
         outline: 2px solid var(--accent-color-dark);
         border-radius: 100px;
     }
-
-.content {
-    margin-top: 50px;
-}
 
 #player {
     border-radius: 12px;
@@ -170,12 +161,6 @@ input[type=text] {
     font-weight: bold;
 }
 
-.pixelated {
-    font-family: Pixelated;
-    position: relative;
-    bottom: -0.1em;
-}
-
 @keyframes rotate {
     from {
         transform: rotate(0deg);
@@ -220,9 +205,9 @@ input[type=text] {
         background-color: var(--accent-color-dark);
     }
 
-        .option:hover .radio-span {
-            color: var(--font-color-light);
-        }
+.option:hover .radio-span {
+    color: var(--font-color-light);
+}
 
 .radio-input {
     width: 100%;
