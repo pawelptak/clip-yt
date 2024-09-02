@@ -9,7 +9,7 @@
 
 @font-face {
     font-family: 'Pixelated';
-    src: url('../fonts/PixeloidMono.ttf');
+    src: url('../fonts/PixelifySans.ttf');
 }
 
 @font-face {
@@ -114,7 +114,7 @@ input[type=text] {
     padding: .3em;
     padding-left: 20px;
     padding-right: 20px;
-    border: 1px solid transparent;
+    border: 2px inset var(--light-grey);
     background-color: var(--dark-grey);
     color: white;
 }
@@ -172,7 +172,8 @@ input[type=text] {
 
 .pixelated {
     font-family: Pixelated;
-    font-size: x-small;
+    position: relative;
+    bottom: -0.1em;
 }
 
 @keyframes rotate {
@@ -190,3 +191,69 @@ input[type=text] {
     pointer-events: none;
     opacity: 0.5;
 }
+
+.radio-wrapper {
+    --font-color-dark: var(--light-grey);
+    --font-color-light: white;
+    --bg-color: var(--dark-grey);
+    --main-color: var(--accent-color);
+    position: relative;
+    background-color: var(--bg-color);
+    border-radius: 20px;
+    display: flex;
+    flex-direction: row;
+    border: 2px inset var(--light-grey);
+}
+
+.radio-option {
+    margin-right: 2px;
+    position: relative;
+    border-radius: 20px;
+    transition: 0.25s cubic-bezier(0, 0, 0, 1);
+}
+
+    .radio-option:last-child {
+        margin-right: 0px;
+    }
+
+    .radio-option:hover {
+        background-color: var(--accent-color-dark);
+    }
+
+        .option:hover .radio-span {
+            color: var(--font-color-light);
+        }
+
+.radio-input {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    appearance: none;
+    cursor: pointer;
+}
+
+.radio-btn {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: .3em 20px .3em 20px;
+}
+
+.radio-span {
+    color: var(--font-color-dark);
+}
+
+.radio-input:checked + .radio-btn {
+    background-color: var(--main-color);
+    transition: 0.2s cubic-bezier(0, 0, 0, 1);
+}
+
+    .radio-input:checked + .radio-btn .radio-span {
+        color: var(--font-color-light);
+        transition: 0.25s cubic-bezier(0, 0, 0, 1);
+    }
