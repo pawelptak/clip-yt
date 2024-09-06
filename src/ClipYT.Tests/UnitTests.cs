@@ -111,8 +111,8 @@ namespace ClipYT.Tests
         public async Task Output_Folder_Should_Be_Empty_After_Processing_Fails() // Except the .gitkeep file
         {
             // Arrange
-            var invalidUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
-            var videoModel = new VideoModel { Url = new Uri(invalidUrl), StartTimestamp = "00:00:20", EndTimestamp = "00:00:10" };
+            var videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+            var videoModel = new VideoModel { Url = new Uri(videoUrl), StartTimestamp = "00:00:20", EndTimestamp = "00:00:10" };
 
             // Act
             try
@@ -125,6 +125,20 @@ namespace ClipYT.Tests
                 var outputFilesExist = Directory.GetFiles(_outputFolder).Any(file => !file.EndsWith(".gitkeep"));
                 Assert.False(outputFilesExist, "Output folder is not empty.");
             }
+        }
+
+        [Fact]
+        public async Task Downloaded_Mp3_Clip_Should_Have_Size_Larger_Than_Zero()
+        {
+            // Arrange
+            var videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+            var videoModel = new VideoModel { Url = new Uri(videoUrl), StartTimestamp = "00:00:10", EndTimestamp = "00:00:20", Format = Enums.Format.MP3 };
+
+            // Act
+            var fileModel = await _videoProcessingService.ProcessYoutubeVideoAsync(videoModel);
+
+            // Assert
+            Assert.True(fileModel.Data.Length > 0);
         }
 
     }
