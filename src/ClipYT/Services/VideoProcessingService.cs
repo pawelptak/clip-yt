@@ -148,7 +148,7 @@ namespace ClipYT.Services
                 }
             }
 
-            var filePath = Directory.GetFiles(_outputFolder).First(file => !file.EndsWith(".gitkeep"));
+            var filePath = Directory.GetFiles(_outputFolder).Single(file => !file.EndsWith(".gitkeep"));
 
             return filePath;
         }
