@@ -1,6 +1,7 @@
 ﻿using ClipYT.Enums;
 using ClipYT.Interfaces;
 using ClipYT.Models;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
 namespace ClipYT.Services
@@ -22,24 +23,39 @@ namespace ClipYT.Services
         {
             ClearOutputDirectory();
 
-            var filePath = DownloadYoutubeVideo(model.Url.ToString(), model.Format, model.Quality);
+            string filePath = null;
 
-            if (!string.IsNullOrEmpty(model.StartTimestamp) && !string.IsNullOrEmpty(model.EndTimestamp))
+            try
             {
-                CutAndConvertFile(filePath, model.StartTimestamp, model.EndTimestamp);
+                filePath = DownloadYoutubeVideo(model.Url.ToString(), model.Format, model.Quality);
+
+                if (!string.IsNullOrEmpty(model.StartTimestamp) && !string.IsNullOrEmpty(model.EndTimestamp))
+                {
+                    CutAndConvertFile(filePath, model.StartTimestamp, model.EndTimestamp);
+                }
+
+                var fileBytes = await File.ReadAllBytesAsync(filePath);
+
+                var fileModel = new FileModel
+                {
+                    Data = fileBytes,
+                    Name = Path.GetFileName(filePath)
+                };
+
+                return fileModel;
             }
-
-            var fileBytes = await File.ReadAllBytesAsync(filePath);
-
-            var fileModel = new FileModel
+            catch (Exception ex)
             {
-                Data = fileBytes,
-                Name = Path.GetFileName(filePath)
-            };
-
-            File.Delete(filePath);
-
-            return fileModel;
+                Debug.WriteLine(ex, "An error occurred while processing the YouTube video.");
+                throw;
+            }
+            finally
+            {
+                if (filePath != null && File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+            }
         }
 
         private void CutAndConvertFile(string filePath, string startTime, string endTime)
@@ -139,6 +155,11 @@ namespace ClipYT.Services
 
         private void ClearOutputDirectory()
         {
+            if (!Directory.Exists(_outputFolder))
+            {
+                return;
+            }
+
             DirectoryInfo di = new(_outputFolder);
 
             foreach (var file in di.GetFiles())
