@@ -31,7 +31,6 @@ html {
 }
 
 body {
-    /*background-color: var(--background-color-bottom);*/
     background-image: linear-gradient(var(--background-color-top), var(--background-color-bottom));
     background-color: var(--background-color-bottom);
 }
@@ -255,7 +254,7 @@ input[type=text] {
 @media (prefers-color-scheme: dark) {
     body {
         background-image: linear-gradient(var(--background-color-top-darkmode), var(--background-color-bottom-darkmode));
-        background-color: white;
+        background-color: var(--background-color-bottom-darkmode);
         color: white;
     }
 
