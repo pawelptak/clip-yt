@@ -4,9 +4,10 @@
     --background-color-top-lightmode: #e5e5e5;
     --background-color-bottom-lightmode: white;
     --input-border-darkmode: #3d3a3b;
+    --input-border: #d3d3d3;
     --dark-grey: #1e1e1e;
     --light-grey: #8a8987;
-    --lighter-grey: #e9e9e9;
+    --lighter-grey: #efefef;
     --accent-color: #f2205f;
     --accent-color-dark: #91143a;
 }
@@ -118,7 +119,7 @@ input[type=text] {
     padding: .3em;
     padding-left: 20px;
     padding-right: 20px;
-    border: 2px inset white;
+    border: 2px outset var(--input-border);
     background-color: var(--lighter-grey);
 }
 
@@ -194,7 +195,7 @@ input[type=text] {
     border-radius: 20px;
     display: flex;
     flex-direction: row;
-    border: 2px inset white;
+    border: 2px outset var(--input-border);
 }
 
 .radio-option {
