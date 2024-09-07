@@ -22,24 +22,39 @@ namespace ClipYT.Services
         {
             ClearOutputDirectory();
 
-            var filePath = DownloadYoutubeVideo(model.Url.ToString(), model.Format, model.Quality);
+            string filePath = null;
 
-            if (!string.IsNullOrEmpty(model.StartTimestamp) && !string.IsNullOrEmpty(model.EndTimestamp))
+            try
             {
-                CutAndConvertFile(filePath, model.StartTimestamp, model.EndTimestamp);
+                filePath = DownloadYoutubeVideo(model.Url.ToString(), model.Format, model.Quality);
+
+                if (!string.IsNullOrEmpty(model.StartTimestamp) && !string.IsNullOrEmpty(model.EndTimestamp))
+                {
+                    CutAndConvertFile(filePath, model.StartTimestamp, model.EndTimestamp);
+                }
+
+                var fileBytes = await File.ReadAllBytesAsync(filePath);
+
+                var fileModel = new FileModel
+                {
+                    Data = fileBytes,
+                    Name = RemoveIdFromFileName(Path.GetFileName(filePath))
+                };
+
+                return fileModel;
             }
-
-            var fileBytes = await File.ReadAllBytesAsync(filePath);
-
-            var fileModel = new FileModel
+            catch (Exception ex)
             {
-                Data = fileBytes,
-                Name = Path.GetFileName(filePath)
-            };
-
-            File.Delete(filePath);
-
-            return fileModel;
+                Debug.WriteLine(ex, "An error occurred while processing the YouTube video.");
+                throw;
+            }
+            finally
+            {
+                if (filePath != null && File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+            }
         }
 
         private void CutAndConvertFile(string filePath, string startTime, string endTime)
@@ -52,7 +67,7 @@ namespace ClipYT.Services
 
             var audioConversionArg = $"-c:a copy";
 
-            var outputFileName = "temp.mp4";
+            var outputFileName = $"{Guid.NewGuid()}.mp4";
             var outputArg = Path.Combine(_outputFolder, outputFileName);
 
 
@@ -93,7 +108,8 @@ namespace ClipYT.Services
             var argsList = new List<string>();
 
             var urlArg = videoUrl;
-            var outputArg = $"-o {_outputFolder}/%(title)s.%(ext)s";
+            var fileId = Guid.NewGuid();
+            var outputArg = $"-o {_outputFolder}/{fileId}_%(title)s.%(ext)s";
 
             argsList.Add(urlArg);
             argsList.Add(outputArg);
@@ -132,13 +148,18 @@ namespace ClipYT.Services
                 }
             }
 
-            var filePath = Directory.GetFiles(_outputFolder).First(file => !file.EndsWith(".gitkeep"));
+            var filePath = Directory.GetFiles(_outputFolder).Single(file => Path.GetFileName(file).StartsWith(fileId.ToString()));
 
             return filePath;
         }
 
         private void ClearOutputDirectory()
         {
+            if (!Directory.Exists(_outputFolder))
+            {
+                return;
+            }
+
             DirectoryInfo di = new(_outputFolder);
 
             foreach (var file in di.GetFiles())
@@ -150,13 +171,25 @@ namespace ClipYT.Services
             }
         }
 
-        private static string AddOneSecond(string timeStamp)
+        private string AddOneSecond(string timeStamp)
         {
             var seconds = TimeSpan.Parse(timeStamp).TotalSeconds;
             var secondsPlusOne = seconds + 1;
             var timeStampPlusOne = TimeSpan.FromSeconds(secondsPlusOne).ToString();
 
             return timeStampPlusOne;
+        }
+
+        private string RemoveIdFromFileName(string input)
+        {
+            int firstUnderscoreIndex = input.IndexOf('_');
+
+            if (firstUnderscoreIndex == -1)
+            {
+                return input;
+            }
+
+            return input.Substring(firstUnderscoreIndex + 1);
         }
     }
 }

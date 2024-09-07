@@ -19,7 +19,7 @@
             <div class="d-flex align-items-center gap-3 justify-content-between flex-wrap mb-4">
                 <div class="d-flex flex-column align-items-center">
                     <div>
-                        <span class="thick">From:</span>
+                        <span>From:</span>
                         @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "timeInput" })
                         <button type="button" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoStartInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                     </div>
@@ -28,7 +28,7 @@
 
                 <div class="d-flex flex-column align-items-center">
                     <div>
-                        <span class="thick">To:</span>
+                        <span>To:</span>
                         @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "timeInput" })
                         <button type="button" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoEndInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                     </div>
@@ -37,7 +37,7 @@
 
                 <div class="d-flex flex-column align-items-center">
                     <div>
-                        <span class="thick">Length (sec):</span>
+                        <span>Length (sec):</span>
                         @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput" })
                     </div>
                     <span class="text-danger fixed-validation-message">@Html.ValidationMessageFor(m => m.ClipLength)</span>
@@ -70,7 +70,6 @@
             </div>
         </div>
     </form>
-    <button class="btn btn-primary">Mode</button>
 </div>
 
 @section Scripts {

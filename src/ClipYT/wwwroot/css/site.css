@@ -5,7 +5,7 @@
     --background-color-bottom-lightmode: white;
     --dark-grey: #3c3c3c;
     --light-grey: #8a8987;
-    --lighter-grey: #c3c3c3;
+    --lighter-grey: #e9e9e9;
     --accent-color: #f2205f;
     --accent-color-dark: #91143a;
 }
@@ -31,9 +31,9 @@ html {
 }
 
 body {
-    color: white;
     /*background-color: var(--background-color-bottom);*/
-    background-image: linear-gradient(var(--background-color-top-lightmode), var(--background-color-bottom-lightmode));
+    background-image: linear-gradient(var(--background-color-top), var(--background-color-bottom));
+    background-color: var(--background-color-bottom);
 }
 
 #app-form {
@@ -139,8 +139,7 @@ input[type=text] {
 
 .fixed-validation-message {
     position: absolute;
-    margin-left: -60px;
-    margin-top: 40px;
+    margin-top: 35px;
 }
 
 .form-check-input {
@@ -156,11 +155,6 @@ input[type=text] {
         box-shadow: none;
         outline: 2px solid var(--accent-color-dark);
     }
-
-
-.thick {
-    font-weight: bold;
-}
 
 @keyframes rotate {
     from {
@@ -181,14 +175,14 @@ input[type=text] {
 .radio-wrapper {
     --font-color-dark: var(--light-grey);
     --font-color-light: white;
-    --bg-color: var(--dark-grey);
+    --bg-color: var(--lighter-grey);
     --main-color: var(--accent-color);
     position: relative;
     background-color: var(--bg-color);
     border-radius: 20px;
     display: flex;
     flex-direction: row;
-    border: 2px inset var(--light-grey);
+    border: 2px inset white;
 }
 
 .radio-option {
@@ -246,9 +240,10 @@ input[type=text] {
     }
 
 
-/*@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) {
     body {
         background-image: linear-gradient(var(--background-color-top-darkmode), var(--background-color-bottom-darkmode));
+        background-color: white;
         color: white;
     }
 
@@ -257,4 +252,9 @@ input[type=text] {
         background-color: var(--dark-grey);
         color: white;
     }
-}*/
+
+    .radio-wrapper {
+        --bg-color: var(--dark-grey);
+        border: 2px inset var(--light-grey);
+    }
+}
