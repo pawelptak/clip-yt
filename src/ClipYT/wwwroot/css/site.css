@@ -102,6 +102,17 @@ body {
     max-width: 80px;
 }
 
+.input-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+.label-text {
+    margin-left: 10px;
+    font-size: .9em;
+    color: var(--light-grey);
+}
+
 input[type=text] {
     border-radius: 20px;
     padding: .3em;
@@ -137,9 +148,10 @@ input[type=text] {
         outline: 2px solid var(--accent-color-dark);
     }
 
-.fixed-validation-message {
-    position: absolute;
-    margin-top: 35px;
+
+.field-validation-error{
+    font-size: .9em;
+    margin-left: 5px;
 }
 
 .form-check-input {

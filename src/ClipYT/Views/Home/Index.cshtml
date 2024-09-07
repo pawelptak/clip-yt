@@ -7,7 +7,7 @@
     </div>
 
     <form id="app-form" method="post">
-        <div class="d-flex flex-column gap-1 mb-4">
+        <div class="d-flex flex-column mb-3">
             <div class="d-flex gap-3">
                 @Html.TextBoxFor(m => m.Url, new { id = "urlInput", placeholder = "Paste YouTube video URL" })
                 <button title="Generate clip" id="submit-button" class="play-button"><i class="bi bi-play-circle-fill"></i></button>
@@ -16,35 +16,41 @@
         </div>
 
         <div id="video-details">
-            <div class="d-flex align-items-center gap-3 justify-content-between flex-wrap mb-4">
-                <div class="d-flex flex-column align-items-center">
-                    <div>
-                        <span>From:</span>
-                        @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "timeInput" })
-                        <button type="button" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoStartInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
+            <div class="d-flex gap-3 justify-content-between flex-wrap mb-3">
+                <div class="d-flex flex-column">
+                    <div class="input-wrapper">
+                        <span class="label-text">Clip start</span>
+                        <div>
+                            @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "timeInput" })
+                            <button type="button" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoStartInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
+                        </div>
                     </div>
-                    <span class="text-danger fixed-validation-message">@Html.ValidationMessageFor(m => m.StartTimestamp)</span>
+                    <span class="text-danger ">@Html.ValidationMessageFor(m => m.StartTimestamp)</span>
                 </div>
 
-                <div class="d-flex flex-column align-items-center">
-                    <div>
-                        <span>To:</span>
-                        @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "timeInput" })
-                        <button type="button" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoEndInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
+                <div class="d-flex flex-column">
+                    <div class="input-wrapper">
+                        <span class="label-text">Clip end</span>
+                        <div>
+                            @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "timeInput" })
+                            <button type="button" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoEndInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
+                        </div>
                     </div>
-                    <span class="text-danger fixed-validation-message">@Html.ValidationMessageFor(m => m.EndTimestamp)</span>
+                    <span class="text-danger ">@Html.ValidationMessageFor(m => m.EndTimestamp)</span>
                 </div>
 
-                <div class="d-flex flex-column align-items-center">
-                    <div>
-                        <span>Length (sec):</span>
+                <div class="d-flex flex-column">
+                    <div class="input-wrapper">
+                        <span class="label-text">Length (s)</span>
                         @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput" })
                     </div>
-                    <span class="text-danger fixed-validation-message">@Html.ValidationMessageFor(m => m.ClipLength)</span>
+                    <span class="text-danger ">@Html.ValidationMessageFor(m => m.ClipLength)</span>
                 </div>
             </div>
 
             <div class="d-flex justify-content-between flex-wrap gap-3">
+                <div class="input-wrapper">
+                    <span class="label-text">Format</span>
                     <div class="radio-wrapper">
                         @foreach (var value in Enum.GetValues(typeof(ClipYT.Enums.Format)))
                         {
@@ -56,17 +62,21 @@
                             </div>
                         }
                     </div>
+                </div>
+                <div class="input-wrapper">
+                    <span class="label-text">Quality</span>
                     <div class="radio-wrapper">
                         @foreach (var value in Enum.GetValues(typeof(ClipYT.Enums.Quality)))
                         {
                             <div class="radio-option">
                                 @Html.RadioButtonFor(m => m.Quality, value, new { @class = "radio-input" })
                                 <div class="radio-btn">
-                                    <span class="radio-span">@value.ToString() Quality</span>
+                                    <span class="radio-span">@value.ToString()</span>
                                 </div>
                             </div>
                         }
                     </div>
+                </div>
             </div>
         </div>
     </form>
@@ -155,7 +165,7 @@
                             clearInterval(interval);
                             resolve();
                         }
-                        else{
+                        else {
                             console.log("player not ready");
                         }
                     }, 100);
