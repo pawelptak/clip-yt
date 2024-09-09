@@ -8,35 +8,42 @@ namespace ClipYT.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IVideoProcessingService _videoProcessingService;
+        private readonly IMediaFileProcessingService _mediaFileProcessingService;
         private readonly string _basePath;
 
-        public HomeController(ILogger<HomeController> logger, IVideoProcessingService videoProcessingService, IConfiguration configuration)
+        public HomeController(ILogger<HomeController> logger, IMediaFileProcessingService mediaFileProcessingService, IConfiguration configuration)
         {
             _logger = logger;
-            _videoProcessingService = videoProcessingService;
+            _mediaFileProcessingService = mediaFileProcessingService;
             _basePath = configuration["Config:BasePath"];
         }
 
         public IActionResult Index()
         {
             ViewData["BasePath"] = _basePath;
-            var model = new VideoModel();
+            var model = new MediaFileModel();
 
             return View(model);
         }
 
         [HttpPost]
-        public async Task<ActionResult> DownloadVideo(VideoModel model)
+        public async Task<ActionResult?> DownloadFile(MediaFileModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View("Index", model);
             }
 
-            var file = await _videoProcessingService.ProcessYoutubeVideoAsync(model);
+            var result = await _mediaFileProcessingService.ProcessMediaFileAsync(model);
 
-            return File(file.Data, System.Net.Mime.MediaTypeNames.Application.Octet, file.Name);
+            if (!result.IsSuccessful)
+            {
+                return null;
+            }
+
+            var fileModel = result.FileModel;
+
+            return File(fileModel.Data, System.Net.Mime.MediaTypeNames.Application.Octet, fileModel.Name);
         }
 
         public IActionResult Privacy()

@@ -1,5 +1,5 @@
 ﻿@using ClipYT.Constants;
-@model VideoModel
+@model MediaFileModel
 
 <div class="d-flex flex-column align-items-center">
     <div class="mb-4" id="player-container">
@@ -12,7 +12,7 @@
                 @Html.TextBoxFor(m => m.Url, new { id = "urlInput", placeholder = "Paste YouTube video URL" })
                 <button title="Generate clip" id="submit-button" class="play-button"><i class="bi bi-play-circle-fill"></i></button>
             </div>
-            <span class="text-danger validation-message">@Html.ValidationMessageFor(m => m.Url)</span>
+            <span id="url-validation-message" class="text-danger validation-message">@Html.ValidationMessageFor(m => m.Url)</span>
         </div>
 
         <div id="video-details">
@@ -132,16 +132,21 @@
     <script>
         $(document).ready(function () {
             $("#urlInput").on('input', function () {
-                if (isYoutubeUrlValid($(this).val())) {
+                var ytRegex = @Html.Raw(Json.Serialize(RegexConstants.YoutubeUrlRegex));
+                var tiktokRegex = @Html.Raw(Json.Serialize(RegexConstants.TiktokUrlRegex));
+                var inputUrl = $(this).val();
+
+                if (inputUrl.match(ytRegex)) {
                     updateVideoFrame($(this).val());
+                    $("#video-details").show();
+                    $("#logo-img").attr('src', '/images/clip_yt_logo.png');
+                }
+                if (inputUrl.match(tiktokRegex)) {
+                    $("#player-container").hide();
+                    $("#video-details").show();
+                    $("#logo-img").attr('src', '/images/cliptok_logo.png'); // TODO: fix logo sharpness. Switch site color palete.
                 }
             });
-
-            function isYoutubeUrlValid(url) {
-                var regex = @Html.Raw(Json.Serialize(RegexConstants.YoutubeUrlRegex));
-
-                return url.match(regex);
-            }
 
             function getIdFromYoutubeUrl(url) {
                 var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
@@ -155,7 +160,6 @@
                 var videoId = getIdFromYoutubeUrl(videoUrl);
                 player.cueVideoById(videoId);
                 $("#player-container").show();
-                $("#video-details").show();
             }
 
             function waitForPlayerToBeLoaded() {
@@ -237,8 +241,10 @@
 
                 var basePath = '@ViewData["BasePath"]';
 
+                var downloadMethodUrl = '@Url.Action("DownloadFile")';
+
                 $.ajax({
-                    url: basePath + '/Home/DownloadVideo',
+                    url: basePath + downloadMethodUrl,
                     type: 'POST',
                     data: $(this).serialize(),
                     xhrFields: {
@@ -260,6 +266,7 @@
                     error: function (xhr, status, error) {
                         console.error('AJAX Request failed:', status, error);
                         console.error('Response Text:', xhr.responseText);
+                        $('#url-validation-message').text('An error occurred. Please try again.').show();
 
                         $button.removeClass('rotating');
                     }

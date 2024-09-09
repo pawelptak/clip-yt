@@ -2,31 +2,35 @@
 using ClipYT.Interfaces;
 using ClipYT.Models;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace ClipYT.Services
 {
-    public class VideoProcessingService : IVideoProcessingService
+    public class MediaFileProcessingService : IMediaFileProcessingService
     {
         private readonly string _youtubeDlpPath;
         private readonly string _ffmpegPath;
         private readonly string _outputFolder;
 
-        public VideoProcessingService(IConfiguration configuration)
+        public MediaFileProcessingService(IConfiguration configuration)
         {
             _ffmpegPath = configuration["Config:FFmpegPath"];
             _youtubeDlpPath = configuration["Config:YoutubeDlpPath"];
             _outputFolder = configuration["Config:OutputFolder"];
         }
 
-        public async Task<FileModel> ProcessYoutubeVideoAsync(VideoModel model)
+        public async Task<ProcessingResult> ProcessMediaFileAsync(MediaFileModel model)
         {
             ClearOutputDirectory();
 
             string filePath = null;
+            var result = new ProcessingResult();
 
             try
             {
-                filePath = DownloadYoutubeVideo(model.Url.ToString(), model.Format, model.Quality);
+                var isTikTokUrl = Regex.IsMatch(model.Url.ToString(), Constants.RegexConstants.TiktokUrlRegex);
+                var maxRetires = isTikTokUrl ? 3 : 1; // Downloading TikTok video using yt-dlp sometimes fails, so it is retried
+                filePath = DownloadMediaFile(model.Url.ToString(), model.Format, model.Quality, maxRetires);
 
                 if (!string.IsNullOrEmpty(model.StartTimestamp) && !string.IsNullOrEmpty(model.EndTimestamp))
                 {
@@ -41,11 +45,15 @@ namespace ClipYT.Services
                     Name = RemoveIdFromFileName(Path.GetFileName(filePath))
                 };
 
-                return fileModel;
+                result.IsSuccessful = true;
+                result.FileModel = fileModel;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex, "An error occurred while processing the YouTube video.");
+                result.IsSuccessful = false;
+                result.ErrorMessage = ex.Message;
+                Debug.WriteLine(ex, "An error occurred while processing the file.");
+
                 throw;
             }
             finally
@@ -55,6 +63,8 @@ namespace ClipYT.Services
                     File.Delete(filePath);
                 }
             }
+
+            return result;
         }
 
         private void CutAndConvertFile(string filePath, string startTime, string endTime)
@@ -103,11 +113,11 @@ namespace ClipYT.Services
             File.Replace(outputArg, filePath, null);
         }
 
-        private string DownloadYoutubeVideo(string videoUrl, Format outputFormat, Quality outputQuality)
+        private string DownloadMediaFile(string inputUrl, Format outputFormat, Quality outputQuality, int maxRetries = 1)
         {
             var argsList = new List<string>();
 
-            var urlArg = videoUrl;
+            var urlArg = inputUrl;
             var fileId = Guid.NewGuid();
             var outputArg = $"-o {_outputFolder}/{fileId}_%(title)s.%(ext)s";
 
@@ -134,23 +144,34 @@ namespace ClipYT.Services
             }
 
             var argsString = string.Join(" ", argsList);
+            string filePath = null;
 
-            using (var process = new Process())
+            for (int attempt = 1; attempt <= maxRetries; attempt++)
             {
-                process.StartInfo.FileName = _youtubeDlpPath;
-                process.StartInfo.Arguments = argsString;
-                process.Start();
-                process.WaitForExit();
-
-                if (process.ExitCode != 0)
+                using (var process = new Process())
                 {
-                    throw new OperationCanceledException($"Yt-dlp process exited with code {process.ExitCode}");
+                    process.StartInfo.FileName = _youtubeDlpPath;
+                    process.StartInfo.Arguments = argsString;
+                    process.Start();
+                    process.WaitForExit();
+
+                    if (process.ExitCode == 0)
+                    {
+                        filePath = Directory.GetFiles(_outputFolder).Single(file => Path.GetFileName(file).StartsWith(fileId.ToString()));
+
+                        return filePath;
+                    }
+
+                    if (attempt == maxRetries)
+                    {
+                        throw new OperationCanceledException($"Yt-dlp process exited with code {process.ExitCode}");
+                    }
+
+                    Thread.Sleep(1000); // Sleep for 1 second before retrying
                 }
             }
 
-            var filePath = Directory.GetFiles(_outputFolder).Single(file => Path.GetFileName(file).StartsWith(fileId.ToString()));
-
-            return filePath;
+            throw new InvalidOperationException("Unexpected error occurred during download.");
         }
 
         private void ClearOutputDirectory()
