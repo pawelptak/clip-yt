@@ -22,7 +22,7 @@
                         <span class="label-text">Clip start</span>
                         <div>
                             @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "timeInput" })
-                            <button type="button" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoStartInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
+                            <button type="button" id="get-current-start-btn" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoStartInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                         </div>
                     </div>
                     <span class="text-danger ">@Html.ValidationMessageFor(m => m.StartTimestamp)</span>
@@ -33,7 +33,7 @@
                         <span class="label-text">Clip end</span>
                         <div>
                             @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "timeInput" })
-                            <button type="button" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoEndInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
+                            <button type="button" id="get-current-end-btn" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoEndInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                         </div>
                     </div>
                     <span class="text-danger ">@Html.ValidationMessageFor(m => m.EndTimestamp)</span>
@@ -154,6 +154,8 @@
                     body.classList.remove('yt-mode');
                     body.classList.add('tiktok-mode');
                     $("#logo-img").attr('src', '/images/cliptok_logo.png');
+                    $("#get-current-end-btn").hide();
+                    $("#get-current-start-btn").hide();
                 }           
             }
 
@@ -163,6 +165,8 @@
                     body.classList.remove('tiktok-mode');
                     body.classList.add('yt-mode');
                     $("#logo-img").attr('src', '/images/clip_yt_logo.png');
+                    $("#get-current-end-btn").show();
+                    $("#get-current-start-btn").show();
                 }
             }
 
