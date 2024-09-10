@@ -153,7 +153,7 @@
                 if (!body.classList.contains('tiktok-mode')) {
                     body.classList.remove('yt-mode');
                     body.classList.add('tiktok-mode');
-                    $("#logo-img").attr('src', '/images/cliptok_logo.png');
+                    $("#logo-img").attr('src', "@Url.Content("~/images/cliptok_logo.png")");
                     $("#get-current-end-btn").hide();
                     $("#get-current-start-btn").hide();
                 }           
@@ -164,7 +164,7 @@
                 if (!body.classList.contains('yt-mode')) {
                     body.classList.remove('tiktok-mode');
                     body.classList.add('yt-mode');
-                    $("#logo-img").attr('src', '/images/clip_yt_logo.png');
+                    $("#logo-img").attr('src', "@Url.Content("~/images/clip_yt_logo.png")");
                     $("#get-current-end-btn").show();
                     $("#get-current-start-btn").show();
                 }
