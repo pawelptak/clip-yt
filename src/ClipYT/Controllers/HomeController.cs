@@ -9,18 +9,15 @@ namespace ClipYT.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IMediaFileProcessingService _mediaFileProcessingService;
-        private readonly string _basePath;
 
-        public HomeController(ILogger<HomeController> logger, IMediaFileProcessingService mediaFileProcessingService, IConfiguration configuration)
+        public HomeController(ILogger<HomeController> logger, IMediaFileProcessingService mediaFileProcessingService)
         {
             _logger = logger;
             _mediaFileProcessingService = mediaFileProcessingService;
-            _basePath = configuration["Config:BasePath"];
         }
 
         public IActionResult Index()
         {
-            ViewData["BasePath"] = _basePath;
             var model = new MediaFileModel();
 
             return View(model);

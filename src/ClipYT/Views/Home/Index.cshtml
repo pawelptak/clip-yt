@@ -261,12 +261,10 @@
                 var $button = $('#submit-button');
                 $button.addClass('rotating');
 
-                var basePath = '@ViewData["BasePath"]';
-
                 var downloadMethodUrl = '@Url.Action("DownloadFile")';
 
                 $.ajax({
-                    url: basePath + downloadMethodUrl,
+                    url: downloadMethodUrl,
                     type: 'POST',
                     data: $(this).serialize(),
                     xhrFields: {
