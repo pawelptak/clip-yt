@@ -139,14 +139,32 @@
                 if (inputUrl.match(ytRegex)) {
                     updateVideoFrame($(this).val());
                     $("#video-details").show();
-                    $("#logo-img").attr('src', '/images/clip_yt_logo.png');
+                    setClipytMode();
                 }
                 if (inputUrl.match(tiktokRegex)) {
                     $("#player-container").hide();
-                    $("#video-details").show();
-                    $("#logo-img").attr('src', '/images/cliptok_logo.png'); // TODO: fix logo sharpness. Switch site color palete.
+                    $("#video-details").show();                 
+                    setCliptokMode();
                 }
             });
+
+            function setCliptokMode() {
+                const body = document.body;
+                if (!body.classList.contains('tiktok-mode')) {
+                    body.classList.remove('yt-mode');
+                    body.classList.add('tiktok-mode');
+                    $("#logo-img").attr('src', '/images/cliptok_logo.png');
+                }           
+            }
+
+            function setClipytMode() {
+                const body = document.body;
+                if (!body.classList.contains('yt-mode')) {
+                    body.classList.remove('tiktok-mode');
+                    body.classList.add('yt-mode');
+                    $("#logo-img").attr('src', '/images/clip_yt_logo.png');
+                }
+            }
 
             function getIdFromYoutubeUrl(url) {
                 var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
