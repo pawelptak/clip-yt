@@ -119,7 +119,7 @@ namespace ClipYT.Services
 
             var urlArg = inputUrl;
             var fileId = Guid.NewGuid();
-            var outputArg = $"-o {_outputFolder}/{fileId}_%(title)s.%(ext)s";
+            var outputArg = $"-o {_outputFolder}/{fileId}_%(title).90s.%(ext)s";
 
             argsList.Add(urlArg);
             argsList.Add(outputArg);
