@@ -272,7 +272,17 @@
                     },
                     success: function (data, status, xhr) {
                         var disposition = xhr.getResponseHeader('Content-Disposition');
-                        var filename = disposition.match(/filename="(.+)"/)[1];
+                        var filename = '';
+
+                        var filenameUTF8 = disposition.match(/filename\*\=UTF-8''([^;]+)/);
+                        if (filenameUTF8) {
+                            filename = decodeURIComponent(filenameUTF8[1]);
+                        } else {
+                            var filenameNormal = disposition.match(/filename="([^"]+)"/);
+                            if (filenameNormal) {
+                                filename = filenameNormal[1];
+                            }
+                        }
 
                         var link = document.createElement('a');
                         link.href = window.URL.createObjectURL(data);
