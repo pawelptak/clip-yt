@@ -27,5 +27,7 @@ namespace ClipYT.Models
         public Format Format { get; set; }
 
         public Quality Quality { get; set; }
+
+        public bool SeparateAudioTracks { get; set; }
     }
 }

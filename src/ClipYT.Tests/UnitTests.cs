@@ -9,6 +9,7 @@ namespace ClipYT.Tests
     public class UnitTests
     {
         private readonly MediaFileProcessingService _mediaFileProcessingService;
+        private readonly TrackSeparationService _trackSeparationService;
         private readonly string _outputFolder;
 
         public UnitTests()
@@ -19,19 +20,23 @@ namespace ClipYT.Tests
 
             var ffmpegPath = Path.Combine(clipYTProjectDirectory, "Utilities", "ffmpeg.exe");
             var youtubeDlpPath = Path.Combine(clipYTProjectDirectory, "Utilities", "yt-dlp.exe");
+            var pythonPath = @"C:\Users\jpawl\AppData\Local\Programs\Python\Python39\python.exe"; // Replace with a correct Python exe
             var outputFolder = Path.Combine(clipYTProjectDirectory, "Output");
 
             var inMemorySettings = new Dictionary<string, string>
             {
                 { "Config:FFmpegPath", ffmpegPath },
                 { "Config:YoutubeDlpPath", youtubeDlpPath },
+                { "Config:PythonPath", pythonPath },            
                 { "Config:OutputFolder", outputFolder }
             };
             var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(inMemorySettings)
             .Build();
 
-            _mediaFileProcessingService = new MediaFileProcessingService(configuration);
+            var trackSeparationService = new TrackSeparationService(configuration);
+            _trackSeparationService = trackSeparationService;
+            _mediaFileProcessingService = new MediaFileProcessingService(configuration, trackSeparationService);
             _outputFolder = outputFolder;
         }
 
@@ -152,5 +157,21 @@ namespace ClipYT.Tests
             Assert.True(fileModel.Data.Length > 0);
         }
 
+
+        [Theory]
+        [InlineData(@"TestFiles\test_file.mp3")]
+        public void Separating_Tracks_Should_Be_Successful(string inputPath)
+        {
+            Assert.True(File.Exists(inputPath));
+
+            // Arrange
+            var bytes = File.ReadAllBytes(inputPath);
+
+            // Act
+            var result = _trackSeparationService.SeparateTracks(bytes, 4, "test");
+
+            // Assert
+            Assert.True(result.IsSuccessful);
+        }
     }
 }

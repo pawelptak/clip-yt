@@ -11,12 +11,14 @@ namespace ClipYT.Services
         private readonly string _youtubeDlpPath;
         private readonly string _ffmpegPath;
         private readonly string _outputFolder;
+        private readonly ITrackSeparationService _trackSeparationService;
 
-        public MediaFileProcessingService(IConfiguration configuration)
+        public MediaFileProcessingService(IConfiguration configuration, ITrackSeparationService trackSeparationService)
         {
             _ffmpegPath = configuration["Config:FFmpegPath"];
             _youtubeDlpPath = configuration["Config:YoutubeDlpPath"];
             _outputFolder = configuration["Config:OutputFolder"];
+            _trackSeparationService = trackSeparationService;
         }
 
         public async Task<ProcessingResult> ProcessMediaFileAsync(MediaFileModel model)
@@ -38,15 +40,30 @@ namespace ClipYT.Services
                 }
 
                 var fileBytes = await File.ReadAllBytesAsync(filePath);
+                var outputName = RemoveIdFromFileName(Path.GetFileName(filePath));
 
-                var fileModel = new FileModel
+                if (model.SeparateAudioTracks)
                 {
-                    Data = fileBytes,
-                    Name = RemoveIdFromFileName(Path.GetFileName(filePath))
-                };
+                    var separationResult = _trackSeparationService.SeparateTracks(fileBytes, 4, outputName);
+                    if (!separationResult.IsSuccessful)
+                    {
+                        return separationResult;
+                    }
+
+                    result.FileModel = separationResult.FileModel;
+                }
+                else
+                {
+                    var fileModel = new FileModel
+                    {
+                        Data = fileBytes,
+                        Name = outputName
+                    };
+
+                    result.FileModel = fileModel;
+                }
 
                 result.IsSuccessful = true;
-                result.FileModel = fileModel;
             }
             catch (Exception ex)
             {

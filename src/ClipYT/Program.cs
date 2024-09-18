@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IMediaFileProcessingService, MediaFileProcessingService>();
+builder.Services.AddSingleton<ITrackSeparationService, TrackSeparationService>();
 builder.Services.AddSingleton<IRandomCaptionService, RandomCaptionService>();
 var app = builder.Build();
 
