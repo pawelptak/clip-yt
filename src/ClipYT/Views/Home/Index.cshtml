@@ -1,5 +1,5 @@
 ﻿@using ClipYT.Constants;
-@model VideoModel
+@model MediaFileModel
 
 <div class="d-flex flex-column align-items-center">
     <div class="mb-4" id="player-container">
@@ -12,7 +12,7 @@
                 @Html.TextBoxFor(m => m.Url, new { id = "urlInput", placeholder = "Paste YouTube video URL" })
                 <button title="Generate clip" id="submit-button" class="play-button"><i class="bi bi-play-circle-fill"></i></button>
             </div>
-            <span class="text-danger validation-message">@Html.ValidationMessageFor(m => m.Url)</span>
+            <span id="url-validation-message" class="text-danger validation-message">@Html.ValidationMessageFor(m => m.Url)</span>
         </div>
 
         <div id="video-details">
@@ -22,7 +22,7 @@
                         <span class="label-text">Clip start</span>
                         <div>
                             @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "timeInput" })
-                            <button type="button" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoStartInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
+                            <button type="button" id="get-current-start-btn" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoStartInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                         </div>
                     </div>
                     <span class="text-danger ">@Html.ValidationMessageFor(m => m.StartTimestamp)</span>
@@ -33,7 +33,7 @@
                         <span class="label-text">Clip end</span>
                         <div>
                             @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "timeInput" })
-                            <button type="button" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoEndInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
+                            <button type="button" id="get-current-end-btn" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoEndInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                         </div>
                     </div>
                     <span class="text-danger ">@Html.ValidationMessageFor(m => m.EndTimestamp)</span>
@@ -132,15 +132,42 @@
     <script>
         $(document).ready(function () {
             $("#urlInput").on('input', function () {
-                if (isYoutubeUrlValid($(this).val())) {
+                var ytRegex = @Html.Raw(Json.Serialize(RegexConstants.YoutubeUrlRegex));
+                var tiktokRegex = @Html.Raw(Json.Serialize(RegexConstants.TiktokUrlRegex));
+                var inputUrl = $(this).val();
+
+                if (inputUrl.match(ytRegex)) {
                     updateVideoFrame($(this).val());
+                    $("#video-details").show();
+                    setClipytMode();
+                }
+                if (inputUrl.match(tiktokRegex)) {
+                    $("#player-container").hide();
+                    $("#video-details").show();                 
+                    setCliptokMode();
                 }
             });
 
-            function isYoutubeUrlValid(url) {
-                var regex = @Html.Raw(Json.Serialize(RegexConstants.YoutubeUrlRegex));
+            function setCliptokMode() {
+                const body = document.body;
+                if (!body.classList.contains('tiktok-mode')) {
+                    body.classList.remove('yt-mode');
+                    body.classList.add('tiktok-mode');
+                    $("#logo-img").attr('src', "@Url.Content("~/images/cliptok_logo.png")");
+                    $("#get-current-end-btn").hide();
+                    $("#get-current-start-btn").hide();
+                }           
+            }
 
-                return url.match(regex);
+            function setClipytMode() {
+                const body = document.body;
+                if (!body.classList.contains('yt-mode')) {
+                    body.classList.remove('tiktok-mode');
+                    body.classList.add('yt-mode');
+                    $("#logo-img").attr('src', "@Url.Content("~/images/clip_yt_logo.png")");
+                    $("#get-current-end-btn").show();
+                    $("#get-current-start-btn").show();
+                }
             }
 
             function getIdFromYoutubeUrl(url) {
@@ -155,7 +182,6 @@
                 var videoId = getIdFromYoutubeUrl(videoUrl);
                 player.cueVideoById(videoId);
                 $("#player-container").show();
-                $("#video-details").show();
             }
 
             function waitForPlayerToBeLoaded() {
@@ -235,10 +261,10 @@
                 var $button = $('#submit-button');
                 $button.addClass('rotating');
 
-                var basePath = '@ViewData["BasePath"]';
+                var downloadMethodUrl = '@Url.Action("DownloadFile")';
 
                 $.ajax({
-                    url: basePath + '/Home/DownloadVideo',
+                    url: downloadMethodUrl,
                     type: 'POST',
                     data: $(this).serialize(),
                     xhrFields: {
@@ -246,7 +272,17 @@
                     },
                     success: function (data, status, xhr) {
                         var disposition = xhr.getResponseHeader('Content-Disposition');
-                        var filename = disposition.match(/filename="(.+)"/)[1];
+                        var filename = '';
+
+                        var filenameUTF8 = disposition.match(/filename\*\=UTF-8''([^;]+)/);
+                        if (filenameUTF8) {
+                            filename = decodeURIComponent(filenameUTF8[1]);
+                        } else {
+                            var filenameNormal = disposition.match(/filename="([^"]+)"/);
+                            if (filenameNormal) {
+                                filename = filenameNormal[1];
+                            }
+                        }
 
                         var link = document.createElement('a');
                         link.href = window.URL.createObjectURL(data);
@@ -260,6 +296,7 @@
                     error: function (xhr, status, error) {
                         console.error('AJAX Request failed:', status, error);
                         console.error('Response Text:', xhr.responseText);
+                        $('#url-validation-message').text('An error occurred. Please try again.').show();
 
                         $button.removeClass('rotating');
                     }

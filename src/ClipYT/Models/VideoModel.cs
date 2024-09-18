@@ -4,15 +4,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ClipYT.Models
 {
-    public class VideoModel
+    public class MediaFileModel
     {
-        public VideoModel()
+        public MediaFileModel()
         {
             ClipLength = 10;
         }
 
         [Required]
-        [RegularExpression(RegexConstants.YoutubeUrlRegex, ErrorMessage = "The provided input is not a valid YouTube URL.")]
+        [RegularExpression($"{RegexConstants.YoutubeUrlRegex}|{RegexConstants.TiktokUrlRegex}", ErrorMessage = "The provided input is not a valid URL.")]
         public Uri Url { get; set; }
 
         [RegularExpression(RegexConstants.TimeFormatRegex, ErrorMessage = "Invalid time format.")]

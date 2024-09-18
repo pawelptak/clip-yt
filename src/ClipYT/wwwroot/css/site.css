@@ -37,6 +37,16 @@ body {
     background-color: var(--background-color-bottom-lightmode);
 }
 
+    body.yt-mode {
+        --accent-color: #f2205f;
+        --accent-color-dark: #91143a;
+    }
+
+    body.tiktok-mode {
+        --accent-color: #6020f3;
+        --accent-color-dark: #351287;
+    }
+
 #app-form {
     width: 100%;
     max-width: 640px;
