@@ -163,13 +163,24 @@ namespace ClipYT.Services
             var argsString = string.Join(" ", argsList);
             string filePath = null;
 
+            var processInfo = new ProcessStartInfo
+            {
+                FileName = _youtubeDlpPath,
+                Arguments = argsString,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
             for (int attempt = 1; attempt <= maxRetries; attempt++)
             {
                 using (var process = new Process())
                 {
-                    process.StartInfo.FileName = _youtubeDlpPath;
-                    process.StartInfo.Arguments = argsString;
+                    process.StartInfo = processInfo; 
                     process.Start();
+                    var output = process.StandardOutput.ReadToEnd();
+                    var error = process.StandardError.ReadToEnd();
                     process.WaitForExit();
 
                     if (process.ExitCode == 0)
