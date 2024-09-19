@@ -63,9 +63,19 @@
                         }
                     </div>
                 </div>
-                <div>
-                    @Html.LabelFor(m => m.SeparateAudioTracks)
-                    @Html.CheckBoxFor(m => m.SeparateAudioTracks)
+                <div id="separate-tracks-wrapper" class="input-wrapper" style="display: none">
+                    <span class="label-text">Extract tracks</span>
+                    <div class="radio-wrapper">
+                        @foreach (var value in Enum.GetValues(typeof(ClipYT.Enums.SeparateTracks)))
+                        {
+                            <div class="radio-option">
+                                @Html.RadioButtonFor(m => m.SeparateAudioTracks, value, new { @class = "radio-input" })
+                                <div class="radio-btn">
+                                    <span class="radio-span">@value.ToString()</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
                 </div>
                 <div class="input-wrapper">
                     <span class="label-text">Quality</span>
@@ -173,6 +183,29 @@
                     $("#get-current-start-btn").show();
                 }
             }
+
+            function toggleSeparateTracks() {
+                var selection = $('input[name="Format"]:checked').val();
+                if (selection == '@ClipYT.Enums.Format.MP3.ToString()') {
+                    $('#separate-tracks-wrapper').show();
+                } else {
+                    $('#separate-tracks-wrapper').hide();
+                    resetSeparateTracksInput();
+                }
+            }
+
+            function resetSeparateTracksInput() {
+                $('#separate-tracks-wrapper').find('.radio-input').each(function () {
+                    var $this = $(this);
+                    if ($this.val() == '@ClipYT.Enums.SeparateTracks.Yes.ToString()') {
+                        $this.prop('checked', false);
+                    } else {
+                        $this.prop('checked', true);
+                    }
+                });
+            }
+
+            $('input[name="Format"]').on('change', toggleSeparateTracks);
 
             function getIdFromYoutubeUrl(url) {
                 var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;

@@ -28,6 +28,6 @@ namespace ClipYT.Models
 
         public Quality Quality { get; set; }
 
-        public bool SeparateAudioTracks { get; set; }
+        public SeparateTracks SeparateAudioTracks { get; set; }
     }
 }
