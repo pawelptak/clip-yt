@@ -1,7 +1,11 @@
 ﻿$(document).ready(function () {
+    const appData = document.getElementById('app-data');
+    const ytRegex = appData.getAttribute('data-yt-regex');
+    const tiktokRegex = appData.getAttribute('data-tiktok-regex');
+    const clipytLogoUrl = appData.getAttribute('data-clipyt-logo');
+    const cliptokLogoUrl = appData.getAttribute('data-cliptok-logo');
+
     $("#urlInput").on('input', function () {
-        //var ytRegex = new RegExp('@RegexConstants.YoutubeUrlRegex');
-        //var tiktokRegex = new RegExp('@RegexConstants.TiktokUrlRegex');
         var inputUrl = $(this).val();
 
         if (inputUrl.match(ytRegex)) {

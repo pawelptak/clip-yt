@@ -1,4 +1,7 @@
 ﻿$(document).ready(function () {
+    const appData = document.getElementById('app-data');
+    const downloadMethodUrl = appData.getAttribute('data-download-url');
+
     $('form').on('submit', function (e) {
         e.preventDefault();
 

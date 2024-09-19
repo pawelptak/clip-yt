@@ -96,17 +96,17 @@
     </form>
 </div>
 
-@section Scripts {
-    <script>
-        var ytRegex = @Html.Raw(Json.Serialize(RegexConstants.YoutubeUrlRegex));
-        var tiktokRegex = @Html.Raw(Json.Serialize(RegexConstants.TiktokUrlRegex));
-        var clipytLogoUrl = '@Url.Content("~/images/clip_yt_logo.png")';
-        var cliptokLogoUrl = '@Url.Content("~/images/cliptok_logo.png")';
-        var downloadMethodUrl = '@Url.Action("DownloadFile")';
-        var mp3FormatEnumValue = '@ClipYT.Enums.Format.MP3.ToString()';
-        var separateTracksEnumValue = '@ClipYT.Enums.SeparateTracks.Yes.ToString()';
-    </script>
+<div id="app-data"
+     data-yt-regex="@RegexConstants.YoutubeUrlRegex"
+     data-tiktok-regex="@RegexConstants.TiktokUrlRegex"
+     data-clipyt-logo="@Url.Content("~/images/clip_yt_logo.png")"
+     data-cliptok-logo="@Url.Content("~/images/cliptok_logo.png")"
+     data-download-url="@Url.Action("DownloadFile")"
+     data-mp3-format="@ClipYT.Enums.Format.MP3.ToString()"
+     data-separate-tracks="@ClipYT.Enums.SeparateTracks.Yes.ToString()">
+</div>
 
+@section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script src="~/js/yt-player.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script> 

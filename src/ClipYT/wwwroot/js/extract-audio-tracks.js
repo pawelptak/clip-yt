@@ -1,4 +1,7 @@
-﻿function toggleSeparateTracks() {
+﻿const appData = document.getElementById('app-data');
+const mp3FormatEnumValue = appData.getAttribute('data-mp3-format');
+const separateTracksEnumValue = appData.getAttribute('data-separate-tracks');
+function toggleSeparateTracks() {
     var selection = $('input[name="Format"]:checked').val();
     if (selection == mp3FormatEnumValue) {
         $('#separate-tracks-wrapper').show();
