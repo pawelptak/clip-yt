@@ -42,9 +42,9 @@ namespace ClipYT.Services
                 var fileBytes = await File.ReadAllBytesAsync(filePath);
                 var outputName = RemoveIdFromFileName(Path.GetFileName(filePath));
 
-                if (model.SeparateAudioTracks == SeparateTracks.Yes)
+                if (model.SelectedAudioTracks.Count != 0)
                 {
-                    var separationResult = _trackSeparationService.SeparateTracks(fileBytes, 4, outputName);
+                    var separationResult = _trackSeparationService.SeparateTracks(fileBytes, 4, outputName, model.SelectedAudioTracks);
                     if (!separationResult.IsSuccessful)
                     {
                         return separationResult;

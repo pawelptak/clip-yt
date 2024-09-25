@@ -1,7 +1,9 @@
-﻿using ClipYT.Interfaces;
+﻿using ClipYT.Enums;
+using ClipYT.Interfaces;
 using ClipYT.Models;
 using System.Diagnostics;
 using System.IO.Compression;
+using System.Linq;
 
 namespace ClipYT.Services
 {
@@ -10,10 +12,11 @@ namespace ClipYT.Services
         private readonly string _outputFolder = configuration["Config:OutputFolder"];
         private readonly string _pythonPath = configuration["Config:PythonPath"];
 
-        // To work on Windows Spleeter requires Python 3.9
+        // To work on Windows Spleeter requires Python 3.9, FFmpeg and FFprobe added to Path
         // pip install spleeter
         // pip install numpy==1.26.4
-        public ProcessingResult SeparateTracks(byte[] audioBytes, int stemCount, string outputFileName)
+        // TODO: update readme with this info
+        public ProcessingResult SeparateTracks(byte[] audioBytes, int stemCount, string outputFileName, List<AudioTrackType> selectedAudioTracks) // TODO: rename everywhere "tracks" to "stems"
         {
             var result = new ProcessingResult();
 
@@ -38,6 +41,7 @@ namespace ClipYT.Services
                 CreateNoWindow = true
             };
 
+            // TODO: Fix spleeter error for https://www.youtube.com/watch?v=YBaRFsubJNo&pp=ygUSc3psdWdpIGkga2FsYWZpb3J5 
             using (var process = new Process())
             {
                 process.StartInfo = processInfo;
@@ -54,18 +58,62 @@ namespace ClipYT.Services
                 }
             }
 
-            ZipFile.CreateFromDirectory(tempOutputPath, zipOutputPath);
-            var resultBytes = File.ReadAllBytes(zipOutputPath);
+            DeleteUnselectedTrackTypes(tempOutputPath, selectedAudioTracks);
+
+            byte[] resultBytes;
+            string resultExtension;
+            string resultFileName;
+            var spleeterOutputFiles = Directory.GetFiles(tempOutputPath);
+            if (spleeterOutputFiles.Length > 1)
+            {
+                ZipFile.CreateFromDirectory(tempOutputPath, zipOutputPath);
+                resultBytes = File.ReadAllBytes(zipOutputPath);
+                resultFileName = Path.ChangeExtension(outputFileName, ".zip");
+            }
+            else
+            {
+                var spleeterOutputFile = spleeterOutputFiles.Single();
+                resultBytes = File.ReadAllBytes(spleeterOutputFile);
+                resultFileName = Path.GetFileName(spleeterOutputFile);
+            }
 
             File.Delete(tempAudioPath);
             Directory.Delete(tempOutputPath, true);
             File.Delete(zipOutputPath);
 
-            var returnZip = new FileModel { Name = Path.ChangeExtension(outputFileName, ".zip"), Data = resultBytes };
+            var resultFile = new FileModel { Name = resultFileName, Data = resultBytes };
             result.IsSuccessful = true;
-            result.FileModel = returnZip;
+            result.FileModel = resultFile;
 
             return result;
+        }
+
+        private void DeleteUnselectedTrackTypes(string folderPath, List<AudioTrackType> selectedAudioTracks)
+        {
+            if (string.IsNullOrEmpty(folderPath) || !Directory.Exists(folderPath) || selectedAudioTracks.Count == 0)
+            {
+                return;
+            }
+
+            try
+            {
+                var files = Directory.GetFiles(folderPath);
+                var filesToDelete = files.Where(path =>
+                {
+                    var fileName = Path.GetFileNameWithoutExtension(path);
+
+                    return !selectedAudioTracks.Any(trackEnum => fileName.EndsWith(Enum.GetName(trackEnum), StringComparison.OrdinalIgnoreCase));
+                });
+
+                foreach (var filePath in filesToDelete)
+                {
+                    File.Delete(filePath);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }
