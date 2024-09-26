@@ -114,11 +114,23 @@ namespace ClipYT.Services
 
             var argsString = string.Join(" ", argsList);
 
+            var processInfo = new ProcessStartInfo
+            {
+                FileName = _ffmpegPath,
+                Arguments = argsString,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            // TODO: Fix spleeter error for https://www.youtube.com/watch?v=YBaRFsubJNo&pp=ygUSc3psdWdpIGkga2FsYWZpb3J5 
             using (var process = new Process())
             {
-                process.StartInfo.FileName = _ffmpegPath;
-                process.StartInfo.Arguments = argsString;
+                process.StartInfo = processInfo;
                 process.Start();
+                var output = process.StandardOutput.ReadToEnd();
+                var error = process.StandardError.ReadToEnd();
                 process.WaitForExit();
 
                 if (process.ExitCode != 0)
@@ -158,6 +170,12 @@ namespace ClipYT.Services
                     var qualityArg = "-S vcodec:h264,res,ext:mp4:m4a --recode mp4"; // this wont download 4k. 4k is only available in webm format
                     argsList.Add(qualityArg);
                 }
+            }
+
+            if (Regex.IsMatch(inputUrl, Constants.RegexConstants.TiktokUrlRegex))
+            {
+                var tikTokFixArg = "-f \"b[url!^='https://www.tiktok.com/']\""; // this fixes TikTok downloading bug https://github.com/yt-dlp/yt-dlp/issues/11034
+                argsList.Add(tikTokFixArg);
             }
 
             var argsString = string.Join(" ", argsList);
