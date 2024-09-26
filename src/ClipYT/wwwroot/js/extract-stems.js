@@ -13,7 +13,7 @@ function toggleExtractStems() {
 }
 
 function setInputsDisabledValue(value) {
-    $('#extract-stems-wrapper').find('.radio-input').each(function () {
+    $('#extract-stems-wrapper').find('.option-input').each(function () {
         var $this = $(this);
         $this.prop('disabled', value);
     });

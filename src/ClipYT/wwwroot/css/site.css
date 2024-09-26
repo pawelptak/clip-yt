@@ -195,7 +195,7 @@ input[type=text] {
     opacity: 0.5;
 }
 
-.radio-wrapper {
+.option-wrapper {
     --font-color-dark: var(--light-grey);
     --font-color-light: white;
     --bg-color: var(--lighter-grey);
@@ -208,7 +208,7 @@ input[type=text] {
     border: 2px outset var(--input-border);
 }
 
-.radio-option {
+.customized-option {
     margin-right: 2px;
     position: relative;
     border-radius: 20px;
@@ -216,19 +216,19 @@ input[type=text] {
     width: 100%;
 }
 
-    .radio-option:last-child {
+    .customized-option:last-child {
         margin-right: 0px;
     }
 
-    .radio-option:hover {
+    .customized-option:hover {
         background-color: var(--accent-color-dark);
     }
 
-.option:hover .radio-span {
+.option:hover .option-span {
     color: var(--font-color-light);
 }
 
-.radio-input {
+.option-input {
     width: 100%;
     height: 100%;
     position: absolute;
@@ -238,7 +238,7 @@ input[type=text] {
     cursor: pointer;
 }
 
-.radio-btn {
+.option-btn {
     width: 100%;
     height: 100%;
     border-radius: 20px;
@@ -249,16 +249,16 @@ input[type=text] {
     white-space: nowrap;
 }
 
-.radio-span {
+.option-span {
     color: var(--font-color-dark);
 }
 
-.radio-input:checked + .radio-btn {
+.option-input:checked + .option-btn {
     background-color: var(--main-color);
     transition: 0.2s cubic-bezier(0, 0, 0, 1);
 }
 
-    .radio-input:checked + .radio-btn .radio-span {
+    .option-input:checked + .option-btn .option-span {
         color: var(--font-color-light);
         transition: 0.25s cubic-bezier(0, 0, 0, 1);
     }
@@ -277,7 +277,7 @@ input[type=text] {
         color: white;
     }
 
-    .radio-wrapper {
+    .option-wrapper {
         --bg-color: var(--dark-grey);
         border: 2px inset var(--input-border-darkmode);
     }

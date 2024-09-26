@@ -52,13 +52,13 @@
             <div class="d-flex justify-content-between flex-wrap gap-3">
                 <div class="input-wrapper">
                     <span class="label-text">Format</span>
-                    <div class="radio-wrapper">
+                    <div class="option-wrapper">
                         @foreach (var value in Enum.GetValues(typeof(ClipYT.Enums.Format)))
                         {
-                            <div class="radio-option">
-                                @Html.RadioButtonFor(m => m.Format, value, new { @class = "radio-input" })
-                                <div class="radio-btn">
-                                    <span class="radio-span">@value.ToString()</span>
+                            <div class="customized-option">
+                                @Html.RadioButtonFor(m => m.Format, value, new { @class = "option-input" })
+                                <div class="option-btn">
+                                    <span class="option-span">@value.ToString()</span>
                                 </div>
                             </div>
                         }
@@ -67,13 +67,13 @@
 
                 <div class="input-wrapper">
                     <span class="label-text">Quality</span>
-                    <div class="radio-wrapper">
+                    <div class="option-wrapper">
                         @foreach (var value in Enum.GetValues(typeof(ClipYT.Enums.Quality)))
                         {
-                            <div class="radio-option">
-                                @Html.RadioButtonFor(m => m.Quality, value, new { @class = "radio-input" })
-                                <div class="radio-btn">
-                                    <span class="radio-span">@value.ToString()</span>
+                            <div class="customized-option">
+                                @Html.RadioButtonFor(m => m.Quality, value, new { @class = "option-input" })
+                                <div class="option-btn">
+                                    <span class="option-span">@value.ToString()</span>
                                 </div>
                             </div>
                         }
@@ -82,18 +82,17 @@
 
                 <div id="extract-stems-wrapper" class="input-wrapper" style="display: none">
                     <span class="label-text">Extract stems</span>
-                    <div class="radio-wrapper">
-                        @* TODO: rename the classes to not say 'radio'*@
+                    <div class="option-wrapper">
                         @foreach (var value in Enum.GetValues(typeof(StemType)).Cast<StemType>())
                         {
-                            <div class="radio-option">
+                            <div class="customized-option">
                                 <input type="checkbox"
                                        name="SelectedStems"
                                        value="@value"
                                 @(Model.SelectedStems.Contains(value) ? "checked" : "")
-                                       class="radio-input" />
-                                <div class="radio-btn">
-                                    <span class="radio-span">@value.ToString()</span>
+                                       class="option-input" />
+                                <div class="option-btn">
+                                    <span class="option-span">@value.ToString()</span>
                                 </div>
                             </div>
                         }
