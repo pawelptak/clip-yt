@@ -19,8 +19,6 @@ namespace ClipYT.Services
         {
             var result = new ProcessingResult();
 
-            //var invalid = outputFileName.Split(Path.GetInvalidFileNameChars());
-            //var sanitizedFileName = string.Join("_", outputFileName.Split(Path.GetInvalidFileNameChars()));
             var tempAudioPath = Path.Combine(_outputFolder, Path.ChangeExtension(Path.GetFileName(outputFileName), ".wav"));
             File.WriteAllBytes(tempAudioPath, audioBytes);
 
