@@ -9,7 +9,7 @@ namespace ClipYT.Models
         public MediaFileModel()
         {
             ClipLength = 10;
-            SelectedAudioTracks = new List<AudioTrackType>();
+            SelectedStems = new List<StemType>();
         }
 
         [Required]
@@ -29,6 +29,6 @@ namespace ClipYT.Models
 
         public Quality Quality { get; set; }
 
-        public List<AudioTrackType> SelectedAudioTracks { get; set; }
+        public List<StemType> SelectedStems { get; set; }
     }
 }

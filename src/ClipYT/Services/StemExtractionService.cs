@@ -3,11 +3,10 @@ using ClipYT.Interfaces;
 using ClipYT.Models;
 using System.Diagnostics;
 using System.IO.Compression;
-using System.Linq;
 
 namespace ClipYT.Services
 {
-    public class TrackSeparationService(IConfiguration configuration) : ITrackSeparationService
+    public class StemExtractionService(IConfiguration configuration) : IStemExtractionService
     {
         private readonly string _outputFolder = configuration["Config:OutputFolder"];
         private readonly string _pythonPath = configuration["Config:PythonPath"];
@@ -16,7 +15,7 @@ namespace ClipYT.Services
         // pip install spleeter
         // pip install numpy==1.26.4
         // TODO: update readme with this info
-        public ProcessingResult SeparateTracks(byte[] audioBytes, int stemCount, string outputFileName, List<AudioTrackType> selectedAudioTracks) // TODO: rename everywhere "tracks" to "stems"
+        public ProcessingResult ExtractStems(byte[] audioBytes, int stemCount, string outputFileName, List<StemType> selectedStems)
         {
             var result = new ProcessingResult();
 
@@ -58,10 +57,12 @@ namespace ClipYT.Services
                 }
             }
 
-            DeleteUnselectedTrackTypes(tempOutputPath, selectedAudioTracks);
+            if (selectedStems.Count < stemCount)
+            {
+                DeleteUnselectedStems(tempOutputPath, selectedStems);
+            }
 
             byte[] resultBytes;
-            string resultExtension;
             string resultFileName;
             var spleeterOutputFiles = Directory.GetFiles(tempOutputPath);
             if (spleeterOutputFiles.Length > 1)
@@ -88,9 +89,9 @@ namespace ClipYT.Services
             return result;
         }
 
-        private void DeleteUnselectedTrackTypes(string folderPath, List<AudioTrackType> selectedAudioTracks)
+        private void DeleteUnselectedStems(string folderPath, List<StemType> selectedStems)
         {
-            if (string.IsNullOrEmpty(folderPath) || !Directory.Exists(folderPath) || selectedAudioTracks.Count == 0)
+            if (string.IsNullOrEmpty(folderPath) || !Directory.Exists(folderPath) || selectedStems.Count == 0)
             {
                 return;
             }
@@ -102,7 +103,7 @@ namespace ClipYT.Services
                 {
                     var fileName = Path.GetFileNameWithoutExtension(path);
 
-                    return !selectedAudioTracks.Any(trackEnum => fileName.EndsWith(Enum.GetName(trackEnum), StringComparison.OrdinalIgnoreCase));
+                    return !selectedStems.Any(stemEnum => fileName.EndsWith(Enum.GetName(stemEnum), StringComparison.OrdinalIgnoreCase));
                 });
 
                 foreach (var filePath in filesToDelete)

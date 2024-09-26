@@ -1,6 +1,6 @@
 ﻿namespace ClipYT.Enums
 {
-    public enum AudioTrackType
+    public enum StemType
     {
         Vocals,
         Bass,

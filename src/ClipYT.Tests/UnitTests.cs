@@ -1,3 +1,4 @@
+using ClipYT.Enums;
 using ClipYT.Models;
 using ClipYT.Services;
 using Microsoft.Extensions.Configuration;
@@ -9,7 +10,7 @@ namespace ClipYT.Tests
     public class UnitTests
     {
         private readonly MediaFileProcessingService _mediaFileProcessingService;
-        private readonly TrackSeparationService _trackSeparationService;
+        private readonly StemExtractionService _stemExtractionService;
         private readonly string _outputFolder;
 
         public UnitTests()
@@ -20,7 +21,7 @@ namespace ClipYT.Tests
 
             var ffmpegPath = Path.Combine(clipYTProjectDirectory, "Utilities", "ffmpeg.exe");
             var youtubeDlpPath = Path.Combine(clipYTProjectDirectory, "Utilities", "yt-dlp.exe");
-            var pythonPath = @"C:\Users\jpawl\AppData\Local\Programs\Python\Python39\python.exe"; // Replace with a correct Python exe
+            var pythonPath = @"C:\Users\twojs\AppData\Local\Programs\Python\Python39\python.exe"; // Replace with a correct Python exe
             var outputFolder = Path.Combine(clipYTProjectDirectory, "Output");
 
             var inMemorySettings = new Dictionary<string, string>
@@ -34,9 +35,9 @@ namespace ClipYT.Tests
             .AddInMemoryCollection(inMemorySettings)
             .Build();
 
-            var trackSeparationService = new TrackSeparationService(configuration);
-            _trackSeparationService = trackSeparationService;
-            _mediaFileProcessingService = new MediaFileProcessingService(configuration, trackSeparationService);
+            var stemExtractionService = new StemExtractionService(configuration);
+            _stemExtractionService = stemExtractionService;
+            _mediaFileProcessingService = new MediaFileProcessingService(configuration, stemExtractionService);
             _outputFolder = outputFolder;
         }
 
@@ -160,15 +161,16 @@ namespace ClipYT.Tests
 
         [Theory]
         [InlineData(@"TestFiles\test_file.mp3")]
-        public void Separating_Tracks_Should_Be_Successful(string inputPath)
+        public void Extracting_Stems_Should_Be_Successful(string inputPath)
         {
             Assert.True(File.Exists(inputPath));
 
             // Arrange
             var bytes = File.ReadAllBytes(inputPath);
+            var selectedStems = new List<StemType> { StemType.Vocals, StemType.Bass, StemType.Drums, StemType.Other };
 
             // Act
-            var result = _trackSeparationService.SeparateTracks(bytes, 4, "test");
+            var result = _stemExtractionService.ExtractStems(bytes, 4, "test", selectedStems);
 
             // Assert
             Assert.True(result.IsSuccessful);

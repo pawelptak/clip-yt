@@ -11,14 +11,14 @@ namespace ClipYT.Services
         private readonly string _youtubeDlpPath;
         private readonly string _ffmpegPath;
         private readonly string _outputFolder;
-        private readonly ITrackSeparationService _trackSeparationService;
+        private readonly IStemExtractionService _stemExtractionService;
 
-        public MediaFileProcessingService(IConfiguration configuration, ITrackSeparationService trackSeparationService)
+        public MediaFileProcessingService(IConfiguration configuration, IStemExtractionService stemExtractionService)
         {
             _ffmpegPath = configuration["Config:FFmpegPath"];
             _youtubeDlpPath = configuration["Config:YoutubeDlpPath"];
             _outputFolder = configuration["Config:OutputFolder"];
-            _trackSeparationService = trackSeparationService;
+            _stemExtractionService = stemExtractionService;
         }
 
         public async Task<ProcessingResult> ProcessMediaFileAsync(MediaFileModel model)
@@ -42,15 +42,15 @@ namespace ClipYT.Services
                 var fileBytes = await File.ReadAllBytesAsync(filePath);
                 var outputName = RemoveIdFromFileName(Path.GetFileName(filePath));
 
-                if (model.SelectedAudioTracks.Count != 0)
+                if (model.SelectedStems.Count != 0)
                 {
-                    var separationResult = _trackSeparationService.SeparateTracks(fileBytes, 4, outputName, model.SelectedAudioTracks);
-                    if (!separationResult.IsSuccessful)
+                    var extractionResult = _stemExtractionService.ExtractStems(fileBytes, 4, outputName, model.SelectedStems);
+                    if (!extractionResult.IsSuccessful)
                     {
-                        return separationResult;
+                        return extractionResult;
                     }
 
-                    result.FileModel = separationResult.FileModel;
+                    result.FileModel = extractionResult.FileModel;
                 }
                 else
                 {

@@ -80,17 +80,17 @@
                     </div>
                 </div>
 
-                <div id="separate-tracks-wrapper" class="input-wrapper" style="display: none">
-                    <span class="label-text">Extract tracks</span>
+                <div id="extract-stems-wrapper" class="input-wrapper" style="display: none">
+                    <span class="label-text">Extract stems</span>
                     <div class="radio-wrapper">
                         @* TODO: rename the classes to not say 'radio'*@
-                        @foreach (var value in Enum.GetValues(typeof(AudioTrackType)).Cast<AudioTrackType>())
+                        @foreach (var value in Enum.GetValues(typeof(StemType)).Cast<StemType>())
                         {
                             <div class="radio-option">
                                 <input type="checkbox"
-                                       name="SelectedAudioTracks"
+                                       name="SelectedStems"
                                        value="@value"
-                                @(Model.SelectedAudioTracks.Contains(value) ? "checked" : "")
+                                @(Model.SelectedStems.Contains(value) ? "checked" : "")
                                        class="radio-input" />
                                 <div class="radio-btn">
                                     <span class="radio-span">@value.ToString()</span>
@@ -119,6 +119,6 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     <script src="~/js/url-input-listener.js"></script>
     <script src="~/js/video-time-controls.js"></script>
-    <script src="~/js/extract-audio-tracks.js"></script>
+    <script src="~/js/extract-stems.js"></script>
     <script src="~/js/ajax-download.js"></script>
 }
