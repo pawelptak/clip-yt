@@ -19,6 +19,8 @@ namespace ClipYT.Services
         {
             var result = new ProcessingResult();
 
+            //var invalid = outputFileName.Split(Path.GetInvalidFileNameChars());
+            //var sanitizedFileName = string.Join("_", outputFileName.Split(Path.GetInvalidFileNameChars()));
             var tempAudioPath = Path.Combine(_outputFolder, Path.ChangeExtension(Path.GetFileName(outputFileName), ".wav"));
             File.WriteAllBytes(tempAudioPath, audioBytes);
 
@@ -40,7 +42,8 @@ namespace ClipYT.Services
                 CreateNoWindow = true
             };
 
-            // TODO: Fix spleeter error for https://www.youtube.com/watch?v=YBaRFsubJNo
+            processInfo.EnvironmentVariables["PYTHONIOENCODING"] = "utf-8"; // Fix for Python file name encoding error
+
             using (var process = new Process())
             {
                 process.StartInfo = processInfo;
