@@ -14,7 +14,6 @@ namespace ClipYT.Services
         // To work on Windows Spleeter requires Python 3.9, FFmpeg and FFprobe added to Path
         // pip install spleeter
         // pip install numpy==1.26.4
-        // TODO: update readme with this info
         public ProcessingResult ExtractStems(byte[] audioBytes, int stemCount, string outputFileName, List<StemType> selectedStems)
         {
             var result = new ProcessingResult();

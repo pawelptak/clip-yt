@@ -11,11 +11,23 @@ An ASP.NET Core MVC web application for creating clips from YouTube videos.
 ### Windows
 - Download yt-dlp and FFmpeg [[yt-dlp Download]](https://github.com/yt-dlp/yt-dlp/releases/latest) [[FFmpeg Download]](https://ffmpeg.org/download.html) and put them into the `Utilites` directory.
 - The default path configurations can be changed in `appsettings.json`.
+- For the "Extract stems" option to work you need Python 3.9, FFmpeg and FFprobe installed and added to Path. Then install spleeter using the following commands:
+  ```
+  pip install spleeter
+  pip install numpy==1.26.4
+  ```
+  Finally, add the path to you Python.exe in `appsettings.json`.
 - Build and run the solution.
+
 
 ### Linux
 - Download and install yt-dlp and FFmpeg on your system.
-- Change the path configurations of yt-dlp and FFmpeg in `appsettings.json` to `yt-dlp` and `ffmpeg`.
+- Replace the contents of `appsettings.json` with the contents of `appsettings.Raspberrypi.json`.
+- For the "Extract stems" option to work you need to install spleeter using the following command:
+  ```
+  pip install spleeter
+  pip install numpy==1.26.4
+  ```
 - Build and run the solution.
 
 ### Linux Docker
