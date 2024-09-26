@@ -1,6 +1,8 @@
 ﻿$(document).ready(function () {
+    const appData = document.getElementById('app-data');
+    const timeFormatRegex = appData.getAttribute('data-time-format-regex');
+
     function isValidTimeFormat(timeStr) {
-        const timeFormatRegex = new RegExp('@RegexConstants.TimeFormatRegex');
         return timeStr.match(timeFormatRegex);
     }
 
