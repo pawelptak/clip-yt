@@ -175,5 +175,23 @@ namespace ClipYT.Tests
             // Assert
             Assert.True(result.IsSuccessful);
         }
+
+        [Theory]
+        [InlineData("https://www.youtube.com/watch?v=dQw4w9WgXcQ")]
+        [InlineData("https://www.youtube.com/watch?v=YBaRFsubJNo")]
+        public async Task Downloading_Mp3_And_Extracting_Stems_Should_Be_Successful(string inputUrl)
+        {
+            // Arrange
+            var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), Format = Format.MP3 };
+            var selectedStems = new List<StemType> { StemType.Vocals, StemType.Bass, StemType.Drums, StemType.Other };
+
+            // Act
+            var processingResult = await _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel);
+            var fileModel = processingResult.FileModel;
+            var result = _stemExtractionService.ExtractStems(fileModel.Data, 4, "test", selectedStems);
+
+            // Assert
+            Assert.True(result.IsSuccessful);
+        }
     }
 }

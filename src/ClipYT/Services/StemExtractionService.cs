@@ -40,7 +40,7 @@ namespace ClipYT.Services
                 CreateNoWindow = true
             };
 
-            // TODO: Fix spleeter error for https://www.youtube.com/watch?v=YBaRFsubJNo&pp=ygUSc3psdWdpIGkga2FsYWZpb3J5 
+            // TODO: Fix spleeter error for https://www.youtube.com/watch?v=YBaRFsubJNo
             using (var process = new Process())
             {
                 process.StartInfo = processInfo;

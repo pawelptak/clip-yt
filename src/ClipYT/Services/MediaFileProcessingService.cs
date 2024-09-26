@@ -118,19 +118,12 @@ namespace ClipYT.Services
             {
                 FileName = _ffmpegPath,
                 Arguments = argsString,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
             };
 
-            // TODO: Fix spleeter error for https://www.youtube.com/watch?v=YBaRFsubJNo&pp=ygUSc3psdWdpIGkga2FsYWZpb3J5 
             using (var process = new Process())
             {
                 process.StartInfo = processInfo;
                 process.Start();
-                var output = process.StandardOutput.ReadToEnd();
-                var error = process.StandardError.ReadToEnd();
                 process.WaitForExit();
 
                 if (process.ExitCode != 0)
