@@ -2,21 +2,49 @@
     const appData = document.getElementById('app-data');
     const ytRegex = appData.getAttribute('data-yt-regex');
     const tiktokRegex = appData.getAttribute('data-tiktok-regex');
+    const twitterRegex = appData.getAttribute('data-twitter-regex');
     const clipytLogoUrl = appData.getAttribute('data-clipyt-logo');
     const cliptokLogoUrl = appData.getAttribute('data-cliptok-logo');
+
+    const platforms = [
+        {
+            regex: ytRegex,
+            setMode: setClipytMode,
+            logoUrl: clipytLogoUrl,
+            showPlayer: true,
+        },
+        {
+            regex: tiktokRegex,
+            setMode: setCliptokMode,
+            logoUrl: cliptokLogoUrl,
+            showPlayer: false,
+        },
+        {
+            regex: appData.getAttribute('data-twitter-regex'),
+            setMode: setTwitterMode,
+            showPlayer: false,
+        }
+    ];
 
     $("#urlInput").on('input', function () {
         var inputUrl = $(this).val();
 
-        if (inputUrl.match(ytRegex)) {
-            updateVideoFrame($(this).val());
-            $("#video-details").show();
-            setClipytMode();
-        }
-        if (inputUrl.match(tiktokRegex)) {
-            $("#player-container").hide();
-            $("#video-details").show();
-            setCliptokMode();
+        for (let platform of platforms) {
+            if (inputUrl.match(platform.regex)) {
+                $("#video-details").show();
+
+                if (platform.showPlayer == true) {
+                    updateVideoFrame(inputUrl);
+                } else {
+                    $("#player-container").hide();
+                }
+
+                platform.setMode();
+                if (platform.logoUrl) {
+                    $("#logo-img").attr('src', platform.logoUrl);
+                }
+                break;
+            }
         }
     });
 
@@ -40,5 +68,11 @@
             $("#get-current-end-btn").show();
             $("#get-current-start-btn").show();
         }
+    }
+
+    function setTwitterMode() {
+            setClipytMode();
+            $("#get-current-end-btn").hide();
+            $("#get-current-start-btn").hide();
     }
 });

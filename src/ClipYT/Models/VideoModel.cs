@@ -12,7 +12,7 @@ namespace ClipYT.Models
         }
 
         [Required]
-        [RegularExpression($"{RegexConstants.YoutubeUrlRegex}|{RegexConstants.TiktokUrlRegex}", ErrorMessage = "The provided input is not a valid URL.")]
+        [RegularExpression($"{RegexConstants.YoutubeUrlRegex}|{RegexConstants.TiktokUrlRegex}|{RegexConstants.TwitterUrlRegex}", ErrorMessage = "The provided input is not a valid URL.")]
         public Uri Url { get; set; }
 
         [RegularExpression(RegexConstants.TimeFormatRegex, ErrorMessage = "Invalid time format.")]
