@@ -6,6 +6,8 @@
     const clipytLogoUrl = appData.getAttribute('data-clipyt-logo');
     const cliptokLogoUrl = appData.getAttribute('data-cliptok-logo');
 
+
+    // TODO: make it smarter, idk how
     const platforms = [
         {
             regex: ytRegex,
@@ -20,7 +22,7 @@
             showPlayer: false,
         },
         {
-            regex: appData.getAttribute('data-twitter-regex'),
+            regex: twitterRegex,
             setMode: setTwitterMode,
             showPlayer: false,
         }
