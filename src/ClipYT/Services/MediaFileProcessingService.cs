@@ -143,6 +143,12 @@ namespace ClipYT.Services
                 }
             }
 
+            if (Regex.IsMatch(inputUrl, Constants.RegexConstants.TiktokUrlRegex))
+            {
+                var tikTokFixArg = "-f \"b[url!^='https://www.tiktok.com/']\""; // this fixes TikTok downloading bug https://github.com/yt-dlp/yt-dlp/issues/11034
+                argsList.Add(tikTokFixArg);
+            }
+
             var argsString = string.Join(" ", argsList);
             string filePath = null;
 
