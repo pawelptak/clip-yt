@@ -5,76 +5,55 @@
     const twitterRegex = appData.getAttribute('data-twitter-regex');
     const clipytLogoUrl = appData.getAttribute('data-clipyt-logo');
     const cliptokLogoUrl = appData.getAttribute('data-cliptok-logo');
+    const clipxLogoUrl = appData.getAttribute('data-clipx-logo');
 
+    var clipytAccentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+    var clipytAccentColorDark = getComputedStyle(document.documentElement).getPropertyValue('--accent-color-dark').trim();
 
-    // TODO: make it smarter, idk how
-    const platforms = [
-        {
-            regex: ytRegex,
-            setMode: setClipytMode,
-            logoUrl: clipytLogoUrl,
-            showPlayer: true,
-        },
-        {
-            regex: tiktokRegex,
-            setMode: setCliptokMode,
-            logoUrl: cliptokLogoUrl,
-            showPlayer: false,
-        },
-        {
-            regex: twitterRegex,
-            setMode: setTwitterMode,
-            showPlayer: false,
-        }
-    ];
+    const youtubePlatformSource = new MediaPlatformSource(ytRegex, clipytLogoUrl, true, clipytAccentColor, clipytAccentColorDark);
+    const tiktokPlatformSource = new MediaPlatformSource(tiktokRegex, cliptokLogoUrl, false, "#6020f3", "#351287");
+    const twitterPlatformSource = new MediaPlatformSource(twitterRegex, clipxLogoUrl, false, "#333333", "#1c1c1c");
+
+    const platforms = [youtubePlatformSource, tiktokPlatformSource, twitterPlatformSource];
 
     $("#urlInput").on('input', function () {
         var inputUrl = $(this).val();
 
         for (let platform of platforms) {
             if (inputUrl.match(platform.regex)) {
-                $("#video-details").show();
-
-                if (platform.showPlayer == true) {
+                if (platform.regex == ytRegex) {
                     updateVideoFrame(inputUrl);
-                } else {
-                    $("#player-container").hide();
                 }
-
-                platform.setMode();
-                if (platform.logoUrl) {
-                    $("#logo-img").attr('src', platform.logoUrl);
-                }
+                platform.setUiMode()
                 break;
             }
         }
     });
+});
 
-    function setCliptokMode() {
-        const body = document.body;
-        if (!body.classList.contains('tiktok-mode')) {
-            body.classList.remove('yt-mode');
-            body.classList.add('tiktok-mode');
-            $("#logo-img").attr('src', cliptokLogoUrl);
-            $("#get-current-end-btn").hide();
-            $("#get-current-start-btn").hide();
-        }
+class MediaPlatformSource {
+    constructor(regex, logoUrl, showPlayer, accentColorCode, accentColorDarkCode) {
+        this.regex = regex;
+        this.logoUrl = logoUrl;
+        this.showPlayer = showPlayer;
+        this.accentColorCode = accentColorCode;
+        this.accentColorDarkCode = accentColorDarkCode;
     }
 
-    function setClipytMode() {
-        const body = document.body;
-        if (!body.classList.contains('yt-mode')) {
-            body.classList.remove('tiktok-mode');
-            body.classList.add('yt-mode');
-            $("#logo-img").attr('src', clipytLogoUrl);
+    setUiMode() {
+        $("#video-details").show();
+        document.documentElement.style.setProperty('--accent-color', this.accentColorCode);
+        document.documentElement.style.setProperty('--accent-color-dark', this.accentColorDarkCode);
+        $("#logo-img").attr('src', this.logoUrl);
+
+        if (this.showPlayer) {
+            $("#player-container").show();
             $("#get-current-end-btn").show();
             $("#get-current-start-btn").show();
-        }
-    }
-
-    function setTwitterMode() {
-            setClipytMode();
+        } else {
+            $("#player-container").hide();
             $("#get-current-end-btn").hide();
             $("#get-current-start-btn").hide();
+        }
     }
-});
+}

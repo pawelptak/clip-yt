@@ -40,7 +40,6 @@ async function updateVideoFrame(videoUrl) {
     await waitForPlayerToBeLoaded();
     var videoId = getIdFromYoutubeUrl(videoUrl);
     player.cueVideoById(videoId);
-    $("#player-container").show();
 }
 
 function waitForPlayerToBeLoaded() {
