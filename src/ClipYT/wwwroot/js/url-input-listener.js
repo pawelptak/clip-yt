@@ -12,7 +12,7 @@
 
     const youtubePlatformSource = new MediaPlatformSource(ytRegex, clipytLogoUrl, true, clipytAccentColor, clipytAccentColorDark);
     const tiktokPlatformSource = new MediaPlatformSource(tiktokRegex, cliptokLogoUrl, false, "#6020f3", "#351287");
-    const twitterPlatformSource = new MediaPlatformSource(twitterRegex, clipxLogoUrl, false, "#333333", "#1c1c1c");
+    const twitterPlatformSource = new MediaPlatformSource(twitterRegex, clipxLogoUrl, false, "#1DA1F2", "#2f62b5");
 
     const platforms = [youtubePlatformSource, tiktokPlatformSource, twitterPlatformSource];
 
