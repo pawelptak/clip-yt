@@ -84,7 +84,7 @@ body {
         border-radius: 100px;
     }
 
-#player {
+#yt-player {
     border-radius: 12px;
 }
 
@@ -92,7 +92,6 @@ body {
     width: 100%;
     max-width: 640px;
     height: 360px;
-    display: none;
 }
 
 .timeInput {
