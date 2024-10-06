@@ -92,6 +92,7 @@ body {
     width: 100%;
     max-width: 640px;
     height: 360px;
+    display: none;
 }
 
 .timeInput {
