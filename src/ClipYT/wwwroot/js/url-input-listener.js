@@ -102,7 +102,6 @@ function createEmbeddedTwitterElement(url, playerContainer) {
 
     var videoAnchor = $('<a>', {
         href: url,
-        text: 'Tweet link'
     });
 
     blockquote.append(videoAnchor);
