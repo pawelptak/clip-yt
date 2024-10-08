@@ -9,7 +9,7 @@
     --light-grey: #8a8987;
     --lighter-grey: #efefef;
     --accent-color: #f2205f;
-    --accent-color-dark: #91143a;
+    --accent-color-dark: #91143a; /*TODO: consider removing this attribute, as it has not much use*/
 }
 
 @font-face {
@@ -36,16 +36,6 @@ body {
     background: linear-gradient(var(--background-color-top-lightmode), var(--background-color-bottom-lightmode));
     background-color: var(--background-color-bottom-lightmode);
 }
-
-    body.yt-mode {
-        --accent-color: #f2205f;
-        --accent-color-dark: #91143a;
-    }
-
-    body.tiktok-mode {
-        --accent-color: #6020f3;
-        --accent-color-dark: #351287;
-    }
 
 #app-form {
     width: 100%;
@@ -94,7 +84,7 @@ body {
         border-radius: 100px;
     }
 
-#player {
+#yt-player {
     border-radius: 12px;
 }
 
@@ -146,12 +136,14 @@ input[type=text] {
     background-color: var(--accent-color);
     border: none;
     border-radius: 100px;
-    color: black;
+    color: white;
     vertical-align: baseline;
+    transition: 0.25s;
 }
 
     .standard-btn:hover {
         filter: brightness(0.8);
+        color: white;
     }
 
     .standard-btn:focus, .standard-btn:active {
@@ -220,7 +212,7 @@ input[type=text] {
     }
 
     .radio-option:hover {
-        background-color: var(--accent-color-dark);
+        filter: brightness(0.8);
     }
 
 .option:hover .radio-span {
@@ -280,4 +272,14 @@ input[type=text] {
         --bg-color: var(--dark-grey);
         border: 2px inset var(--input-border-darkmode);
     }
+}
+
+.twitter-tweet.twitter-tweet-rendered{
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+[id^="twitter-widget"] {
+    /* Workaround for hiding 1px white border around twitter video iframe */
+    transform: scale(1.01);
 }
