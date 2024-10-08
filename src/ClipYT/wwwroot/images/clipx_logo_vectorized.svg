@@ -99,13 +99,10 @@
        id="path8"
        sodipodi:nodetypes="csccscc"
        inkscape:label="play luk gorny" />
-    <text
-       xml:space="preserve"
+    <path
+       d="m 108.75,31.58585 v -6.48 h -2.4 v 8.4 h 7.848 v -1.92 z m 6.24,1.92 h 2.4 v -8.4 h -2.4 z m 3.42001,0 h 2.4 v -2.616 h 1.428 c 2.412,0 3.984,-0.768 3.984,-2.988 0,-1.848 -1.428,-2.796 -3.984,-2.796 h -3.828 z m 2.4,-6.48 h 1.116 c 0.984,0 1.956,-0.108 1.956,0.948 0,1.056 -0.948,0.996 -1.932,0.996 h -1.14 z m 5.412,-1.92 3.432,4.2 -3.432,4.2 h 2.868 l 1.992,-2.448 1.992,2.448 h 2.868 l -3.432,-4.2 3.432,-4.2 h -2.868 l -1.992,2.448 -1.992,-2.448 z"
        id="text1"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;font-family:'Grand Wilson Sans DEMO';-inkscape-font-specification:'Grand Wilson Sans DEMO, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;white-space:pre;shape-inside:url(#rect1);display:inline;fill:#1da1f2;fill-opacity:1"
-       transform="matrix(4.3159286,0,0,5.0171313,-350.274,-88.853497)"><tspan
-         x="105.75"
-         y="33.50585"
-         id="tspan1">LIPX</tspan></text>
+       transform="matrix(4.3159286,0,0,5.0171313,-350.274,-88.853497)"
+       aria-label="LIPX" />
   </g>
 </svg>
