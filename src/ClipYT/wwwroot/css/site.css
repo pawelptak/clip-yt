@@ -279,7 +279,7 @@ input[type=text] {
     border-radius: 12px;
 }
 
-#twitter-widget-0 {
-    /* Workaround for hiding 1px white border around twitter video iframe */ 
+[id^="twitter-widget"] {
+    /* Workaround for hiding 1px white border around twitter video iframe */
     transform: scale(1.01);
 }
