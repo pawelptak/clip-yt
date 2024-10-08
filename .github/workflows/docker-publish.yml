@@ -3,7 +3,7 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - add-deploy-to-dockerhub-workflow  # TODO: replace with 'main'
+      - main
 
 jobs:
   build:
@@ -31,4 +31,4 @@ jobs:
         context: ./src/ClipYT
         platforms: linux/arm64
         push: true
-        tags: pawelptak/clipyt:test
+        tags: pawelptak/clipyt:arm64
