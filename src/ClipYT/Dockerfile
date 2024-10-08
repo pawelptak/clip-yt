@@ -18,6 +18,9 @@ RUN apt-get update && apt-get install -y \
     && chown -R 1001:1001 /app/Output
 USER 1001
 
+# Set the cache directory for yt-dlp
+ENV XDG_CACHE_HOME=/app/Output/.cache
+
 # This stage is used to build the service project
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 ARG BUILD_CONFIGURATION=Release
