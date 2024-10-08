@@ -23,7 +23,7 @@ RUN dotnet build "./ClipYT.csproj" -c $BUILD_CONFIGURATION -o /app/build
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./ClipYT.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./ClipYT.csproj" -c $BUILD_CONFIGURATION -o /app/publish
 
 # Use the base image as the final runtime image
 FROM base AS final
