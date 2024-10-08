@@ -17,7 +17,7 @@ WORKDIR "/src/."
 RUN dotnet build "./ClipYT.csproj" -c Release -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
-FROM build-env AS publish  # <-- Corrected this line
+FROM build-env AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./ClipYT.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
