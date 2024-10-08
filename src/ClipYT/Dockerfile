@@ -5,6 +5,18 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
+# Install dependencies and create output directory
+USER root
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    python3-pip \
+    && pip3 install yt-dlp --break-system-packages \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p /app/Output \
+    && mkdir -p /app/Output/.cache \
+    && chown -R 1001:1001 /app/Output
+USER 1001
 
 # This stage is used to build the service project
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
