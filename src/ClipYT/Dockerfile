@@ -12,6 +12,7 @@ WORKDIR /src
 
 # Copy the project file and restore any dependencies (using a distinct layer for better caching)
 COPY ["ClipYT.csproj", "./"]
+RUN dotnet nuget locals all --clear
 RUN dotnet restore "./ClipYT.csproj"
 
 # Copy the rest of the application source code
@@ -23,7 +24,7 @@ RUN dotnet build "./ClipYT.csproj" -c $BUILD_CONFIGURATION -o /app/build
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./ClipYT.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./ClipYT.csproj" -c $BUILD_CONFIGURATION -o /app/publish
 
 # Use the base image as the final runtime image
 FROM base AS final
