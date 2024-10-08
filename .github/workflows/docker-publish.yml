@@ -29,6 +29,6 @@ jobs:
       uses: docker/build-push-action@v6
       with:
         context: ./src/ClipYT
-        platforms: linux/arm64
+        # platforms: linux/arm64
         push: true
-        tags: user/app:latest
+        tags: pawelptak/clipyt:test
