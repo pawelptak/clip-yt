@@ -1,5 +1,5 @@
 # Use slim base image for ASP.NET Core runtime
-FROM mcr.microsoft.com/dotnet/aspnet:8.0.8-bookworm-slim-arm64v8 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0.8-bookworm-slim AS base
 USER app
 WORKDIR /app
 EXPOSE 8080
@@ -10,9 +10,12 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
+
+# Clear the NuGet cache to avoid any potential corruption issues
+RUN dotnet nuget locals all --clear
+
 # Copy the project file and restore any dependencies (using a distinct layer for better caching)
 COPY ["ClipYT.csproj", "./"]
-RUN dotnet nuget locals all --clear
 RUN dotnet restore "./ClipYT.csproj"
 
 # Copy the rest of the application source code
