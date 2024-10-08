@@ -31,4 +31,4 @@ jobs:
         context: ./src/ClipYT
         # platforms: linux/arm64
         push: true
-        tags: user/app:latest
+        tags: pawelptak/clipyt:test
