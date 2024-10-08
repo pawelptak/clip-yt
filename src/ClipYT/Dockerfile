@@ -1,5 +1,3 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
 # This stage is used when running from VS in fast mode (Default for Debug configuration)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 USER app
@@ -19,7 +17,7 @@ WORKDIR "/src/."
 RUN dotnet build "./ClipYT.csproj" -c Release -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
-FROM build AS publish
+FROM build-env AS publish  # <-- Corrected this line
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./ClipYT.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
