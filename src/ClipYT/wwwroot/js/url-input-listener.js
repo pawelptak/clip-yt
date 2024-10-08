@@ -7,8 +7,8 @@
     const cliptokLogoUrl = appData.getAttribute('data-cliptok-logo');
     const clipxLogoUrl = appData.getAttribute('data-clipx-logo');
 
-    var clipytAccentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
-    var clipytAccentColorDark = getComputedStyle(document.documentElement).getPropertyValue('--accent-color-dark').trim();
+    const clipytAccentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+    const clipytAccentColorDark = getComputedStyle(document.documentElement).getPropertyValue('--accent-color-dark').trim();
 
     const youtubePlatformSource = new MediaPlatformSource(ytRegex, clipytLogoUrl, true, true, clipytAccentColor, clipytAccentColorDark);
     const tiktokPlatformSource = new MediaPlatformSource(tiktokRegex, cliptokLogoUrl, false, false, "#6020f3", "#351287");
@@ -33,10 +33,10 @@
                 if (platform.regex == twitterRegex) {
                     $('#yt-player').hide();
                     var twitterElement = createEmbeddedTwitterElement(transformTwitterUrlForEmbedding(inputUrl));
-                    playerContainer.append(twitterElement);
+                    playerContainer.append(twitterElement);                 
                     playerContainer.css('display', 'contents');
                     twttr.widgets.load();
-                } 
+            }
                 platform.setUiMode()
                 break;
             }
@@ -92,15 +92,15 @@ function transformTwitterUrlForEmbedding(url) {
     }
 }
 
-function createEmbeddedTwitterElement(url, playerContainer) {
-    var blockquote = $('<blockquote>', {
+function createEmbeddedTwitterElement(url) {
+    const blockquote = $('<blockquote>', {
         class: 'twitter-tweet',
         'data-media-max-width': '640',
         align: 'center',
         dnt: 'false'
     });
 
-    var videoAnchor = $('<a>', {
+    const videoAnchor = $('<a>', {
         href: url,
     });
 
