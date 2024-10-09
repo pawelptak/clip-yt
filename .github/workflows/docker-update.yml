@@ -2,7 +2,7 @@ name: Update Docker Image
 
 on:
   workflow_run:
-    workflows: ["docker-push"]
+    workflows: ["Build and Push Docker Image"]
     types:
       - completed
   workflow_dispatch:  # Allows manual trigger from the GitHub UI
