@@ -5,13 +5,13 @@ on:
     workflows: ["docker-push"]
     types:
       - completed
-    workflow_dispatch:  # Allows manual trigger from the GitHub UI
+  workflow_dispatch:  # Allows manual trigger from the GitHub UI
 
-  jobs:
-    deploy:
-      if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
-      runs-on: ubuntu-latest
-      
+jobs:
+  deploy:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    
     steps:
       - name: OpenVPN-Connect
       # You may pin to the exact commit or the version.
@@ -20,8 +20,8 @@ on:
         with:
           # Location of OpenVPN client config file
           config_file: ${{ secrets.RASPBERRY_OPENVPN_CONFIG }}
-
-
+  
+  
       # Verify VPN connection by pinging the server
       - name: Verify VPN Connection
         # env:
