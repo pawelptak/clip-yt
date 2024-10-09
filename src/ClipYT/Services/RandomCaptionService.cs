@@ -29,7 +29,8 @@ namespace ClipYT.Services
             "Mr. Salieri sends his regards.",
             "Why are you gay?",
             "Keep on keeping on.",
-            "Kept you waiting, huh?"
+            "Kept you waiting, huh?",
+            "AISEM TIBITI OOOOO"
         };
 
         public string GetRandomCaption() => Captions[_random.Next(Captions.Count)];
