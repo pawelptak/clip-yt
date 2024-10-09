@@ -13,25 +13,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Install OpenVPN on the GitHub runner
-      - name: Install OpenVPN
-        run: sudo apt-get update && sudo apt-get install -y openvpn
-
-      # Set up and connect to OpenVPN
-      - name: Connect to VPN
-        env:
-          OPENVPN_CONFIG: ${{ secrets.RASPBERRY_OPENVPN_CONFIG }}
-        run: |
-          echo "${OPENVPN_CONFIG}" > vpn-config.ovpn
-          sudo openvpn --config vpn-config.ovpn --daemon
-          sleep 20
-
-      # Verify the VPN connection by pinging the Raspberry Pi or local server
-      - name: Verify VPN Connection
-        env:
-          RASPBERRY_SSH_HOST: ${{ secrets.RASPBERRY_SSH_HOST }}
-        run: ping -c 3 192.168.1.21  # Replace with your local server's IP address
-        
       - name: SSH to Server and Update Container
         uses: appleboy/ssh-action@master
         with:
