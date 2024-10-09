@@ -30,7 +30,7 @@ namespace ClipYT.Services
             "Why are you gay?",
             "Keep on keeping on.",
             "Kept you waiting, huh?",
-            "AISEM TIBITI OOOOO"
+            "AISEM TIBITI OOO"
         };
 
         public string GetRandomCaption() => Captions[_random.Next(Captions.Count)];
