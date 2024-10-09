@@ -9,7 +9,15 @@
     <form id="app-form" method="post">
         <div class="d-flex flex-column mb-3">
             <div class="d-flex gap-3">
-                @Html.TextBoxFor(m => m.Url, new { id = "urlInput", placeholder = "Paste YouTube video URL" })
+                <div class="clear-input-container">
+                    @Html.TextBoxFor(m => m.Url, new { id = "urlInput", placeholder = "Paste YouTube video URL", @class = "clear-input" })
+                    <button class="clear-input-button"
+                            aria-label="Clear input"
+                            title="Clear input"
+                            type="button">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
                 <button title="Generate clip" id="submit-button" class="play-button"><i class="bi bi-play-circle-fill"></i></button>
             </div>
             <span id="url-validation-message" class="text-danger validation-message">@Html.ValidationMessageFor(m => m.Url)</span>
@@ -102,4 +110,5 @@
     <script src="~/js/url-input-listener.js"></script>
     <script src="~/js/video-time-controls.js"></script>
     <script src="~/js/ajax-download.js"></script>
+    <script src="~/js/clear-input-button.js"></script>
 }
