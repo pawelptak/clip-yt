@@ -24,13 +24,13 @@ jobs:
         run: |
           echo "${OPENVPN_CONFIG}" > vpn-config.ovpn
           sudo openvpn --config vpn-config.ovpn --daemon
-          sleep 10
+          sleep 20
 
       # Verify the VPN connection by pinging the Raspberry Pi or local server
       - name: Verify VPN Connection
         env:
           RASPBERRY_SSH_HOST: ${{ secrets.RASPBERRY_SSH_HOST }}
-        run: ping -c 4 karolwojtyla.servecounterstrike.com  # Replace with your local server's IP address
+        run: ping -c 3 192.168.1.21  # Replace with your local server's IP address
         
       - name: SSH to Server and Update Container
         uses: appleboy/ssh-action@master
