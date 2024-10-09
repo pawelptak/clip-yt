@@ -20,7 +20,7 @@ jobs:
           username: ${{ secrets.RASPBERRY_SSH_USER }}
           key: ${{ secrets.RASPBERRY_SSH_PRIVATE_KEY }}
           script: |
-            cd /ApkiPawla/clipyt
+            cd ApkiPawla/clipyt
             docker compose pull
             docker compose up -d
             docker image prune -f
