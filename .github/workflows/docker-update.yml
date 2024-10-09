@@ -30,7 +30,7 @@ jobs:
       - name: Verify VPN Connection
         env:
           RASPBERRY_SSH_HOST: ${{ secrets.RASPBERRY_SSH_HOST }}
-        run: ping -c 4 "$RASPBERRY_SSH_HOST"  # Replace with your local server's IP address
+        run: ping -c 4 192.168.1.21  # Replace with your local server's IP address
         
       - name: SSH to Server and Update Container
         uses: appleboy/ssh-action@master
