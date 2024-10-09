@@ -18,18 +18,9 @@
 }
 
 html {
-    font-size: 14px;
-}
-
-@media (min-width: 768px) {
-    html {
-        font-size: 16px;
-    }
-}
-
-html {
     position: relative;
     min-height: 100%;
+    font-size: 16px;
 }
 
 body {
@@ -152,7 +143,7 @@ input[type=text] {
     }
 
 
-.field-validation-error{
+.field-validation-error {
     font-size: .9em;
     margin-left: 5px;
 }
@@ -274,7 +265,7 @@ input[type=text] {
     }
 }
 
-.twitter-tweet.twitter-tweet-rendered{
+.twitter-tweet.twitter-tweet-rendered {
     overflow: hidden;
     border-radius: 12px;
 }
@@ -283,3 +274,49 @@ input[type=text] {
     /* Workaround for hiding 1px white border around twitter video iframe */
     transform: scale(1.01);
 }
+
+.clear-input-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.clear-input {
+    width: 100%;
+    padding-right: 35px !important;
+}
+
+.clear-input-button {
+    position: absolute;
+    right: .4em;
+    top: 4px;
+    justify-content: center;
+    align-items: center;
+    width: 25px;
+    height: 30px;
+    appearance: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    /* hide the button initially */
+    display: none;
+    font-size: large;
+    background-color: transparent;
+}
+
+.clear-input--touched:focus + .clear-input-button,
+.clear-input--touched:hover + .clear-input-button,
+.clear-input--touched + .clear-input-button:hover {
+    display: inline-flex;
+}
+
+.clear-input-button i {
+    display: grid;
+    color: var(--light-grey);
+    transition: filter 0.3s;
+    font-size: 25px;
+}
+
+    .clear-input-button i:hover {
+        filter: brightness(0.8);
+    }
