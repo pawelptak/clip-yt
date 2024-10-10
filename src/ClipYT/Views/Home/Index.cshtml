@@ -50,7 +50,7 @@
                 <div class="d-flex flex-column">
                     <div class="input-wrapper">
                         <span class="label-text">Length (s)</span>
-                        @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput" })
+                        @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput", placeholder = "10" })
                     </div>
                     <span class="text-danger ">@Html.ValidationMessageFor(m => m.ClipLength)</span>
                 </div>

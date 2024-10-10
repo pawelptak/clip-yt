@@ -6,11 +6,6 @@ namespace ClipYT.Models
 {
     public class MediaFileModel
     {
-        public MediaFileModel()
-        {
-            ClipLength = 10;
-        }
-
         [Required]
         [RegularExpression($"{RegexConstants.YoutubeUrlRegex}|{RegexConstants.TiktokUrlRegex}|{RegexConstants.TwitterUrlRegex}", ErrorMessage = "The provided input is not a valid URL.")]
         public Uri Url { get; set; }

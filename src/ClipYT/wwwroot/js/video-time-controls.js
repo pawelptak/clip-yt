@@ -5,6 +5,10 @@
     function isValidTimeFormat(timeStr) {
         return timeStr.match(timeFormatRegex);
     }
+    function setLengthInputDefaultValue(defaultValue) {
+        const videoLengthElement = document.getElementById("videoLengthInput");
+        videoLengthElement.value = defaultValue;
+    }
 
     function updateVideoLengthInput() {
         const startTimeStr = document.getElementById("videoStartInput").value;
@@ -19,11 +23,17 @@
         const timeDifference = (endTime - startTime) / 1000;
 
         document.getElementById("videoLengthInput").value = timeDifference;
+        $('#videoLengthInput').valid();
     }
 
     function updateVideoEndInput() {
+        const videoLengthElement = document.getElementById("videoLengthInput")
+        if (videoLengthElement.value.length === 0) {
+            setLengthInputDefaultValue(10);
+        }
+
         const startTimeStr = document.getElementById("videoStartInput").value;
-        const videoLengthStr = document.getElementById("videoLengthInput").value;
+        const videoLengthStr = videoLengthElement.value;
 
         if (!isValidTimeFormat(startTimeStr) || isNaN(videoLengthStr)) {
             return;
@@ -36,6 +46,7 @@
         const endTimeFormatted = `${String(endTime.getHours()).padStart(2, '0')}:${String(endTime.getMinutes()).padStart(2, '0')}:${String(endTime.getSeconds()).padStart(2, '0')}`;
 
         document.getElementById("videoEndInput").value = endTimeFormatted;
+        $('#videoLengthInput').valid();
     }
 
     document.getElementById("videoEndInput").addEventListener("change", updateVideoLengthInput);
