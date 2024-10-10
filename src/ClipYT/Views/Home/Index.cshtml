@@ -9,15 +9,7 @@
     <form id="app-form" method="post">
         <div class="d-flex flex-column mb-3">
             <div class="d-flex gap-3">
-                <div class="clear-input-container">
-                    @Html.TextBoxFor(m => m.Url, new { id = "urlInput", placeholder = "Paste YouTube video URL", @class = "clear-input" })
-                    <button class="clear-input-button"
-                            aria-label="Clear input"
-                            title="Clear input"
-                            type="button">
-                        <i class="bi bi-x"></i>
-                    </button>
-                </div>
+                <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.Url, new { id = "urlInput", placeholder = "Paste YouTube video URL",}) }" />
                 <button title="Generate clip" id="submit-button" class="play-button"><i class="bi bi-play-circle-fill"></i></button>
             </div>
             <span id="url-validation-message" class="text-danger validation-message">@Html.ValidationMessageFor(m => m.Url)</span>
@@ -28,8 +20,8 @@
                 <div class="d-flex flex-column">
                     <div class="input-wrapper">
                         <span class="label-text">Clip start</span>
-                        <div>
-                            @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "timeInput" })
+                        <div class="d-flex gap-1">
+                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "time-input" }) }" />
                             <button type="button" id="get-current-start-btn" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoStartInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                         </div>
                     </div>
@@ -39,8 +31,8 @@
                 <div class="d-flex flex-column">
                     <div class="input-wrapper">
                         <span class="label-text">Clip end</span>
-                        <div>
-                            @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "timeInput" })
+                        <div class="d-flex gap-1">
+                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "time-input" }) }" />
                             <button type="button" id="get-current-end-btn" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoEndInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                         </div>
                     </div>
@@ -50,7 +42,7 @@
                 <div class="d-flex flex-column">
                     <div class="input-wrapper">
                         <span class="label-text">Length (s)</span>
-                        @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput", placeholder = "10" })
+                        <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput", placeholder = "10" }) }" />
                     </div>
                     <span class="text-danger ">@Html.ValidationMessageFor(m => m.ClipLength)</span>
                 </div>

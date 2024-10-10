@@ -1,23 +1,17 @@
 ﻿$(document).ready(function () {
-    const input = document.querySelector(".clear-input")
-
-    function handleInputChange(e) {
-        if (e.target.value && !input.classList.contains("clear-input--touched")) {
-            input.classList.add("clear-input--touched");
-        } else if (!e.target.value && input.classList.contains("clear-input--touched")) {
-            input.classList.remove("clear-input--touched");
+    $(document).on('input', '.clear-input-container input', function (e) {
+        const input = $(this);
+        if (input.val() && !input.hasClass("clear-input--touched")) {
+            input.addClass("clear-input--touched");
+        } else if (!input.val() && input.hasClass("clear-input--touched")) {
+            input.removeClass("clear-input--touched");
         }
-    }
+    });
 
-    input.addEventListener("input", handleInputChange)
-
-    const clearButton = document.querySelector(".clear-input-button")
-
-    const handleButtonClick = (e) => {
-        input.value = ''
-        input.focus()
-        input.classList.remove("clear-input--touched")
-    }
-
-    clearButton.addEventListener("click", handleButtonClick)
+    $(document).on('click', '.clear-input-button', function (e) {
+        const input = $(this).closest('.clear-input-container').find('input');
+        if (input.length > 0) {
+            input.val('').focus().removeClass("clear-input--touched");
+        }
+    });
 });
