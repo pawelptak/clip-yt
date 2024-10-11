@@ -20,8 +20,12 @@ function updateInputFromPlayer(inputElementId) {
     const element = document.getElementById(inputElementId);
     element.value = convertToTimestampFormat(currentTime);
 
+
     const e = new Event("change");
     element.dispatchEvent(e); // Manually trigger the 'change' event
+
+    const input = $('#' + inputElementId);
+    input.trigger('input'); // To make the clear button appear
 }
 
 function convertToTimestampFormat(seconds) {

@@ -91,7 +91,7 @@ body {
 }
 
 #videoLengthInput {
-    max-width: 80px;
+    max-width: 85px;
 }
 
 .input-wrapper {
@@ -313,7 +313,7 @@ input[type=text] {
             filter: brightness(0.8);
         }
 
-.clear-input--touched:focus + .clear-input-button,
+.clear-input--touched + .clear-input-button,
 .clear-input--touched:hover + .clear-input-button,
 .clear-input--touched + .clear-input-button:hover {
     display: inline-flex;
