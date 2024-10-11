@@ -28,6 +28,15 @@ function updateInputFromPlayer(inputElementId) {
     input.trigger('input'); // To make the clear button appear
 }
 
+function updatePlayerFromInput(event) {
+    const element = $(event.target);
+    var test = element.val();
+    const elementTimeSeconds = convertToSeconds(element.val());
+    if (!isNaN(elementTimeSeconds)) {
+        player.seekTo(elementTimeSeconds);
+    }
+}
+
 function convertToTimestampFormat(seconds) {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -38,6 +47,18 @@ function convertToTimestampFormat(seconds) {
     const formattedSeconds = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
 
     return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+}
+
+function convertToSeconds(timestamp) {
+    const timeParts = timestamp.split(':');
+
+    const hours = parseInt(timeParts[0], 10) || 0;
+    const minutes = parseInt(timeParts[1], 10) || 0;
+    const seconds = parseFloat(timeParts[2]) || 0;
+
+    const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+
+    return totalSeconds;
 }
 
 async function updateVideoFrame(videoUrl) {

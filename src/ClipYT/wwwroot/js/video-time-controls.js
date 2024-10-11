@@ -54,12 +54,12 @@
         videoLengthInput.valid();
     }
 
-
-
     $("#videoEndInput").on("change", updateVideoLengthInput);
     $("#videoStartInput").on("change", updateVideoLengthInput);
     $("#videoStartInput").on("change", updateVideoEndInput);
     $("#videoLengthInput").on("change", updateVideoEndInput);
+
+    //$("#videoStartInput").on("blur", updatePlayerFromInput); // Experimental feature. Won't delete.
 
     Inputmask("99:99:99", {
         insertMode: false,

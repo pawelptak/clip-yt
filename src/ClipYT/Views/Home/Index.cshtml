@@ -44,7 +44,8 @@
                         <span class="label-text">Length (s)</span>
                         <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput", placeholder = "10" }) }" />
                     </div>
-                    <span class="text-danger ">@Html.ValidationMessageFor(m => m.ClipLength)</span>
+                    @* TODO: fix clear button positiong when validation error appears *@
+                    <span class="text-danger ">@Html.ValidationMessageFor(m => m.ClipLength)</span> 
                 </div>
             </div>
 
