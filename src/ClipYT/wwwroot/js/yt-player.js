@@ -92,7 +92,8 @@ function getIdFromYoutubeUrl(url) {
 var pauseAtEndTime = false;
 function startClipPreview() {
     const videoStartTime = $("#videoStartInput").val();
-    if (!videoStartTime) {
+    const videoLength = $("#videoLengthInput").val();
+    if (!videoStartTime || videoLength <= 0) {
         return;
     }
     const startTimeSeconds = convertToSeconds(videoStartTime)
