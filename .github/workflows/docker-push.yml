@@ -25,12 +25,12 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Extract git version
-      id: vars
+    - name: Get Version from GitHub Tag or Commit SHA
+      id: version
       run: |
-        # Get the current git tag, or fallback to commit SHA if no tag exists
-        VERSION=$(git describe --tags --always --dirty)
-        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        # Try to get the latest tag; if no tag, get the short commit SHA
+        VERSION=$(git tag --sort=-creatordate | head -n 1)
+        echo "VERSION=$VERSION"
         echo "::set-output name=VERSION::$VERSION"
 
     - name: Build and push
@@ -40,7 +40,6 @@ jobs:
         platforms: linux/arm64
         push: true
         tags: |
-          pawelptak/clipyt:${{ env.VERSION }}
           pawelptak/clipyt:latest
         build-args: |
           VERSION=${{ env.VERSION }}
