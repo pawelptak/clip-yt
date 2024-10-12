@@ -36,6 +36,11 @@ FROM build-env AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./ClipYT.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
+# Accept the version as a build argument
+ARG VERSION
+# Set the version as an environment variable
+ENV APP_VERSION=$VERSION
+
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app

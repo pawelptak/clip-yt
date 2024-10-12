@@ -18,6 +18,9 @@ namespace ClipYT.Controllers
 
         public IActionResult Index()
         {
+            string version = Environment.GetEnvironmentVariable("APP_VERSION") ?? "Development";
+            ViewBag.Version = version;
+
             var model = new MediaFileModel();
 
             return View(model);
