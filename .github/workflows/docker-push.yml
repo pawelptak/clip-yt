@@ -25,10 +25,19 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
+    - name: Extract git version
+      id: vars
+      run: |
+        # Get the current git tag or commit SHA
+        VERSION=$(git describe --tags --always --dirty)
+        echo "::set-output name=VERSION::$VERSION"
+
     - name: Build and push
       uses: docker/build-push-action@v6
       with:
         context: ./src/ClipYT
         platforms: linux/arm64
         push: true
-        tags: pawelptak/clipyt:arm64
+        tags: |
+          pawelptak/clipyt:${{ env.VERSION }}
+          pawelptak/clipyt:latest
