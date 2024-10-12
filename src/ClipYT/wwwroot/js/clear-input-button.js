@@ -12,6 +12,7 @@
         const input = $(this).closest('.clear-input-container').find('input');
         if (input.length > 0) {
             input.val('').focus().removeClass("clear-input--touched");
+            input.trigger('input'); // Trigger input event causing other fields to clear
         }
     });
 

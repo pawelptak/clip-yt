@@ -33,12 +33,18 @@
                 if (platform.regex == twitterRegex) {
                     $('#yt-player').hide();
                     var twitterElement = createEmbeddedTwitterElement(transformTwitterUrlForEmbedding(inputUrl));
-                    playerContainer.append(twitterElement);                 
+                    playerContainer.append(twitterElement);
                     playerContainer.css('display', 'contents');
                     twttr.widgets.load();
-            }
+                }
                 platform.setUiMode()
                 break;
+            }
+            else {
+                // Clear all clip inputs
+                $("#videoStartInput").val(''); 
+                $("#videoEndInput").val(''); 
+                $("#videoLengthInput").val(''); 
             }
         }
     });
