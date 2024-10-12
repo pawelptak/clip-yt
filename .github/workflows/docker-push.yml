@@ -42,3 +42,5 @@ jobs:
         tags: |
           pawelptak/clipyt:${{ env.VERSION }}
           pawelptak/clipyt:latest
+        build-args: |
+          VERSION=${{ env.VERSION }}
