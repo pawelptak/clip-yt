@@ -42,10 +42,13 @@
                 <div class="d-flex flex-column">
                     <div class="input-wrapper">
                         <span class="label-text">Length (s)</span>
-                        <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput", placeholder = "10" }) }" />
+                        <div class="d-flex gap-1">
+                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput", placeholder = "10" }) }" />
+                            <button type="button" id="clip-preview-button" title="Start clip preview" class="btn standard-btn" onclick="startClipPreview()"><i class="bi bi-play-btn"></i></button>
+                        </div>
                     </div>
                     @* TODO: fix clear button positiong when validation error appears *@
-                    <span class="text-danger ">@Html.ValidationMessageFor(m => m.ClipLength)</span> 
+                    <span class="text-danger">@Html.ValidationMessageFor(m => m.ClipLength)</span>
                 </div>
             </div>
 

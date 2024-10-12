@@ -10,7 +10,8 @@ function onYouTubeIframeAPIReady() {
             'onReady': () => {
                 playerReady = true;
                 iframeWindow = player.getIframe().contentWindow;
-            }
+            },
+            'onStateChange': playVideoUntilEndTime
         }
     });
 }
@@ -85,4 +86,34 @@ function getIdFromYoutubeUrl(url) {
     var match = url.match(regExp);
 
     return (match && match[7].length == 11) ? match[7] : false;
+}
+
+
+var pauseAtEndTime = false;
+function startClipPreview() {
+    const videoStartTime = $("#videoStartInput").val();
+    if (!videoStartTime) {
+        return;
+    }
+    const startTimeSeconds = convertToSeconds(videoStartTime)
+    player.seekTo(startTimeSeconds);
+    player.playVideo();
+    pauseAtEndTime = true;
+}
+
+function playVideoUntilEndTime(event) {
+    if (event.data == YT.PlayerState.PLAYING && pauseAtEndTime) {
+        // Monitor the playback position to pause at the end timestamp
+        var checkTime = setInterval(function () {
+            var currentTimeSeconds = player.getCurrentTime();
+            var endTimeString = $("#videoEndInput").val();
+            if (endTimeString) {
+                if (currentTimeSeconds >= convertToSeconds(endTimeString)) {
+                    player.pauseVideo();
+                    pauseAtEndTime = false;
+                    clearInterval(checkTime);
+                }
+            }
+        }, 100);
+    }
 }
