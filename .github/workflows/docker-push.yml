@@ -28,8 +28,9 @@ jobs:
     - name: Extract git version
       id: vars
       run: |
-        # Get the current git tag or commit SHA
+        # Get the current git tag, or fallback to commit SHA if no tag exists
         VERSION=$(git describe --tags --always --dirty)
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
         echo "::set-output name=VERSION::$VERSION"
 
     - name: Build and push
