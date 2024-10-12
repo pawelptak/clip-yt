@@ -41,6 +41,9 @@
                 break;
             }
             else {
+                $("#player-container").hide();
+                $("#video-details").hide();
+
                 // Clear all clip inputs
                 $("#videoStartInput").val(''); 
                 $("#videoEndInput").val(''); 
