@@ -13,6 +13,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Set up Git
+        run: |
+          git fetch --tags
+          
+      - name: Get Version from GitHub Tag or Commit SHA
+        id: version
+        run: |
+          # Try to get the latest tag; if no tag, get the short commit SHA
+          VERSION=$(git describe --tags --always --dirty)
+          echo "VERSION=$VERSION"
+          echo "::set-output name=VERSION::$VERSION"
+    
       - name: SSH to Server and Update Container
         uses: appleboy/ssh-action@master
         with:
@@ -22,5 +34,5 @@ jobs:
           script: |
             cd ApkiPawla/clipyt
             docker compose pull
-            docker compose up -d
+            APP_VERSION=${{ steps.version.outputs.VERSION }} docker compose up -d
             docker image prune -f
