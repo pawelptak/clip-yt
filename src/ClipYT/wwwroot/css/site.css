@@ -137,11 +137,16 @@ input[type=text] {
         color: white;
     }
 
-    .standard-btn:focus, .standard-btn:active {
+    .standard-btn:active {
         box-shadow: none;
         outline: 2px solid var(--accent-color-dark);
+        outline: none;
+        filter: brightness(0.5);
     }
 
+    .standard-btn:focus {
+        box-shadow: none;
+    }
 
 .field-validation-error {
     font-size: .9em;
