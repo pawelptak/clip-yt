@@ -12,6 +12,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history, including tags
       
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
