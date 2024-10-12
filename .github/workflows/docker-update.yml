@@ -22,7 +22,7 @@ jobs:
         id: version
         run: |
           # Try to get the latest tag; if no tag, get the short commit SHA
-          VERSION=$(git describe --tags --always --dirty)
+          VERSION=$(git tag --sort=-creatordate | head -n 1)
           echo "VERSION=$VERSION"
           echo "::set-output name=VERSION::$VERSION"
     
