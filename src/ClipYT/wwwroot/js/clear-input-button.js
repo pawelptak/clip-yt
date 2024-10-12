@@ -14,4 +14,8 @@
             input.val('').focus().removeClass("clear-input--touched");
         }
     });
+
+    $(document).on('mousedown', '.clear-input-button', function (e) {
+        e.preventDefault(); // Prevents other inputs from updating when clicking the clear button
+    });
 });

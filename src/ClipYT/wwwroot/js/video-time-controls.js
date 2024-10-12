@@ -26,7 +26,7 @@
         const videoLengthInput = $("#videoLengthInput");
         videoLengthInput.val(timeDifference);
         videoLengthInput.trigger('input'); // To make the clear button appear
-        $('#videoLengthInput').valid();
+        videoLengthInput.valid();
     }
 
     function updateVideoEndInput() {
