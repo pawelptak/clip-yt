@@ -86,11 +86,12 @@ body {
     display: none;
 }
 
-.time-input {
+.clear-input-container:has(.time-input) {
     max-width: 130px;
 }
 
-#videoLengthInput {
+
+.clear-input-container:has(#videoLengthInput) {
     max-width: 85px;
 }
 

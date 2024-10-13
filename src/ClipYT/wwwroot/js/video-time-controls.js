@@ -31,10 +31,6 @@
 
     function updateVideoEndInput() {
         const videoLengthInput = $("#videoLengthInput");
-        if (!videoLengthInput.val()) {
-            setLengthInputDefaultValue(10);
-        }
-
         const startTimeStr = $("#videoStartInput").val();
         const videoLengthStr = videoLengthInput.val();
 
@@ -42,15 +38,20 @@
             return;
         }
 
-        const startTime = new Date(`1970-01-01T${startTimeStr}`);
-        const videoLengthSeconds = parseInt(videoLengthStr);
-        const endTimeMilliseconds = startTime.getTime() + (videoLengthSeconds * 1000);
-        const endTime = new Date(endTimeMilliseconds);
-        const endTimeFormatted = `${String(endTime.getHours()).padStart(2, '0')}:${String(endTime.getMinutes()).padStart(2, '0')}:${String(endTime.getSeconds()).padStart(2, '0')}`;
+        if (!videoLengthInput.val()) {
+            setLengthInputDefaultValue(10);
+        }
+
+        const startTimeInSeconds = convertToSeconds(startTimeStr);
+        const videoLengthSeconds = parseInt(videoLengthStr, 10);
+
+        const endTimeInSeconds = startTimeInSeconds + videoLengthSeconds;
+        const endTimeFormatted = convertToTimestampFormat(endTimeInSeconds);
 
         const videoEndInput = $("#videoEndInput");
         videoEndInput.val(endTimeFormatted);
         videoEndInput.trigger('input'); // To make the clear button appear
+        videoEndInput.valid();
         videoLengthInput.valid();
     }
 

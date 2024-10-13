@@ -21,7 +21,7 @@
                     <div class="input-wrapper">
                         <span class="label-text">Clip start</span>
                         <div class="d-flex gap-1">
-                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "time-input" }) }" />
+                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "time-input", data_val = "true", data_val_timestamp = "Timestamp exceeds the video length." }) }" />
                             <button type="button" id="get-current-start-btn" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoStartInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                         </div>
                     </div>
@@ -32,7 +32,7 @@
                     <div class="input-wrapper">
                         <span class="label-text">Clip end</span>
                         <div class="d-flex gap-1">
-                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "time-input" }) }" />
+                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "time-input", data_val = "true", data_val_timestamp = "Timestamp exceeds the video length." }) }" />
                             <button type="button" id="get-current-end-btn" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoEndInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                         </div>
                     </div>
@@ -102,6 +102,7 @@
     <script src="~/js/yt-player.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <script src="~/js/custom-validation.js"></script>
     <script src="~/js/url-input-listener.js"></script>
     <script src="~/js/video-time-controls.js"></script>
     <script src="~/js/ajax-download.js"></script>
