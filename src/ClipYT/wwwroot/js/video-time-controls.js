@@ -32,9 +32,8 @@
     function updateVideoEndInput() {
         const videoLengthInput = $("#videoLengthInput");
         const startTimeStr = $("#videoStartInput").val();
-        const videoLengthStr = videoLengthInput.val();
 
-        if (!isValidTimeFormat(startTimeStr) || isNaN(videoLengthStr)) {
+        if (!isValidTimeFormat(startTimeStr) || isNaN(videoLengthInput.val())) {
             return;
         }
 
@@ -43,7 +42,7 @@
         }
 
         const startTimeInSeconds = convertToSeconds(startTimeStr);
-        const videoLengthSeconds = parseInt(videoLengthStr, 10);
+        const videoLengthSeconds = parseInt(videoLengthInput.val(), 10);
 
         const endTimeInSeconds = startTimeInSeconds + videoLengthSeconds;
         const endTimeFormatted = convertToTimestampFormat(endTimeInSeconds);
