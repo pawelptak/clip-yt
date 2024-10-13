@@ -13,15 +13,16 @@
 
     function updateVideoLengthInput() {
         const startTimeStr = $("#videoStartInput").val();
-        const endTimeStr = $("#videoEndInput").val();
+        var endTimeStr = $("#videoEndInput").val();
 
         if (!isValidTimeFormat(startTimeStr) || !isValidTimeFormat(endTimeStr)) {
             return;
         }
 
-        const startTime = new Date(`1970-01-01T${startTimeStr}`);
-        const endTime = new Date(`1970-01-01T${endTimeStr}`);
-        const timeDifference = (endTime - startTime) / 1000;
+        const startTimeInSeconds = convertToSeconds(startTimeStr);
+        const endTimeInSeconds = convertToSeconds(endTimeStr);
+
+        const timeDifference = endTimeInSeconds - startTimeInSeconds;
 
         const videoLengthInput = $("#videoLengthInput");
         videoLengthInput.val(timeDifference);
@@ -45,16 +46,32 @@
         const videoLengthSeconds = parseInt(videoLengthInput.val(), 10);
 
         const endTimeInSeconds = startTimeInSeconds + videoLengthSeconds;
-        const endTimeFormatted = convertToTimestampFormat(endTimeInSeconds);
+        var endTimeFormatted = convertToTimestampFormat(endTimeInSeconds);
+        endTimeFormatted = clipToVideoLength(endTimeFormatted);
 
         const videoEndInput = $("#videoEndInput");
         videoEndInput.val(endTimeFormatted);
+        updateVideoLengthInput(); // In case the end time has been clipped, update the length value
         videoEndInput.trigger('input'); // To make the clear button appear
         videoEndInput.valid();
         videoLengthInput.valid();
     }
 
+    function clipToVideoLength(timeInputValue) {
+        if (timeInputValue) {
+            if (!isTimestampPositionValid(timeInputValue)) {
+                return convertToTimestampFormat(getCurrentVideoDuration());
+            }
+        }
+
+        return timeInputValue;
+    }
+
     $("#videoEndInput").on("change", updateVideoLengthInput);
+    $("#videoEndInput").on("change", function () {
+        var currentValue = $(this).val();
+        $(this).val(clipToVideoLength(currentValue));
+    });
     $("#videoStartInput").on("change", updateVideoLengthInput);
     $("#videoStartInput").on("change", updateVideoEndInput);
     $("#videoLengthInput").on("change", updateVideoEndInput);

@@ -119,15 +119,24 @@ function playVideoUntilEndTime(event) {
     }
 }
 
-function isTimestampPositionValid(event) {
+function isTimestampPositionValidFromEvent(event) {
+    const elementId = event.target.id;
+    const element = $('#' + elementId);
+
+    return isTimestampPositionValid(element.val());
+}
+
+function isTimestampPositionValid(timestamp) {
     if (!$('#yt-player').is(':visible')) {
         return true;
     }
 
-    const elementId = event.target.id;
-    const timestampElement = $('#' + elementId);
-    const timeStampSeconds = convertToSeconds(timestampElement.val());
-    videoLength = player.getDuration();
+    const timeStampSeconds = convertToSeconds(timestamp);
+    videoLength = getCurrentVideoDuration();
 
     return timeStampSeconds < videoLength;
+}
+
+function getCurrentVideoDuration() {
+    return player.getDuration();
 }
