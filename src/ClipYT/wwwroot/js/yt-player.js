@@ -118,3 +118,16 @@ function playVideoUntilEndTime(event) {
         }, 100);
     }
 }
+
+function isTimestampPositionValid(event) {
+    if (!$('#yt-player').is(':visible')) {
+        return true;
+    }
+
+    const elementId = event.target.id;
+    const timestampElement = $('#' + elementId);
+    const timeStampSeconds = convertToSeconds(timestampElement.val());
+    videoLength = player.getDuration();
+
+    return timeStampSeconds < videoLength;
+}
