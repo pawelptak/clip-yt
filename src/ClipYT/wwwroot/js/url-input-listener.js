@@ -33,23 +33,32 @@
                 if (platform.regex == twitterRegex) {
                     $('#yt-player').hide();
                     var twitterElement = createEmbeddedTwitterElement(transformTwitterUrlForEmbedding(inputUrl));
-                    playerContainer.append(twitterElement);                 
+                    playerContainer.append(twitterElement);
                     playerContainer.css('display', 'contents');
                     twttr.widgets.load();
-            }
+                }
                 platform.setUiMode()
                 break;
+            }
+            else {
+                $("#player-container").hide();
+                $("#video-details").hide();
+
+                // Clear all clip inputs
+                $("#videoStartInput").val(''); 
+                $("#videoEndInput").val(''); 
+                $("#videoLengthInput").val(''); 
             }
         }
     });
 });
 
 class MediaPlatformSource {
-    constructor(regex, logoUrl, showPlayer, showTimestampButtons, accentColorCode, accentColorDarkCode) {
+    constructor(regex, logoUrl, showPlayer, showClipButtons, accentColorCode, accentColorDarkCode) {
         this.regex = regex;
         this.logoUrl = logoUrl;
         this.showPlayer = showPlayer;
-        this.showTimestampButtons = showTimestampButtons;
+        this.showClipButtons = showClipButtons;
         this.accentColorCode = accentColorCode;
         this.accentColorDarkCode = accentColorDarkCode;
     }
@@ -67,12 +76,14 @@ class MediaPlatformSource {
 
         }
 
-        if (this.showTimestampButtons) {
+        if (this.showClipButtons) {
             $("#get-current-end-btn").show();
             $("#get-current-start-btn").show();
+            $("#clip-preview-button").show();
         } else {
             $("#get-current-end-btn").hide();
             $("#get-current-start-btn").hide();
+            $("#clip-preview-button").hide();
         }
     }
 }

@@ -10,7 +10,8 @@ function onYouTubeIframeAPIReady() {
             'onReady': () => {
                 playerReady = true;
                 iframeWindow = player.getIframe().contentWindow;
-            }
+            },
+            'onStateChange': playVideoUntilEndTime
         }
     });
 }
@@ -20,8 +21,21 @@ function updateInputFromPlayer(inputElementId) {
     const element = document.getElementById(inputElementId);
     element.value = convertToTimestampFormat(currentTime);
 
+
     const e = new Event("change");
     element.dispatchEvent(e); // Manually trigger the 'change' event
+
+    const input = $('#' + inputElementId);
+    input.trigger('input'); // To make the clear button appear
+}
+
+function updatePlayerFromInput(event) {
+    const element = $(event.target);
+    var test = element.val();
+    const elementTimeSeconds = convertToSeconds(element.val());
+    if (!isNaN(elementTimeSeconds)) {
+        player.seekTo(elementTimeSeconds);
+    }
 }
 
 function convertToTimestampFormat(seconds) {
@@ -34,6 +48,18 @@ function convertToTimestampFormat(seconds) {
     const formattedSeconds = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
 
     return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+}
+
+function convertToSeconds(timestamp) {
+    const timeParts = timestamp.split(':');
+
+    const hours = parseInt(timeParts[0], 10) || 0;
+    const minutes = parseInt(timeParts[1], 10) || 0;
+    const seconds = parseFloat(timeParts[2]) || 0;
+
+    const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+
+    return totalSeconds;
 }
 
 async function updateVideoFrame(videoUrl) {
@@ -60,4 +86,35 @@ function getIdFromYoutubeUrl(url) {
     var match = url.match(regExp);
 
     return (match && match[7].length == 11) ? match[7] : false;
+}
+
+
+var pauseAtEndTime = false;
+function startClipPreview() {
+    const videoStartTime = $("#videoStartInput").val();
+    const videoLength = $("#videoLengthInput").val();
+    if (!videoStartTime || videoLength <= 0) {
+        return;
+    }
+    const startTimeSeconds = convertToSeconds(videoStartTime)
+    player.seekTo(startTimeSeconds);
+    player.playVideo();
+    pauseAtEndTime = true;
+}
+
+function playVideoUntilEndTime(event) {
+    if (event.data == YT.PlayerState.PLAYING && pauseAtEndTime) {
+        // Monitor the playback position to pause at the end timestamp
+        var checkTime = setInterval(function () {
+            var currentTimeSeconds = player.getCurrentTime();
+            var endTimeString = $("#videoEndInput").val();
+            if (endTimeString) {
+                if (currentTimeSeconds >= convertToSeconds(endTimeString)) {
+                    player.pauseVideo();
+                    pauseAtEndTime = false;
+                    clearInterval(checkTime);
+                }
+            }
+        }, 100);
+    }
 }

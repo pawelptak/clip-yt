@@ -72,7 +72,7 @@ namespace ClipYT.Services
             var argsList = new List<string>();
 
             var inputArg = $"-i \"{filePath}\"";
-            var cutArg = $"-ss {startTime} -to {AddOneSecond(endTime)}"; // Adding one second is experimental
+            var cutArg = $"-ss {startTime} -to {endTime}";
 
 
             var audioConversionArg = $"-c:a copy";
@@ -196,15 +196,6 @@ namespace ClipYT.Services
                     file.Delete();
                 }
             }
-        }
-
-        private string AddOneSecond(string timeStamp)
-        {
-            var seconds = TimeSpan.Parse(timeStamp).TotalSeconds;
-            var secondsPlusOne = seconds + 1;
-            var timeStampPlusOne = TimeSpan.FromSeconds(secondsPlusOne).ToString();
-
-            return timeStampPlusOne;
         }
 
         private string RemoveIdFromFileName(string input)

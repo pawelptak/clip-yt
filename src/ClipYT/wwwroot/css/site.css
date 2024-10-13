@@ -86,12 +86,12 @@ body {
     display: none;
 }
 
-.timeInput {
-    max-width: 110px;
+.time-input {
+    max-width: 130px;
 }
 
 #videoLengthInput {
-    max-width: 80px;
+    max-width: 85px;
 }
 
 .input-wrapper {
@@ -137,11 +137,16 @@ input[type=text] {
         color: white;
     }
 
-    .standard-btn:focus, .standard-btn:active {
+    .standard-btn:active {
         box-shadow: none;
         outline: 2px solid var(--accent-color-dark);
+        outline: none;
+        filter: brightness(0.5);
     }
 
+    .standard-btn:focus {
+        box-shadow: none;
+    }
 
 .field-validation-error {
     font-size: .9em;
@@ -282,10 +287,10 @@ input[type=text] {
     align-items: center;
 }
 
-.clear-input {
-    width: 100%;
-    padding-right: 35px !important;
-}
+    .clear-input-container input {
+        width: 100%;
+        padding-right: 35px !important;
+    }
 
 .clear-input-button {
     position: absolute;
@@ -302,19 +307,19 @@ input[type=text] {
     background-color: transparent;
 }
 
-.clear-input--touched:focus + .clear-input-button,
+    .clear-input-button i {
+        color: var(--light-grey);
+        transition: filter 0.3s;
+        font-size: 20pt;
+        line-height: 1em;
+    }
+
+        .clear-input-button i:hover {
+            filter: brightness(0.8);
+        }
+
+.clear-input--touched + .clear-input-button,
 .clear-input--touched:hover + .clear-input-button,
 .clear-input--touched + .clear-input-button:hover {
     display: inline-flex;
 }
-
-.clear-input-button i {
-    color: var(--light-grey);
-    transition: filter 0.3s;
-    font-size: 20pt;
-    line-height: 1em;
-}
-
-    .clear-input-button i:hover {
-        filter: brightness(0.8);
-    }
