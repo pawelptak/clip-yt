@@ -87,6 +87,7 @@
         $("#videoEndInput").val('');
         $("#videoLengthInput").val('');
     }
+
     function transformTwitterUrlForEmbedding(url) {
         // Extract the tweet ID
         const tweetIdMatch = url.match(/status\/(\d+)/);
