@@ -82,9 +82,19 @@ body {
 #player-container {
     width: 100%;
     max-width: 640px;
-    height: 360px;
+    justify-content: center;
     display: none;
 }
+
+.default-style{
+    display: block;
+    height: 360px;
+}
+
+.flex-style {
+    display: flex;
+}
+
 
 .clear-input-container:has(.time-input) {
     max-width: 130px;
@@ -323,4 +333,9 @@ input[type=text] {
 .clear-input--touched:hover + .clear-input-button,
 .clear-input--touched + .clear-input-button:hover {
     display: inline-flex;
+}
+
+.instagram-media {
+    border: none !important;
+    border-radius: 12px !important;
 }
