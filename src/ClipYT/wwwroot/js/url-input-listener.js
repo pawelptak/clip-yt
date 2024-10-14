@@ -15,7 +15,7 @@
     const youtubePlatformSource = new MediaPlatformSource(ytRegex, clipytLogoUrl, true, true, clipytAccentColor, clipytAccentColorDark);
     const tiktokPlatformSource = new MediaPlatformSource(tiktokRegex, cliptokLogoUrl, false, false, "#6020f3", "#351287");
     const twitterPlatformSource = new MediaPlatformSource(twitterRegex, clipxLogoUrl, true, false, "#1DA1F2", "#2f62b5");
-    const instagramPlatformSource = new MediaPlatformSource(instagramRegex, clipstagramLogoUrl, false, false, "#a83299", "#8c2a7f");
+    const instagramPlatformSource = new MediaPlatformSource(instagramRegex, clipstagramLogoUrl, true, false, "#a83299", "#8c2a7f");
 
     const platforms = [youtubePlatformSource, tiktokPlatformSource, twitterPlatformSource, instagramPlatformSource];
 
@@ -31,6 +31,8 @@
                     $('#yt-player').show();
                     playerContainer.css('display', '');
                     updateVideoFrame(inputUrl);
+                } else {
+
                 }
 
                 if (platform.regex == twitterRegex) {
@@ -40,6 +42,17 @@
                     playerContainer.css('display', 'contents');
                     twttr.widgets.load();
                 }
+
+                if (platform.regex == instagramRegex) {
+                    $('#yt-player').hide();
+                    var instagramElement = createEmbeddedInstagramElement(inputUrl);
+                    playerContainer.append(instagramElement);
+
+                    if (window.instgrm) {
+                        window.instgrm.Embeds.process();
+                    }
+                }
+
                 platform.setUiMode()
                 break;
             }
@@ -119,6 +132,15 @@ function createEmbeddedTwitterElement(url) {
     });
 
     blockquote.append(videoAnchor);
+
+    return blockquote;
+}
+
+function createEmbeddedInstagramElement(url) {
+    const blockquote = $('<blockquote>', {
+        class: 'instagram-media',
+        'data-instgrm-permalink': url,
+    });
 
     return blockquote;
 }
