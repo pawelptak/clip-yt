@@ -2,12 +2,10 @@
 @inject IRandomCaptionService RandomCaptionService;
 
 <div class="d-flex justify-content-center mb-4">
-    <div>
-        <a class="logo-a d-flex flex-column" href=@Url.Action("Index") title="@ViewBag.Version">
+        <a class="logo-a" href=@Url.Action("Index") title="@ViewBag.Version">
             <img src="~/images/clipyt_logo_vectorized.svg" alt="ClipYT logo" id="logo-img" />
             <span class="logo-caption">@RandomCaptionService.GetRandomCaption()</span>
         </a>
-    </div>
 </div>
 
 <style>
@@ -18,6 +16,8 @@
 
     #logo-img {
         max-height: 100px;
+        width: auto;
+        height: auto;
     }
 
     .logo-caption {
