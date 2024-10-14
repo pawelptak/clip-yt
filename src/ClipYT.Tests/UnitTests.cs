@@ -39,6 +39,7 @@ namespace ClipYT.Tests
         [InlineData("https://www.youtube.com/watch?v=invalid")]
         [InlineData("https://www.tiktok.com/invalid")]
         [InlineData("https://x.com/i/status/invalid")]
+        [InlineData("https://www.instagram.com/invalid")]
         public async Task Invalid_Input_Url_Should_Return_Error_Message(string invalidUrl)
         {
             // Arrange
@@ -56,6 +57,7 @@ namespace ClipYT.Tests
         [InlineData("https://www.youtube.com/watch?v=dQw4w9WgXcQ")]
         [InlineData("https://www.tiktok.com/@rickastleyofficial/video/7081656622094929158")]
         [InlineData("https://x.com/i/status/1842206140693664182")]
+        [InlineData("https://www.instagram.com/p/DAEQq8lvpvD/")]
         public async Task Downloaded_File_Should_Have_Size_Larger_Than_Zero(string inputUrl)
         {
             // Arrange
@@ -74,6 +76,7 @@ namespace ClipYT.Tests
         [InlineData("https://www.youtube.com/watch?v=dQw4w9WgXcQ")]
         [InlineData("https://www.tiktok.com/@rickastleyofficial/video/7081656622094929158")]
         [InlineData("https://x.com/i/status/1842206140693664182")]
+        [InlineData("https://www.instagram.com/p/DAEQq8lvpvD/")]
         public async Task Downloaded_Clip_Should_Have_Size_Larger_Than_Zero(string inputUrl)
         {
             // Arrange
@@ -91,6 +94,7 @@ namespace ClipYT.Tests
         [InlineData("https://www.youtube.com/watch?v=dQw4w9WgXcQ")]
         [InlineData("https://www.tiktok.com/@rickastleyofficial/video/7081656622094929158")]
         [InlineData("https://x.com/i/status/1842206140693664182")]
+        [InlineData("https://www.instagram.com/p/DAEQq8lvpvD/")]
         public async Task Invalid_Cut_Times_Should_Throw_Exception(string inputUrl)
         {
             // Arrange
@@ -107,6 +111,7 @@ namespace ClipYT.Tests
         [InlineData("https://www.youtube.com/watch?v=dQw4w9WgXcQ")]
         [InlineData("https://www.tiktok.com/@rickastleyofficial/video/7081656622094929158")]
         [InlineData("https://x.com/i/status/1842206140693664182")]
+        [InlineData("https://www.instagram.com/p/DAEQq8lvpvD/")]
         public async Task Output_Folder_Should_Be_Empty_After_Processing_Completes(string inputUrl) // Except the .gitkeep file
         {
             // Arrange
@@ -124,6 +129,7 @@ namespace ClipYT.Tests
         [InlineData("https://www.youtube.com/watch?v=dQw4w9WgXcQ")]
         [InlineData("https://www.tiktok.com/@rickastleyofficial/video/7081656622094929158")]
         [InlineData("https://x.com/i/status/1842206140693664182")]
+        [InlineData("https://www.instagram.com/p/DAEQq8lvpvD/")]
         public async Task Output_Folder_Should_Be_Empty_After_Processing_Fails(string inputUrl) // Except the .gitkeep file
         {
             // Arrange
@@ -146,6 +152,7 @@ namespace ClipYT.Tests
         [InlineData("https://www.youtube.com/watch?v=dQw4w9WgXcQ")]
         [InlineData("https://www.tiktok.com/@rickastleyofficial/video/7081656622094929158")]
         [InlineData("https://x.com/i/status/1842206140693664182")]
+        [InlineData("https://www.instagram.com/p/DAEQq8lvpvD/")]
         public async Task Downloaded_Mp3_Clip_Should_Have_Size_Larger_Than_Zero(string inputUrl)
         {
             // Arrange

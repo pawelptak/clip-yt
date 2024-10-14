@@ -3,9 +3,11 @@
     const ytRegex = appData.getAttribute('data-yt-regex');
     const tiktokRegex = appData.getAttribute('data-tiktok-regex');
     const twitterRegex = appData.getAttribute('data-twitter-regex');
+    const instagramRegex = appData.getAttribute('data-instagram-regex');
     const clipytLogoUrl = appData.getAttribute('data-clipyt-logo');
     const cliptokLogoUrl = appData.getAttribute('data-cliptok-logo');
     const clipxLogoUrl = appData.getAttribute('data-clipx-logo');
+    const clipstagramLogoUrl = appData.getAttribute('data-clipstagram-logo');
 
     const clipytAccentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
     const clipytAccentColorDark = getComputedStyle(document.documentElement).getPropertyValue('--accent-color-dark').trim();
@@ -13,8 +15,9 @@
     const youtubePlatformSource = new MediaPlatformSource(ytRegex, clipytLogoUrl, true, true, clipytAccentColor, clipytAccentColorDark);
     const tiktokPlatformSource = new MediaPlatformSource(tiktokRegex, cliptokLogoUrl, false, false, "#6020f3", "#351287");
     const twitterPlatformSource = new MediaPlatformSource(twitterRegex, clipxLogoUrl, true, false, "#1DA1F2", "#2f62b5");
+    const instagramPlatformSource = new MediaPlatformSource(instagramRegex, clipstagramLogoUrl, false, false, "#1DA1F2", "#2f62b5");
 
-    const platforms = [youtubePlatformSource, tiktokPlatformSource, twitterPlatformSource];
+    const platforms = [youtubePlatformSource, tiktokPlatformSource, twitterPlatformSource, instagramPlatformSource];
 
     var playerContainer = $('#player-container');
     $("#urlInput").on('input', function () {
