@@ -15,7 +15,7 @@
     const youtubePlatformSource = new MediaPlatformSource(ytRegex, clipytLogoUrl, true, true, clipytAccentColor, clipytAccentColorDark);
     const tiktokPlatformSource = new MediaPlatformSource(tiktokRegex, cliptokLogoUrl, false, false, "#6020f3", "#351287");
     const twitterPlatformSource = new MediaPlatformSource(twitterRegex, clipxLogoUrl, true, false, "#1DA1F2", "#2f62b5");
-    const instagramPlatformSource = new MediaPlatformSource(instagramRegex, clipstagramLogoUrl, false, false, "#1DA1F2", "#2f62b5");
+    const instagramPlatformSource = new MediaPlatformSource(instagramRegex, clipstagramLogoUrl, false, false, "#a83299", "#8c2a7f");
 
     const platforms = [youtubePlatformSource, tiktokPlatformSource, twitterPlatformSource, instagramPlatformSource];
 
