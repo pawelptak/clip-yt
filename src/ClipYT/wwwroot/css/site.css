@@ -92,7 +92,7 @@ body {
 }
 
 .flex-style {
-    display: flex;
+    display: flex !important;
 }
 
 
