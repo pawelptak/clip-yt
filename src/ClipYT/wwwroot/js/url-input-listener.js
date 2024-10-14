@@ -25,48 +25,108 @@
 
         for (let platform of platforms) {
             if (inputUrl.match(platform.regex)) {
-                $(".twitter-tweet").remove();
+                handlePlatformEmbed(platform, inputUrl);
+                platform.setUiMode();
 
-                if (platform.regex == ytRegex) {
-                    $('#yt-player').show();
-                    playerContainer.css('display', '');
-                    updateVideoFrame(inputUrl);
-                } else {
-
-                }
-
-                if (platform.regex == twitterRegex) {
-                    $('#yt-player').hide();
-                    var twitterElement = createEmbeddedTwitterElement(transformTwitterUrlForEmbedding(inputUrl));
-                    playerContainer.append(twitterElement);
-                    playerContainer.css('display', 'contents');
-                    twttr.widgets.load();
-                }
-
-                if (platform.regex == instagramRegex) {
-                    $('#yt-player').hide();
-                    var instagramElement = createEmbeddedInstagramElement(inputUrl);
-                    playerContainer.append(instagramElement);
-
-                    if (window.instgrm) {
-                        window.instgrm.Embeds.process();
-                    }
-                }
-
-                platform.setUiMode()
                 break;
             }
             else {
-                $("#player-container").hide();
-                $("#video-details").hide();
+                resetUi();
 
-                // Clear all clip inputs
-                $("#videoStartInput").val(''); 
-                $("#videoEndInput").val(''); 
-                $("#videoLengthInput").val(''); 
             }
         }
     });
+
+    function handlePlatformEmbed(platform, inputUrl) {
+        $(".twitter-tweet").remove();
+        $(".instagram-media").remove();
+        setPlayerContainerStyle(isDefault = true)
+        $('#yt-player').hide();
+
+        switch (platform.regex) {
+            case ytRegex:
+                $('#yt-player').show();
+                playerContainer.css('display', '');
+                updateVideoFrame(inputUrl);
+                break;
+
+            case twitterRegex:
+                var twitterElement = createEmbeddedTwitterElement(transformTwitterUrlForEmbedding(inputUrl));
+                playerContainer.append(twitterElement);
+                setPlayerContainerStyle(isDefault = false);
+                twttr.widgets.load();
+                break;
+
+            case instagramRegex:
+                var instagramElement = createEmbeddedInstagramElement(inputUrl);
+                playerContainer.append(instagramElement);
+                setPlayerContainerStyle(isDefault = false);
+                if (window.instgrm) {
+                    window.instgrm.Embeds.process();
+                }
+                break;
+        }
+    }
+
+    function setPlayerContainerStyle(isDefault) {
+        var container = $('#player-container');
+        container.removeClass('default-style flex-style');
+        if (isDefault) {
+            container.addClass('default-style');
+        } else {
+            container.addClass('flex-style');
+        }
+    }
+
+    function resetUi() {
+        $("#player-container").hide();
+        $("#video-details").hide();
+
+        // Clear all clip inputs
+        $("#videoStartInput").val('');
+        $("#videoEndInput").val('');
+        $("#videoLengthInput").val('');
+    }
+    function transformTwitterUrlForEmbedding(url) {
+        // Extract the tweet ID
+        const tweetIdMatch = url.match(/status\/(\d+)/);
+
+        if (tweetIdMatch && tweetIdMatch[1]) {
+            const tweetId = tweetIdMatch[1];
+
+            return `https://twitter.com/i/status/${tweetId}`;
+        } else {
+            console.warn('Invalid Twitter URL. Could not extract tweet ID.');
+
+            return url;
+        }
+    }
+
+    function createEmbeddedTwitterElement(url) {
+        const blockquote = $('<blockquote>', {
+            class: 'twitter-tweet',
+            'data-media-max-width': '640',
+            align: 'center',
+            dnt: 'false'
+        });
+
+        const videoAnchor = $('<a>', {
+            href: url,
+        });
+
+        blockquote.append(videoAnchor);
+
+        return blockquote;
+    }
+
+    function createEmbeddedInstagramElement(url) {
+        const blockquote = $('<blockquote>', {
+            class: 'instagram-media',
+            'data-instgrm-permalink': url,
+        });
+
+        return blockquote;
+    }
 });
 
 class MediaPlatformSource {
@@ -102,45 +162,4 @@ class MediaPlatformSource {
             $("#clip-preview-button").hide();
         }
     }
-}
-
-function transformTwitterUrlForEmbedding(url) {
-    // Extract the tweet ID
-    const tweetIdMatch = url.match(/status\/(\d+)/);
-
-    if (tweetIdMatch && tweetIdMatch[1]) {
-        const tweetId = tweetIdMatch[1];
-
-        return `https://twitter.com/i/status/${tweetId}`;
-    } else {
-        console.warn('Invalid Twitter URL. Could not extract tweet ID.');
-
-        return url;
-    }
-}
-
-function createEmbeddedTwitterElement(url) {
-    const blockquote = $('<blockquote>', {
-        class: 'twitter-tweet',
-        'data-media-max-width': '640',
-        align: 'center',
-        dnt: 'false'
-    });
-
-    const videoAnchor = $('<a>', {
-        href: url,
-    });
-
-    blockquote.append(videoAnchor);
-
-    return blockquote;
-}
-
-function createEmbeddedInstagramElement(url) {
-    const blockquote = $('<blockquote>', {
-        class: 'instagram-media',
-        'data-instgrm-permalink': url,
-    });
-
-    return blockquote;
 }
