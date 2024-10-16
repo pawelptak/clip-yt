@@ -1,5 +1,5 @@
 <p align="center">
-  <img height="100" src="https://github.com/pawelptak/clip-yt/assets/52631916/5f6176d5-a57d-4095-bd4d-9f6405b457c3">
+  <img height="100" src="src/ClipYT/wwwroot/images/clipyt_logo_vectorized.svg">
 </p>
 
 # ClipYT
@@ -27,7 +27,7 @@ An ASP.NET Core MVC web application for creating clips from YouTube videos.
 - Select the start and end timestamp if you'd like to download a section of the whole video.
 - Press the "Start" button to start processing and download the file.
 
- <img height="500" src="https://github.com/user-attachments/assets/58f322d0-e635-4a62-ad96-0bc4d92a0cc0">
+ <img height="500" src="https://github.com/user-attachments/assets/a684d4e1-7a8b-43e5-bcbb-8cdc41863217">
 
 
 ## Credits
