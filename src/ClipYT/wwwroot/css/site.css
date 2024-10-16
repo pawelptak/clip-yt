@@ -12,11 +12,6 @@
     --accent-color-dark: #91143a; /*TODO: consider removing this attribute, as it has not much use*/
 }
 
-@font-face {
-    font-family: 'Nekst';
-    src: url('../fonts/Nekst.otf');
-}
-
 html {
     position: relative;
     min-height: 100%;
@@ -26,6 +21,7 @@ html {
 body {
     background: linear-gradient(var(--background-color-top-lightmode), var(--background-color-bottom-lightmode));
     background-color: var(--background-color-bottom-lightmode);
+    font-family: 'Figtree' !important;
 }
 
 #app-form {
