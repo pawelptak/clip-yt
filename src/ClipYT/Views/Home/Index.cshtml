@@ -21,7 +21,7 @@
                     <div class="input-wrapper">
                         <span class="label-text">Clip start</span>
                         <div class="d-flex gap-1">
-                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "time-input", data_val = "true", data_val_timestamp = "Timestamp exceeds the video length." }) }" />
+                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "time-input", inputmode="numeric", data_val = "true", data_val_timestamp = "Timestamp exceeds the video length." }) }" />
                             <button type="button" id="get-current-start-btn" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoStartInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                         </div>
                     </div>
@@ -32,7 +32,7 @@
                     <div class="input-wrapper">
                         <span class="label-text">Clip end</span>
                         <div class="d-flex gap-1">
-                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "time-input" }) }" />
+                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "time-input", inputmode="numeric" }) }" />
                             <button type="button" id="get-current-end-btn" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoEndInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                         </div>
                     </div>
@@ -43,7 +43,7 @@
                     <div class="input-wrapper">
                         <span class="label-text">Length (s)</span>
                         <div class="d-flex gap-1">
-                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput", placeholder = "10" }) }" />
+                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput", placeholder = "10", inputmode="numeric" }) }" />
                             <button type="button" id="clip-preview-button" title="Start clip preview" class="btn standard-btn" onclick="startClipPreview()"><i class="bi bi-play-btn"></i></button>
                         </div>
                     </div>

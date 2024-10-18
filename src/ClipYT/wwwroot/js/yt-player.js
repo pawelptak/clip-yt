@@ -27,6 +27,8 @@ function updateInputFromPlayer(inputElementId) {
 
     const input = $('#' + inputElementId);
     input.trigger('input'); // To make the clear button appear
+
+    input.valid(); // Manually trigger client-side validation
 }
 
 function updatePlayerFromInput(event) {
