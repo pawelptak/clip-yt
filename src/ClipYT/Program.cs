@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<IMediaFileProcessingService, MediaFileProcessingService>();
 builder.Services.AddSingleton<IRandomCaptionService, RandomCaptionService>();
+builder.Services.AddSignalR();
 var app = builder.Build();
 
 var basePath = builder.Configuration.GetValue<string>("Config:BasePath");
@@ -34,5 +35,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapHub<ProgressHub>("/progressHub");
 
 app.Run();
