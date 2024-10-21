@@ -1,5 +1,7 @@
 ﻿$(document).ready(function () {
-    var connection = new signalR.HubConnectionBuilder().withUrl("/progressHub").build();
+    const appData = document.getElementById('app-data');
+    const progressHubUrl = appData.getAttribute('data-progress-hub-url');
+    var connection = new signalR.HubConnectionBuilder().withUrl(progressHubUrl).build();
 
     connection.on("ReceiveProgress", function (progress) {
         $("#progressText").text(progress);
