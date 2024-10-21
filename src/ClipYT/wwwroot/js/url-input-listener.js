@@ -32,7 +32,6 @@
             }
             else {
                 resetUi();
-
             }
         }
     });
@@ -81,6 +80,7 @@
     function resetUi() {
         $("#player-container").hide();
         $("#video-details").hide();
+        toggleYtVideoValidationError(true);
 
         // Clear all clip inputs
         $("#videoStartInput").val('');

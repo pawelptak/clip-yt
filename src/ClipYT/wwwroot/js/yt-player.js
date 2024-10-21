@@ -11,7 +11,8 @@ function onYouTubeIframeAPIReady() {
                 playerReady = true;
                 iframeWindow = player.getIframe().contentWindow;
             },
-            'onStateChange': playVideoUntilEndTime
+            'onStateChange': playVideoUntilEndTime,
+            'onError': onPlayerError
         }
     });
 }
@@ -67,6 +68,7 @@ function convertToSeconds(timestamp) {
 async function updateVideoFrame(videoUrl) {
     await waitForPlayerToBeLoaded();
     var videoId = getIdFromYoutubeUrl(videoUrl);
+    toggleYtVideoValidationError(true);
     player.cueVideoById(videoId);
 }
 
@@ -141,4 +143,31 @@ function isTimestampPositionValid(timestamp) {
 
 function getCurrentVideoDuration() {
     return player.getDuration();
+}
+
+function onPlayerError(event) {
+    if (event.data === 101 || event.data === 150) {
+        const errorMessage = "This video cannot be downloaded, possibly due to age restrictions.";
+        console.log(errorMessage);
+        $("#yt-video-validation-message").html(`
+        <span class="field-validation-error" data-valmsg-replace="true">
+            <span id="yt-video-error">${errorMessage}</span>
+        </span>
+    `);
+    } else {
+        const errorMessage = "An error occurred: " + event.data;
+        console.log(errorMessage);
+    }
+
+    toggleYtVideoValidationError(false);
+}
+
+function toggleYtVideoValidationError(isValid) {
+    if (isValid) {
+        $("#submit-button").prop("disabled", false);
+        $("#yt-video-validation-message").hide();
+    } else {
+        $("#submit-button").prop("disabled", true);
+        $("#yt-video-validation-message").show();
+    }
 }
