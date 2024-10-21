@@ -17,6 +17,8 @@ if (!string.IsNullOrEmpty(basePath))
     app.UsePathBase(basePath);
 }
 
+app.MapHub<ProgressHub>("/progressHub");
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -35,7 +37,5 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-
-app.MapHub<ProgressHub>($"{basePath}/progressHub");
 
 app.Run();
