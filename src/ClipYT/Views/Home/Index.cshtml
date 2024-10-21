@@ -12,6 +12,9 @@
                 <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.Url, new { id = "urlInput", placeholder = "Paste YouTube video URL", inputmode="url" }) }" />
                 <button title="Generate clip" id="submit-button" class="play-button"><i class="bi bi-play-circle-fill"></i></button>
             </div>
+            <div id="progress-container" class="mt-2">
+                <span id="progressText"></span>
+            </div>
             <span id="url-validation-message" class="text-danger validation-message">@Html.ValidationMessageFor(m => m.Url)</span>
             <span id="yt-video-validation-message" class="text-danger validation-message"></span>
         </div>
@@ -111,4 +114,6 @@
     <script src="~/js/video-time-controls.js"></script>
     <script src="~/js/ajax-download.js"></script>
     <script src="~/js/clear-input-button.js"></script>
+    <script src="~/js/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/signalr/signalr-setup-hub.js"></script>
 }

@@ -340,6 +340,13 @@ input[type=text] {
     border-radius: 12px !important;
 }
 
+#progress-container {
+    justify-content: center;
+    color: var(--light-grey);
+    display: none;
+    font-size: small;
+}
+
 #yt-video-validation-message {
     display: none;
 }

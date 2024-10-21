@@ -1,6 +1,7 @@
 ﻿using ClipYT.Enums;
 using ClipYT.Interfaces;
 using ClipYT.Models;
+using Microsoft.AspNetCore.SignalR;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
@@ -11,12 +12,14 @@ namespace ClipYT.Services
         private readonly string _youtubeDlpPath;
         private readonly string _ffmpegPath;
         private readonly string _outputFolder;
+        private readonly IHubContext<ProgressHub> _hubContext;
 
-        public MediaFileProcessingService(IConfiguration configuration)
+        public MediaFileProcessingService(IConfiguration configuration, IHubContext<ProgressHub> hubContext)
         {
             _ffmpegPath = configuration["Config:FFmpegPath"];
             _youtubeDlpPath = configuration["Config:YoutubeDlpPath"];
             _outputFolder = configuration["Config:OutputFolder"];
+            _hubContext = hubContext;
         }
 
         public async Task<ProcessingResult> ProcessMediaFileAsync(MediaFileModel model)
@@ -30,11 +33,11 @@ namespace ClipYT.Services
             {
                 var isTikTokUrl = Regex.IsMatch(model.Url.ToString(), Constants.RegexConstants.TiktokUrlRegex);
                 var maxRetires = isTikTokUrl ? 3 : 1; // Downloading TikTok video using yt-dlp sometimes fails, so it is retried
-                filePath = DownloadMediaFile(model.Url.ToString(), model.Format, model.Quality, maxRetires);
+                filePath = await DownloadMediaFileAsync(model.Url.ToString(), model.Format, model.Quality, async (progress) => await SendProgressToHubAsync(progress), maxRetires);
 
                 if (!string.IsNullOrEmpty(model.StartTimestamp) && !string.IsNullOrEmpty(model.EndTimestamp))
                 {
-                    CutAndConvertFile(filePath, model.StartTimestamp, model.EndTimestamp);
+                    await CutAndConvertFileAsync(filePath, model.StartTimestamp, model.EndTimestamp, async (progress) => await SendProgressToHubAsync(progress));
                 }
 
                 var fileBytes = await File.ReadAllBytesAsync(filePath);
@@ -67,7 +70,12 @@ namespace ClipYT.Services
             return result;
         }
 
-        private void CutAndConvertFile(string filePath, string startTime, string endTime)
+        private async Task SendProgressToHubAsync(string progress)
+        {
+            await _hubContext.Clients.All.SendAsync("ReceiveProgress", progress);
+        }
+
+        private async Task CutAndConvertFileAsync(string filePath, string startTime, string endTime, Action<string> onProgress)
         {
             var argsList = new List<string>();
 
@@ -101,8 +109,28 @@ namespace ClipYT.Services
             {
                 process.StartInfo.FileName = _ffmpegPath;
                 process.StartInfo.Arguments = argsString;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+
+                // FFmpeg reports progress as error output
+                process.ErrorDataReceived += (sender, args) =>
+                {
+                    var output = args.Data;
+                    if (!string.IsNullOrEmpty(output))
+                    {
+                        var timePattern = @"time=(\d{2}:\d{2}:\d{2})"; // Regex to get the current video time
+                        var match = Regex.Match(output, timePattern);
+                        if (match.Success)
+                        {
+                            var time = match.Groups[1].Value;
+                            onProgress?.Invoke($"Processing your clip: {time} / {endTime}");
+                        }                     
+                    }
+                };
+
                 process.Start();
-                process.WaitForExit();
+                process.BeginErrorReadLine();
+                await process.WaitForExitAsync();
 
                 if (process.ExitCode != 0)
                 {
@@ -113,7 +141,7 @@ namespace ClipYT.Services
             File.Replace(outputArg, filePath, null);
         }
 
-        private string DownloadMediaFile(string inputUrl, Format outputFormat, Quality outputQuality, int maxRetries = 1)
+        private async Task<string> DownloadMediaFileAsync(string inputUrl, Format outputFormat, Quality outputQuality, Action<string> onProgress, int maxRetries = 1)
         {
             var argsList = new List<string>();
 
@@ -158,13 +186,34 @@ namespace ClipYT.Services
                 {
                     process.StartInfo.FileName = _youtubeDlpPath;
                     process.StartInfo.Arguments = argsString;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.StartInfo.RedirectStandardError = true;
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.CreateNoWindow = true;
+
+                    process.OutputDataReceived += (sender, args) =>
+                    {
+                        var output = args.Data;
+                        if (!string.IsNullOrEmpty(output))
+                        {
+                            if (output.StartsWith("[download]"))
+                            {
+                                var parts = output.Split(' ');
+                                var trimmed = string.Join(" ", parts.Skip(1)); // Skip the '[download]' prefix
+                                onProgress?.Invoke($"Downloading: {trimmed}");
+                            }
+                        }
+                    };
+
                     process.Start();
-                    process.WaitForExit();
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
+                    await process.WaitForExitAsync();
 
                     if (process.ExitCode == 0)
                     {
-                        filePath = Directory.GetFiles(_outputFolder).Single(file => Path.GetFileName(file).StartsWith(fileId.ToString()));
-
+                        filePath = Directory.GetFiles(_outputFolder)
+                            .Single(file => Path.GetFileName(file).StartsWith(fileId.ToString()));
                         return filePath;
                     }
 
@@ -173,7 +222,7 @@ namespace ClipYT.Services
                         throw new OperationCanceledException($"Yt-dlp process exited with code {process.ExitCode}");
                     }
 
-                    Thread.Sleep(1000); // Sleep for 1 second before retrying
+                    await Task.Delay(1000); // Sleep for 1 second before retrying
                 }
             }
 

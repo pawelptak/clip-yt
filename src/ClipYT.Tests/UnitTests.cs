@@ -1,6 +1,8 @@
 using ClipYT.Models;
 using ClipYT.Services;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
+using Moq;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 
@@ -31,7 +33,18 @@ namespace ClipYT.Tests
             .AddInMemoryCollection(inMemorySettings)
             .Build();
 
-            _mediaFileProcessingService = new MediaFileProcessingService(configuration);
+
+            var hubContextMock = new Mock<IHubContext<ProgressHub>>();
+
+            var clientsMock = new Mock<IHubClients>();
+            hubContextMock.Setup(h => h.Clients).Returns(clientsMock.Object);
+
+            var clientProxyMock = new Mock<IClientProxy>();
+            clientsMock.Setup(c => c.All).Returns(clientProxyMock.Object);
+            clientProxyMock.Setup(cp => cp.SendCoreAsync(It.IsAny<string>(), It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
+                           .Returns(Task.CompletedTask); // Thx https://stackoverflow.com/a/56269592
+
+            _mediaFileProcessingService = new MediaFileProcessingService(configuration, hubContextMock.Object);
             _outputFolder = outputFolder;
         }
 

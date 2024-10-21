@@ -12,6 +12,9 @@
         var $button = $('#submit-button');
         $button.addClass('rotating');
 
+        $("#progressText").text("Download is starting");
+        $("#progress-container").css('display', 'flex');
+
         $.ajax({
             url: downloadMethodUrl,
             type: 'POST',
@@ -41,6 +44,7 @@
                 document.body.removeChild(link);
 
                 $button.removeClass('rotating');
+                $("#progress-container").hide();
             },
             error: function (xhr, status, error) {
                 console.error('AJAX Request failed:', status, error);
@@ -48,6 +52,7 @@
                 $('#url-validation-message').text('An error occurred. Please try again.').show();
 
                 $button.removeClass('rotating');
+                $("#progress-container").hide();
             }
         });
     });
