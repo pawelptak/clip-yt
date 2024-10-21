@@ -71,6 +71,10 @@ body {
         border-radius: 100px;
     }
 
+.play-button:disabled {
+    filter: brightness(0.5);
+}
+
 #yt-player {
     border-radius: 12px;
 }
@@ -334,4 +338,8 @@ input[type=text] {
 .instagram-media {
     border: none !important;
     border-radius: 12px !important;
+}
+
+#yt-video-validation-message {
+    display: none;
 }
