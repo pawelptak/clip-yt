@@ -11,6 +11,8 @@
 
         var $button = $('#submit-button');
         $button.addClass('rotating');
+
+        $("#progressText").text("Download is starting");
         $("#progress-container").css('display', 'flex');
 
         $.ajax({

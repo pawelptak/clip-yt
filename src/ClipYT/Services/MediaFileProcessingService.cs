@@ -37,7 +37,7 @@ namespace ClipYT.Services
 
                 if (!string.IsNullOrEmpty(model.StartTimestamp) && !string.IsNullOrEmpty(model.EndTimestamp))
                 {
-                    CutAndConvertFile(filePath, model.StartTimestamp, model.EndTimestamp);
+                    await CutAndConvertFileAsync(filePath, model.StartTimestamp, model.EndTimestamp, async (progress) => await SendProgressToHubAsync(progress));
                 }
 
                 var fileBytes = await File.ReadAllBytesAsync(filePath);
@@ -75,7 +75,7 @@ namespace ClipYT.Services
             await _hubContext.Clients.All.SendAsync("ReceiveProgress", progress);
         }
 
-        private void CutAndConvertFile(string filePath, string startTime, string endTime)
+        private async Task CutAndConvertFileAsync(string filePath, string startTime, string endTime, Action<string> onProgress)
         {
             var argsList = new List<string>();
 
@@ -109,8 +109,28 @@ namespace ClipYT.Services
             {
                 process.StartInfo.FileName = _ffmpegPath;
                 process.StartInfo.Arguments = argsString;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+
+                // FFmpeg reports progress as error output
+                process.ErrorDataReceived += (sender, args) =>
+                {
+                    var output = args.Data;
+                    if (!string.IsNullOrEmpty(output))
+                    {
+                        var timePattern = @"time=(\d{2}:\d{2}:\d{2})"; // Regex to get the current video time
+                        var match = Regex.Match(output, timePattern);
+                        if (match.Success)
+                        {
+                            var time = match.Groups[1].Value;
+                            onProgress?.Invoke($"Processing your clip: {time} / {endTime}");
+                        }                     
+                    }
+                };
+
                 process.Start();
-                process.WaitForExit();
+                process.BeginErrorReadLine();
+                await process.WaitForExitAsync();
 
                 if (process.ExitCode != 0)
                 {
@@ -180,18 +200,10 @@ namespace ClipYT.Services
                             {
                                 var parts = output.Split(' ');
                                 var trimmed = string.Join(" ", parts.Skip(1)); // Skip the '[download]' prefix
-                                onProgress?.Invoke(trimmed);
+                                onProgress?.Invoke($"Downloading: {trimmed}");
                             }
                         }
                     };
-
-                    //process.ErrorDataReceived += (sender, args) =>
-                    //{
-                    //    if (!string.IsNullOrEmpty(args.Data))
-                    //    {
-                    //        onProgress?.Invoke(args.Data);
-                    //    }
-                    //};
 
                     process.Start();
                     process.BeginOutputReadLine();
