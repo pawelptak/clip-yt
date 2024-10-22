@@ -9,6 +9,7 @@
             return;
         }
 
+        connectToHub();
         var $button = $('#submit-button');
         $button.addClass('rotating');
 
