@@ -146,6 +146,7 @@ function getCurrentVideoDuration() {
 }
 
 function onPlayerError(event) {
+    console.log(`Error code ${event.data}`)
     if (event.data === 101 || event.data === 150) {
         const errorMessage = "This video cannot be downloaded, possibly due to age restrictions.";
         console.log(errorMessage);
