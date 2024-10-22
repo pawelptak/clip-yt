@@ -164,10 +164,10 @@ function onPlayerError(event) {
 
 function toggleYtVideoValidationError(isValid) {
     if (isValid) {
-        $("#submit-button").prop("disabled", false);
+        //$("#submit-button").prop("disabled", false);
         $("#yt-video-validation-message").hide();
     } else {
-        $("#submit-button").prop("disabled", true);
+        //$("#submit-button").prop("disabled", true);
         $("#yt-video-validation-message").show();
     }
 }
