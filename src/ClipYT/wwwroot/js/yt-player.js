@@ -138,6 +138,10 @@ function isTimestampPositionValid(timestamp) {
     const timeStampSeconds = convertToSeconds(timestamp);
     videoLength = getCurrentVideoDuration();
 
+    if (videoLength == 0) {
+        return true;
+    }
+
     return timeStampSeconds < videoLength;
 }
 
