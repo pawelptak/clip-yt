@@ -105,6 +105,8 @@ namespace ClipYT.Services
 
             var argsString = string.Join(" ", argsList);
 
+            var clipLength = GetTimeDifference(startTime, endTime);
+
             using (var process = new Process())
             {
                 process.StartInfo.FileName = _ffmpegPath;
@@ -123,7 +125,7 @@ namespace ClipYT.Services
                         if (match.Success)
                         {
                             var time = match.Groups[1].Value;
-                            onProgress?.Invoke($"Processing your clip: {time} / {endTime}");
+                            onProgress?.Invoke($"Processing your clip: {time} / {clipLength}");
                         }                     
                     }
                 };
@@ -139,6 +141,16 @@ namespace ClipYT.Services
             }
 
             File.Replace(outputArg, filePath, null);
+        }
+
+        private static string GetTimeDifference(string startTime, string endTime)
+        {
+            TimeSpan startTimeSpan = TimeSpan.Parse(startTime);
+            TimeSpan endTimeSpan = TimeSpan.Parse(endTime);
+
+            TimeSpan diff = startTimeSpan - endTimeSpan;
+
+            return diff.ToString(@"hh\:mm\:ss");
         }
 
         private async Task<string> DownloadMediaFileAsync(string inputUrl, Format outputFormat, Quality outputQuality, Action<string> onProgress, int maxRetries = 1)
