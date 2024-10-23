@@ -152,7 +152,7 @@ function getCurrentVideoDuration() {
 function onPlayerError(event) {
     console.log(`Error code ${event.data}`)
     if (event.data === 101 || event.data === 150) {
-        const errorMessage = "This video cannot be downloaded, possibly due to age restrictions.";
+        const errorMessage = "This video is probably age restricted. If so, you cannot download it.";
         console.log(errorMessage);
         $("#yt-video-validation-message").html(`
         <span class="field-validation-error" data-valmsg-replace="true">
