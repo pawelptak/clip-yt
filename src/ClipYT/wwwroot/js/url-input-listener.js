@@ -78,7 +78,7 @@
     }
 
     function resetUi() {
-        $("#player-container").hide();
+        $("#player-container").attr("style", "display: none !important");
         $("#video-details").hide();
         toggleYtVideoValidationError(true);
 

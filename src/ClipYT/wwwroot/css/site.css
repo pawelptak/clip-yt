@@ -284,6 +284,7 @@ input[type=text] {
 .twitter-tweet.twitter-tweet-rendered {
     overflow: hidden;
     border-radius: 12px;
+    margin: 0 !important;
 }
 
 [id^="twitter-widget"] {
