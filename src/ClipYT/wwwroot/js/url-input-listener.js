@@ -26,6 +26,7 @@
         for (let platform of platforms) {
             if (inputUrl.match(platform.regex)) {
                 handlePlatformEmbed(platform, inputUrl);
+                scrollToInputAfterVideoRendered();
                 platform.setUiMode();
 
                 break;
@@ -65,6 +66,26 @@
                 }
                 break;
         }
+    }
+
+    function waitForVideoToRender() {
+        return new Promise((resolve) => {
+            const interval = setInterval(() => {
+                const playerContainer = $('#player-container');
+                const element = playerContainer.get(0);
+                if (element && element.offsetHeight > 100) // 100 is an experimentally chosen number here 
+                {
+                    clearInterval(interval);
+                    resolve();
+                }
+            }, 100);
+        });
+    }
+
+    async function scrollToInputAfterVideoRendered() {
+        await waitForVideoToRender();
+        const urlInput = $('#urlInput');
+        urlInput[0].scrollIntoView({ behavior: 'smooth' });
     }
 
     function setPlayerContainerStyle(isDefault) {
