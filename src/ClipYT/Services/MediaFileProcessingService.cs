@@ -171,16 +171,27 @@ namespace ClipYT.Services
             }
             else
             {
-                if (outputQuality == Quality.Minimal)
+                if (Regex.IsMatch(inputUrl, Constants.RegexConstants.YoutubeUrlRegex))
                 {
-                    var qualityArg = "-S  vcodec:h264,res:360,ext:mp4:m4a --recode mp4"; // 360p
-                    argsList.Add(qualityArg);
+                    if (outputQuality == Quality.Minimal)
+                    {
+                        var qualityArg = "-S  vcodec:h264,res:360,ext:mp4:m4a"; // 360p
+                        argsList.Add(qualityArg);
+                    }
+                    else
+                    {
+
+                        var qualityArg = "-S vcodec:h264,res,ext:mp4:m4a";
+                        argsList.Add(qualityArg);
+                    }
                 }
                 else
                 {
-                    var qualityArg = "-S vcodec:h264,res,ext:mp4:m4a --recode mp4"; // this wont download 4k. 4k is only available in webm format
+                    var qualityArg = "-f bestvideo+bestaudio/best"; // For non-YouTube URLs, download the best available quality
                     argsList.Add(qualityArg);
                 }
+
+                argsList.Add("--recode mp4"); // 4k is only available in webm format
             }
 
             if (Regex.IsMatch(inputUrl, Constants.RegexConstants.TiktokUrlRegex))
