@@ -12,10 +12,10 @@
     const clipytAccentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
     const clipytAccentColorDark = getComputedStyle(document.documentElement).getPropertyValue('--accent-color-dark').trim();
 
-    const youtubePlatformSource = new MediaPlatformSource(ytRegex, clipytLogoUrl, true, true, clipytAccentColor, clipytAccentColorDark);
-    const tiktokPlatformSource = new MediaPlatformSource(tiktokRegex, cliptokLogoUrl, false, false, "#6020f3", "#351287");
-    const twitterPlatformSource = new MediaPlatformSource(twitterRegex, clipxLogoUrl, true, false, "#1DA1F2", "#2f62b5");
-    const instagramPlatformSource = new MediaPlatformSource(instagramRegex, clipstagramLogoUrl, true, false, "#a83299", "#8c2a7f");
+    const youtubePlatformSource = new MediaPlatformSource(ytRegex, clipytLogoUrl, true, true, true, clipytAccentColor, clipytAccentColorDark);
+    const tiktokPlatformSource = new MediaPlatformSource(tiktokRegex, cliptokLogoUrl, false, false, false, "#6020f3", "#351287");
+    const twitterPlatformSource = new MediaPlatformSource(twitterRegex, clipxLogoUrl, true, false, false, "#1DA1F2", "#2f62b5");
+    const instagramPlatformSource = new MediaPlatformSource(instagramRegex, clipstagramLogoUrl, true, false, false, "#a83299", "#8c2a7f");
 
     const platforms = [youtubePlatformSource, tiktokPlatformSource, twitterPlatformSource, instagramPlatformSource];
 
@@ -152,11 +152,12 @@
 });
 
 class MediaPlatformSource {
-    constructor(regex, logoUrl, showPlayer, showClipButtons, accentColorCode, accentColorDarkCode) {
+    constructor(regex, logoUrl, showPlayer, showClipButtons, enableQualitySelector, accentColorCode, accentColorDarkCode) {
         this.regex = regex;
         this.logoUrl = logoUrl;
         this.showPlayer = showPlayer;
         this.showClipButtons = showClipButtons;
+        this.showQualitySelector = enableQualitySelector;
         this.accentColorCode = accentColorCode;
         this.accentColorDarkCode = accentColorDarkCode;
     }
@@ -182,6 +183,14 @@ class MediaPlatformSource {
             $("#get-current-end-btn").hide();
             $("#get-current-start-btn").hide();
             $("#clip-preview-button").hide();
+        }
+
+        if (this.showQualitySelector) {
+            document.querySelectorAll("#quality-select-container .radio-option")
+                .forEach(el => el.classList.remove("disabled"));
+        } else {
+            document.querySelectorAll("#quality-select-container .radio-option")
+                .forEach(el => el.classList.add("disabled"));
         }
     }
 }
