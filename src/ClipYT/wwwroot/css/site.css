@@ -71,9 +71,9 @@ body {
         border-radius: 100px;
     }
 
-.play-button:disabled {
-    filter: brightness(0.5);
-}
+    .play-button:disabled {
+        filter: brightness(0.5);
+    }
 
 #yt-player {
     border-radius: 12px;
@@ -261,6 +261,15 @@ input[type=text] {
         transition: 0.25s cubic-bezier(0, 0, 0, 1);
     }
 
+.radio-option.disabled {
+    pointer-events: none;
+    filter: grayscale(80%) brightness(0.9);
+    opacity: 0.6;
+}
+
+    .radio-option.disabled .radio-span {
+        color: var(--font-color-dark);
+    }
 
 @media (prefers-color-scheme: dark) {
     body {
