@@ -41,8 +41,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     border: none;
     background-color: transparent;
 }
@@ -53,7 +53,7 @@ body {
 
     .play-button i {
         color: var(--accent-color);
-        font-size: 30pt;
+        font-size: 35pt;
         transition: filter 0.3s;
         line-height: 0;
     }
