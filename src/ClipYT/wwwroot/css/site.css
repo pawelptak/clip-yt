@@ -96,13 +96,12 @@ body {
 }
 
 
-.clear-input-container:has(.time-input) {
+.time-input {
     max-width: 130px;
 }
 
-
 .clear-input-container:has(#videoLengthInput) {
-    max-width: 85px;
+    max-width: 8ch;
 }
 
 .input-wrapper {
@@ -117,8 +116,9 @@ body {
 }
 
 input[type=text] {
-    border-radius: 20px;
-    padding: .3em;
+    border-radius: 50px;
+    padding-top: 0.4em;
+    padding-bottom: 0.4em;
     padding-left: 20px;
     padding-right: 20px;
     border: 2px outset var(--input-border);
@@ -243,7 +243,7 @@ input[type=text] {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: .3em 20px .3em 20px;
+    padding: .4em 20px .4em 20px;
     white-space: nowrap;
 }
 
@@ -301,10 +301,13 @@ input[type=text] {
     transform: scale(1.01);
 }
 
+.clear-input-container:has(>#urlInput) {
+   width: 100%;
+}
+
 .clear-input-container {
     position: relative;
     display: flex;
-    width: 100%;
     align-items: center;
 }
 
