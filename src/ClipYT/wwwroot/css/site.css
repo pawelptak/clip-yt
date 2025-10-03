@@ -9,7 +9,9 @@
     --light-grey: #8a8987;
     --lighter-grey: #efefef;
     --accent-color: #f2205f;
+    --accent-color-highlight: #a50189;
     --accent-color-dark: #91143a; /*TODO: consider removing this attribute, as it has not much use*/
+    --accent-gradient: linear-gradient(to top, var(--accent-color), var(--accent-color-highlight));
 }
 
 html {
@@ -52,10 +54,13 @@ body {
     }
 
     .play-button i {
-        color: var(--accent-color);
         font-size: 30pt;
-        transition: filter 0.3s;
         line-height: 0;
+        transition: filter 0.3s;
+        background: var(--accent-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
     }
 
         .play-button i:hover {
@@ -135,7 +140,7 @@ input[type=text] {
     }
 
 .standard-btn {
-    background-color: var(--accent-color);
+    background: var(--accent-gradient);
     border: none;
     border-radius: 100px;
     color: white;
@@ -252,7 +257,8 @@ input[type=text] {
 }
 
 .radio-input:checked + .radio-btn {
-    background-color: var(--main-color);
+    background: var(--accent-gradient);
+    color: var(--font-color-light);
     transition: 0.2s cubic-bezier(0, 0, 0, 1);
 }
 

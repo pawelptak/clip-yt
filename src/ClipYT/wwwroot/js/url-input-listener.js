@@ -11,11 +11,12 @@
 
     const clipytAccentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
     const clipytAccentColorDark = getComputedStyle(document.documentElement).getPropertyValue('--accent-color-dark').trim();
+    const clipytAccentColorHighlight = getComputedStyle(document.documentElement).getPropertyValue('--accent-color-highlight').trim();
 
-    const youtubePlatformSource = new MediaPlatformSource(ytRegex, clipytLogoUrl, true, true, true, clipytAccentColor, clipytAccentColorDark);
-    const tiktokPlatformSource = new MediaPlatformSource(tiktokRegex, cliptokLogoUrl, false, false, false, "#6020f3", "#351287");
-    const twitterPlatformSource = new MediaPlatformSource(twitterRegex, clipxLogoUrl, true, false, false, "#1DA1F2", "#2f62b5");
-    const instagramPlatformSource = new MediaPlatformSource(instagramRegex, clipstagramLogoUrl, true, false, false, "#a83299", "#8c2a7f");
+    const youtubePlatformSource = new MediaPlatformSource(ytRegex, clipytLogoUrl, true, true, true, clipytAccentColor, clipytAccentColorDark, clipytAccentColorHighlight);
+    const tiktokPlatformSource = new MediaPlatformSource(tiktokRegex, cliptokLogoUrl, false, false, false, "#6020f3", "#351287", "#871248");
+    const twitterPlatformSource = new MediaPlatformSource(twitterRegex, clipxLogoUrl, true, false, false, "#1DA1F2", "#2f62b5", "#01a55c");
+    const instagramPlatformSource = new MediaPlatformSource(instagramRegex, clipstagramLogoUrl, true, false, false, "#a83299", "#8c2a7f", "#017fa5");
 
     const platforms = [youtubePlatformSource, tiktokPlatformSource, twitterPlatformSource, instagramPlatformSource];
 
@@ -152,7 +153,7 @@
 });
 
 class MediaPlatformSource {
-    constructor(regex, logoUrl, showPlayer, showClipButtons, enableQualitySelector, accentColorCode, accentColorDarkCode) {
+    constructor(regex, logoUrl, showPlayer, showClipButtons, enableQualitySelector, accentColorCode, accentColorDarkCode, accentColorHighlight) {
         this.regex = regex;
         this.logoUrl = logoUrl;
         this.showPlayer = showPlayer;
@@ -160,12 +161,14 @@ class MediaPlatformSource {
         this.showQualitySelector = enableQualitySelector;
         this.accentColorCode = accentColorCode;
         this.accentColorDarkCode = accentColorDarkCode;
+        this.accentColorHighlight = accentColorHighlight;
     }
 
     setUiMode() {
         $("#video-details").show();
         document.documentElement.style.setProperty('--accent-color', this.accentColorCode);
         document.documentElement.style.setProperty('--accent-color-dark', this.accentColorDarkCode);
+        document.documentElement.style.setProperty('--accent-color-highlight', this.accentColorHighlight);
         $("#logo-img").attr('src', this.logoUrl);
 
         if (this.showPlayer) {
