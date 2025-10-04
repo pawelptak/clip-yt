@@ -152,6 +152,12 @@
     }
 
     $("input[name='Format']").on('change', function () {
+        var inputUrl = $("#urlInput").val();
+
+        if (!inputUrl || !inputUrl.match(ytRegex)) {
+            return;
+        }
+
         var selectedFormat = $("input[name='Format']:checked").val();
         if (selectedFormat === "MP3") {
             toggleQualitySelectorAvailability(false);
