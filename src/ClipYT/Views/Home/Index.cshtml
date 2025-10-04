@@ -58,7 +58,8 @@
             <div class="d-flex justify-content-between flex-wrap gap-3">
                 <div class="input-wrapper">
                     <span class="label-text">Format</span>
-                    <div class="radio-wrapper">
+                    <div class="radio-wrapper format-radio-wrapper">
+                        <div class="radio-highlight-bar"></div>
                         @foreach (var value in Enum.GetValues(typeof(ClipYT.Enums.Format)))
                         {
                             <div class="radio-option">
@@ -72,7 +73,8 @@
                 </div>
                 <div class="input-wrapper">
                     <span class="label-text">Quality</span>
-                    <div class="radio-wrapper" id="quality-select-container">
+                    <div class="radio-wrapper quality-radio-wrapper" id="quality-select-container">
+                        <div class="radio-highlight-bar"></div>
                         @foreach (var value in Enum.GetValues(typeof(ClipYT.Enums.Quality)))
                         {
                             <div class="radio-option">
@@ -111,6 +113,7 @@
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     <script async src="//www.instagram.com/embed.js"></script>
     <script src="~/js/helpers.js"></script>
+    <script src="~/js/radio-highlight-bar.js"></script>
     <script src="~/js/custom-validation.js"></script>
     <script src="~/js/url-input-listener.js"></script>
     <script src="~/js/video-time-controls.js"></script>
