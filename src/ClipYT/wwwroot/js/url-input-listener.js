@@ -150,6 +150,15 @@
 
         return blockquote;
     }
+
+    $("input[name='Format']").on('change', function () {
+        var selectedFormat = $("input[name='Format']:checked").val();
+        if (selectedFormat === "MP3") {
+            toggleQualitySelectorAvailability(false);
+        } else {
+            toggleQualitySelectorAvailability(true);
+        }
+    });
 });
 
 class MediaPlatformSource {
@@ -175,7 +184,6 @@ class MediaPlatformSource {
             $("#player-container").show();
         } else {
             $("#player-container").hide();
-
         }
 
         if (this.showClipButtons) {
@@ -188,12 +196,6 @@ class MediaPlatformSource {
             $("#clip-preview-button").hide();
         }
 
-        if (this.showQualitySelector) {
-            document.querySelectorAll("#quality-select-container .radio-option")
-                .forEach(el => el.classList.remove("disabled"));
-        } else {
-            document.querySelectorAll("#quality-select-container .radio-option")
-                .forEach(el => el.classList.add("disabled"));
-        }
+        toggleQualitySelectorAvailability(this.showQualitySelector);
     }
 }
