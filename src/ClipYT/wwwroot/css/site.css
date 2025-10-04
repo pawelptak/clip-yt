@@ -223,9 +223,11 @@ input[type=text] {
         margin-right: 0px;
     }
 
+@media (hover: hover) and (pointer: fine) {
     .radio-option:hover {
         filter: brightness(0.8);
     }
+}
 
 .option:hover .radio-span {
     color: var(--font-color-light);
