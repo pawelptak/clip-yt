@@ -29,8 +29,6 @@
                 handlePlatformEmbed(platform, inputUrl);
                 scrollToInputAfterVideoRendered();
                 platform.setUiMode();
-                setupRadioHighlight('.format-radio-wrapper');
-                setupRadioHighlight('.quality-radio-wrapper');
 
                 break;
             }
