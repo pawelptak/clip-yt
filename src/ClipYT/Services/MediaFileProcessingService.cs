@@ -126,7 +126,7 @@ namespace ClipYT.Services
                         {
                             var time = match.Groups[1].Value;
                             onProgress?.Invoke($"Processing your clip: {time} / {clipLength}");
-                        }                     
+                        }
                     }
                 };
 
@@ -171,7 +171,9 @@ namespace ClipYT.Services
             }
             else
             {
-                if (outputQuality == Quality.Minimal || !Regex.IsMatch(inputUrl, Constants.RegexConstants.YoutubeUrlRegex)) // for non-YT videos always download the lowest quality
+                if (outputQuality == Quality.Minimal ||
+                    Regex.IsMatch(inputUrl, Constants.RegexConstants.InstagramUrlRegex) ||
+                    Regex.IsMatch(inputUrl, Constants.RegexConstants.TiktokUrlRegex)) // For now TikTok and Instagram do not support higher quality
                 {
                     var qualityArg = "-S  vcodec:h264,res:360,ext:mp4:m4a"; // 360p
                     argsList.Add(qualityArg);
