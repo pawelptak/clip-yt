@@ -1,5 +1,5 @@
 <p align="center">
-  <img height="100" src="src/ClipYT/wwwroot/images/clipyt_logo_vectorized.svg">
+  <img height="100" src="src/ClipYT/wwwroot/images/clipyt_logo_gradient.svg">
 </p>
 
 # ClipYT
