@@ -9,12 +9,12 @@
     <form id="app-form" method="post">
         <div class="d-flex flex-column mb-3">
             <div class="d-flex gap-2">
-                <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.Url, new { id = "urlInput", placeholder = "Paste YouTube video URL", inputmode="url" }) }" />
+                <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.Url, new { id = "urlInput", placeholder = "Paste YouTube video URL", inputmode = "url" }) }" />
                 <button title="Generate clip" id="submit-button" class="play-button"><i class="bi bi-play-circle-fill"></i></button>
             </div>
             <div id="progress-container" class="mt-2">
                 <span id="progressText"></span>
-            </div> 
+            </div>
             <span id="url-validation-message" class="text-danger validation-message">@Html.ValidationMessageFor(m => m.Url)</span>
             <span id="yt-video-validation-message" class="text-danger validation-message"></span>
         </div>
@@ -25,7 +25,7 @@
                     <div class="input-wrapper">
                         <span class="label-text">Clip start</span>
                         <div class="d-flex gap-1">
-                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "time-input", inputmode="numeric", data_val = "true", data_val_timestamp = "Timestamp exceeds the video length." }) }" />
+                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "time-input", inputmode = "numeric", data_val = "true", data_val_timestamp = "Timestamp exceeds the video length." }) }" />
                             <button type="button" id="get-current-start-btn" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoStartInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                         </div>
                     </div>
@@ -36,7 +36,7 @@
                     <div class="input-wrapper">
                         <span class="label-text">Clip end</span>
                         <div class="d-flex gap-1">
-                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "time-input", inputmode="numeric" }) }" />
+                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "time-input", inputmode = "numeric" }) }" />
                             <button type="button" id="get-current-end-btn" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoEndInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                         </div>
                     </div>
@@ -47,7 +47,7 @@
                     <div class="input-wrapper">
                         <span class="label-text">Length (s)</span>
                         <div class="d-flex gap-1">
-                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput", placeholder = "10", inputmode="numeric" }) }" />
+                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput", placeholder = "10", inputmode = "numeric" }) }" />
                             <button type="button" id="clip-preview-button" title="Start clip preview" class="btn standard-btn" onclick="startClipPreview()"><i class="bi bi-play-btn"></i></button>
                         </div>
                     </div>
