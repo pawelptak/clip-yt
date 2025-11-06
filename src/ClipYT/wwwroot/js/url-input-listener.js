@@ -4,10 +4,12 @@
     const tiktokRegex = appData.getAttribute('data-tiktok-regex');
     const twitterRegex = appData.getAttribute('data-twitter-regex');
     const instagramRegex = appData.getAttribute('data-instagram-regex');
+    const facebookRegex = appData.getAttribute('data-facebook-regex');
     const clipytLogoUrl = appData.getAttribute('data-clipyt-logo');
     const cliptokLogoUrl = appData.getAttribute('data-cliptok-logo');
     const clipxLogoUrl = appData.getAttribute('data-clipx-logo');
     const clipstagramLogoUrl = appData.getAttribute('data-clipstagram-logo');
+    const clipfbLogoUrl = appData.getAttribute('data-clipfb-logo');
 
     const clipytAccentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
     const clipytAccentColorDark = getComputedStyle(document.documentElement).getPropertyValue('--accent-color-dark').trim();
@@ -17,8 +19,9 @@
     const tiktokPlatformSource = new MediaPlatformSource(tiktokRegex, cliptokLogoUrl, false, false, false, "#6020f3", "#351287", "#871248");
     const twitterPlatformSource = new MediaPlatformSource(twitterRegex, clipxLogoUrl, true, false, true, "#1DA1F2", "#2f62b5", "#01a55c");
     const instagramPlatformSource = new MediaPlatformSource(instagramRegex, clipstagramLogoUrl, true, false, false, "#a83299", "#8c2a7f", "#017fa5");
+    const facebookPlatformSource = new MediaPlatformSource(facebookRegex, clipfbLogoUrl, false, false, false, "#ff3796", "#b80060", "#00c784");
 
-    const platforms = [youtubePlatformSource, tiktokPlatformSource, twitterPlatformSource, instagramPlatformSource];
+    const platforms = [youtubePlatformSource, tiktokPlatformSource, twitterPlatformSource, instagramPlatformSource, facebookPlatformSource];
 
     var playerContainer = $('#player-container');
     $("#urlInput").on('input', function () {
@@ -41,7 +44,8 @@
     function handlePlatformEmbed(platform, inputUrl) {
         $(".twitter-tweet").remove();
         $(".instagram-media").remove();
-        setPlayerContainerStyle(isDefault = true)
+        $(".fb-reel-container").remove();
+        setPlayerContainerStyle(isDefault = true);
         $('#yt-player').hide();
 
         switch (platform.regex) {
@@ -65,6 +69,13 @@
                 if (window.instgrm) {
                     window.instgrm.Embeds.process();
                 }
+                break;
+
+            case facebookRegex:
+                // TODO: does not work for URLs like https://www.facebook.com/share/r/17J3iJfAkM/?mibextid=wwXIfr
+                //var fbElement = createEmbeddedFacebookReelElement(inputUrl);
+                //playerContainer.append(fbElement);
+                setPlayerContainerStyle(isDefault = false);
                 break;
         }
     }
@@ -149,6 +160,43 @@
         });
 
         return blockquote;
+    }
+
+    // TODO: needs to be fixed of URLs like https://www.facebook.com/share/r/17J3iJfAkM/?mibextid=wwXIfr
+    function createEmbeddedFacebookReelElement(url) {
+        const container = $('<div>', {
+            class: 'fb-reel-container',
+            css: {
+                position: 'relative',
+                width: '100%',
+                'max-width': '320px',
+                'aspect-ratio': '9 / 16',
+                'border-radius': '12px',
+                overflow: 'hidden',
+                margin: '0 auto'
+            }
+        });
+
+        const iframe = $('<iframe>', {
+            class: 'fb-reel-embed',
+            src: `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false&width=420`,
+            allowfullscreen: 'true',
+            scrolling: 'no',
+            frameborder: 0,
+            css: {
+                position: 'absolute',
+                inset: 0,
+                width: '100%',
+                height: '100%',
+                border: 'none',
+                'border-radius': '12px'
+            }
+        });
+
+        container.append(iframe);
+        $('#player-container').append(container);
+
+        return container;
     }
 
     $("input[name='Format']").on('change', function () {
