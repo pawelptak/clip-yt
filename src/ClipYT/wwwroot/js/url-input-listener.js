@@ -19,7 +19,7 @@
     const tiktokPlatformSource = new MediaPlatformSource(tiktokRegex, cliptokLogoUrl, false, false, false, "#6020f3", "#351287", "#871248");
     const twitterPlatformSource = new MediaPlatformSource(twitterRegex, clipxLogoUrl, true, false, true, "#1DA1F2", "#2f62b5", "#01a55c");
     const instagramPlatformSource = new MediaPlatformSource(instagramRegex, clipstagramLogoUrl, true, false, false, "#a83299", "#8c2a7f", "#017fa5");
-    const facebookPlatformSource = new MediaPlatformSource(facebookRegex, clipfbLogoUrl, true, false, false, "#ff3796", "#b80060", "#00c784");
+    const facebookPlatformSource = new MediaPlatformSource(facebookRegex, clipfbLogoUrl, false, false, false, "#ff3796", "#b80060", "#00c784");
 
     const platforms = [youtubePlatformSource, tiktokPlatformSource, twitterPlatformSource, instagramPlatformSource, facebookPlatformSource];
 
@@ -72,8 +72,9 @@
                 break;
 
             case facebookRegex:
-                var fbElement = createEmbeddedFacebookReelElement(inputUrl);
-                playerContainer.append(fbElement);
+                // TODO: does not work for URLs like https://www.facebook.com/share/r/17J3iJfAkM/?mibextid=wwXIfr
+                //var fbElement = createEmbeddedFacebookReelElement(inputUrl);
+                //playerContainer.append(fbElement);
                 setPlayerContainerStyle(isDefault = false);
                 break;
         }
@@ -159,6 +160,8 @@
 
         return blockquote;
     }
+
+    // TODO: needs to be fixed of URLs like https://www.facebook.com/share/r/17J3iJfAkM/?mibextid=wwXIfr
     function createEmbeddedFacebookReelElement(url) {
         const container = $('<div>', {
             class: 'fb-reel-container',
