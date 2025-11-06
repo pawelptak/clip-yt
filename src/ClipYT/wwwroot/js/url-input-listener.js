@@ -149,6 +149,7 @@
         });
 
         blockquote.append(videoAnchor);
+
         return blockquote;
     }
 
