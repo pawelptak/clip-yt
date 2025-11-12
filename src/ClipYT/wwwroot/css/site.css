@@ -70,21 +70,6 @@ body {
         color: transparent;
     }
 
-        .play-button i:hover {
-            /* TODO: all these needs tweaking */
-            text-shadow: var(--shadow-glow-sm);
-        }
-
-    .play-button:active i {
-        text-shadow: var(--shadow-glow-md);
-    }
-
-    .play-button:focus i {
-        filter: brightness(1.2);
-        text-shadow: var(--shadow-glow-sm);
-        outline: none;
-    }
-
     .play-button:disabled {
         filter: brightness(0.5);
     }
@@ -92,6 +77,7 @@ body {
     .play-button:hover,
     .play-button:focus {
         box-shadow: var(--shadow-glow-md);
+        filter: brightness(1.2);
     }
 
     .play-button:active {
@@ -234,15 +220,8 @@ input[type=text] {
 }
 
 .radio-option {
-    margin-right: 2px;
     position: relative;
-    border-radius: 20px;
-    transition: 0.25s cubic-bezier(0, 0, 0, 1);
 }
-
-    .radio-option:last-child {
-        margin-right: 0px;
-    }
 
 .radio-input {
     width: 100%;
@@ -252,6 +231,7 @@ input[type=text] {
     top: 0;
     appearance: none;
     cursor: pointer;
+    z-index: 2; /* ensure clicks go to the input */
 }
 
 .radio-btn {
@@ -273,34 +253,21 @@ input[type=text] {
 .radio-input:checked + .radio-btn {
     background: var(--accent-gradient);
     color: var(--font-color-light);
-    transition: 0.2s cubic-bezier(0, 0, 0, 1);
 }
 
     .radio-input:checked + .radio-btn .radio-span {
         color: var(--font-color-light);
-        transition: 0.25s cubic-bezier(0, 0, 0, 1);
     }
-
-
-.radio-input:focus + .radio-btn,
-.radio-input:focus-visible + .radio-btn,
-.radio-option:focus-within .radio-btn {
-    box-shadow: var(--shadow-glow-md);
-    filter: brightness(1.1);
-}
-
-.radio-input:checked:focus + .radio-btn,
-.radio-input:checked:focus-visible + .radio-btn {
-    box-shadow: var(--shadow-glow-lg);
-}
 
 @media (hover: hover) and (pointer: fine) {
     .radio-option:hover {
-        filter: brightness(1.25);
+        filter: brightness(1.15);
+        transition: box-shadow .25s, filter .25s;
     }
 
         .radio-option:hover:has(input:checked) {
             box-shadow: var(--shadow-glow-sm);
+            border-radius: 20px;
         }
 }
 
@@ -331,11 +298,6 @@ input[type=text] {
     .radio-wrapper {
         --bg-color: var(--dark-grey);
         border: 2px inset var(--input-border-darkmode);
-    }
-
-    .standard-btn:hover,
-    .standard-btn:focus {
-        box-shadow: var(--shadow-glow-lg);
     }
 
     .standard-btn:active {
@@ -389,7 +351,7 @@ input[type=text] {
     }
 
         .clear-input-button i:hover {
-            filter: brightness(1.25);
+            filter: brightness(1.2);
         }
 
 .clear-input--touched + .clear-input-button,
