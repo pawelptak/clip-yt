@@ -63,7 +63,6 @@ body {
     .play-button i {
         font-size: 30pt;
         line-height: 0;
-        transition: filter 0.3s, text-shadow 0.3s;
         background: var(--accent-gradient);
         -webkit-background-clip: text;
         background-clip: text;
