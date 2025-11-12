@@ -12,6 +12,11 @@
     --accent-color-highlight: #a50189;
     --accent-color-dark: #91143a; /*TODO: consider removing this attribute, as it has not much use*/
     --accent-gradient: linear-gradient(to top, var(--accent-color), var(--accent-color-highlight));
+
+    --shadow-glow-sm: 0 0 4px var(--accent-color), 0 0 8px var(--accent-color-highlight);
+    --shadow-glow-md: 0 0 6px var(--accent-color), 0 0 14px var(--accent-color-highlight);
+    --shadow-glow-lg: 0 0 8px var(--accent-color), 0 0 18px var(--accent-color-highlight);
+    --shadow-glow-xl: 0 0 8px var(--accent-color), 0 0 18px var(--accent-color-highlight), 0 0 26px var(--accent-color-highlight);
 }
 
 html {
@@ -47,6 +52,7 @@ body {
     height: 38px;
     border: none;
     background-color: transparent;
+    border-radius: 100px;
 }
 
     .play-button:focus {
@@ -56,7 +62,7 @@ body {
     .play-button i {
         font-size: 30pt;
         line-height: 0;
-        transition: filter 0.3s;
+        transition: filter 0.3s, text-shadow 0.3s;
         background: var(--accent-gradient);
         -webkit-background-clip: text;
         background-clip: text;
@@ -64,16 +70,18 @@ body {
     }
 
         .play-button i:hover {
-            filter: brightness(0.8);
+            /* TODO: all these needs tweaking */
+            text-shadow: var(--shadow-glow-sm);
         }
 
     .play-button:active i {
-        filter: brightness(0.5);
+        text-shadow: var(--shadow-glow-sm);
     }
 
     .play-button:focus i {
-        outline: 2px solid var(--accent-color-dark);
-        border-radius: 100px;
+        filter: brightness(1.2);
+        text-shadow: var(--shadow-glow-sm);
+        outline: none;
     }
 
     .play-button:disabled {
@@ -100,11 +108,9 @@ body {
     display: flex !important;
 }
 
-
 .clear-input-container:has(.time-input) {
     max-width: 130px;
 }
-
 
 .clear-input-container:has(#videoLengthInput) {
     max-width: 85px;
@@ -128,11 +134,13 @@ input[type=text] {
     padding-right: 20px;
     border: 2px outset var(--input-border);
     background-color: var(--lighter-grey);
+    transition: box-shadow .25s, filter .25s;
 }
 
     input[type=text]:focus {
         outline: none !important;
         border: 2px solid var(--accent-color);
+        box-shadow: var(--shadow-glow-md);
     }
 
     input[type=text]::placeholder {
@@ -149,19 +157,21 @@ input[type=text] {
 }
 
     .standard-btn:hover {
-        filter: brightness(0.8);
+        filter: brightness(1.15);
         color: white;
+        box-shadow: var(--shadow-glow-md);
     }
 
     .standard-btn:active {
-        box-shadow: none;
-        outline: 2px solid var(--accent-color-dark);
         outline: none;
-        filter: brightness(0.5);
+        filter: brightness(1.25);
+        box-shadow: var(--shadow-glow-xl);
     }
 
     .standard-btn:focus {
-        box-shadow: none;
+        filter: brightness(1.15);
+        outline: none;
+        box-shadow: var(--shadow-glow-md);
     }
 
 .field-validation-error {
@@ -171,6 +181,7 @@ input[type=text] {
 
 .form-check-input {
     background-color: var(--dark-grey);
+    transition: box-shadow .25s, filter .25s;
 }
 
     .form-check-input:checked {
@@ -179,8 +190,8 @@ input[type=text] {
     }
 
     .form-check-input:focus {
-        box-shadow: none;
-        outline: 2px solid var(--accent-color-dark);
+        box-shadow: var(--shadow-glow-sm);
+        outline: none;
     }
 
 @keyframes rotate {
@@ -225,8 +236,12 @@ input[type=text] {
 
 @media (hover: hover) and (pointer: fine) {
     .radio-option:hover {
-        filter: brightness(0.8);
+        filter: brightness(1.25);
     }
+
+        .radio-option:hover:has(input:checked) {
+            box-shadow: var(--shadow-glow-sm);
+        }
 }
 
 .option:hover .radio-span {
@@ -252,6 +267,7 @@ input[type=text] {
     align-items: center;
     padding: .3em 20px .3em 20px;
     white-space: nowrap;
+    transition: box-shadow .25s, filter .25s;
 }
 
 .radio-span {
@@ -292,9 +308,23 @@ input[type=text] {
         color: white;
     }
 
+        input[type=text]:focus {
+            border: 2px solid var(--accent-color);
+            box-shadow: var(--shadow-glow-md);
+        }
+
     .radio-wrapper {
         --bg-color: var(--dark-grey);
         border: 2px inset var(--input-border-darkmode);
+    }
+
+    .standard-btn:hover,
+    .standard-btn:focus {
+        box-shadow: var(--shadow-glow-lg);
+    }
+
+    .standard-btn:active {
+        box-shadow: var(--shadow-glow-xl);
     }
 }
 
@@ -344,7 +374,7 @@ input[type=text] {
     }
 
         .clear-input-button i:hover {
-            filter: brightness(0.8);
+            filter: brightness(1.25);
         }
 
 .clear-input--touched + .clear-input-button,
