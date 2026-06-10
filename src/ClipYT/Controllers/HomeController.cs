@@ -83,6 +83,11 @@ namespace ClipYT.Controllers
                 return BadRequest();
             }
 
+            if (mediaUrl.Scheme != Uri.UriSchemeHttp && mediaUrl.Scheme != Uri.UriSchemeHttps)
+            {
+                return BadRequest();
+            }
+
             var previewResult = await _mediaFileProcessingService.GetPreviewMediaAsync(mediaUrl);
             if (!previewResult.IsSuccessful || string.IsNullOrWhiteSpace(previewResult.StreamUrl))
             {
