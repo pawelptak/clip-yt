@@ -227,9 +227,11 @@ function onPlayerError() {
 function setPlayerErrorMessage(errorMessage) {
     $("#yt-video-validation-message").html(`
         <span class="field-validation-error" data-valmsg-replace="true">
-            <span id="yt-video-error">${errorMessage}</span>
+            <span id="yt-video-error"></span>
         </span>
     `);
+
+    $("#yt-video-error").text(errorMessage);
 }
 
 function toggleYtVideoValidationError(isValid) {
