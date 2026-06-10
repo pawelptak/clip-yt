@@ -340,10 +340,6 @@ namespace ClipYT.Services
             }
 
             var streamUrl = outputLines.LastOrDefault(line => Uri.TryCreate(line, UriKind.Absolute, out _));
-            if (string.IsNullOrWhiteSpace(streamUrl))
-            {
-                throw new InvalidOperationException("Yt-dlp did not return a preview stream URL.");
-            }
 
             return streamUrl;
         }
