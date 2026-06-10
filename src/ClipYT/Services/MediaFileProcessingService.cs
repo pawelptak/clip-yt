@@ -2,7 +2,6 @@
 using ClipYT.Interfaces;
 using ClipYT.Models;
 using Microsoft.AspNetCore.SignalR;
-using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 
@@ -11,12 +10,10 @@ namespace ClipYT.Services
     public class MediaFileProcessingService : IMediaFileProcessingService
     {
         private const string PreviewFormatSelector = "b[height<=360][ext=mp4]/b[height<=360]/b[ext=mp4]/b";
-        private static readonly TimeSpan PreviewCacheLifetime = TimeSpan.FromMinutes(2);
         private readonly string _youtubeDlpPath;
         private readonly string _ffmpegPath;
         private readonly string _outputFolder;
         private readonly IHubContext<ProgressHub> _hubContext;
-        private readonly ConcurrentDictionary<string, CachedPreviewMediaResult> _previewCache = new();
 
         public MediaFileProcessingService(IConfiguration configuration, IHubContext<ProgressHub> hubContext)
         {
@@ -76,15 +73,6 @@ namespace ClipYT.Services
 
         public async Task<PreviewMediaResult> GetPreviewMediaAsync(Uri url)
         {
-            var cacheKey = url.ToString();
-            CleanupExpiredPreviewCacheEntries();
-
-            if (_previewCache.TryGetValue(cacheKey, out var cachedPreview)
-                && cachedPreview.ExpiresAtUtc > DateTime.UtcNow)
-            {
-                return ClonePreviewMediaResult(cachedPreview.Result);
-            }
-
             var result = new PreviewMediaResult();
 
             try
@@ -98,15 +86,6 @@ namespace ClipYT.Services
                 {
                     result.ErrorMessage = "Unable to resolve preview stream.";
                 }
-
-                if (result.IsSuccessful)
-                {
-                    _previewCache[cacheKey] = new CachedPreviewMediaResult
-                    {
-                        ExpiresAtUtc = DateTime.UtcNow.Add(PreviewCacheLifetime),
-                        Result = ClonePreviewMediaResult(result)
-                    };
-                }
             }
             catch (Exception ex)
             {
@@ -116,28 +95,6 @@ namespace ClipYT.Services
             }
 
             return result;
-        }
-
-        private void CleanupExpiredPreviewCacheEntries()
-        {
-            foreach (var previewCacheEntry in _previewCache)
-            {
-                if (previewCacheEntry.Value.ExpiresAtUtc <= DateTime.UtcNow)
-                {
-                    _previewCache.TryRemove(previewCacheEntry.Key, out _);
-                }
-            }
-        }
-
-        private static PreviewMediaResult ClonePreviewMediaResult(PreviewMediaResult previewMediaResult)
-        {
-            return new PreviewMediaResult
-            {
-                IsSuccessful = previewMediaResult.IsSuccessful,
-                StreamUrl = previewMediaResult.StreamUrl,
-                ContentType = previewMediaResult.ContentType,
-                ErrorMessage = previewMediaResult.ErrorMessage
-            };
         }
 
         private async Task SendProgressToHubAsync(string progress)
@@ -436,13 +393,6 @@ namespace ClipYT.Services
             }
 
             return input.Substring(firstUnderscoreIndex + 1);
-        }
-
-        private sealed class CachedPreviewMediaResult
-        {
-            public required DateTime ExpiresAtUtc { get; init; }
-
-            public required PreviewMediaResult Result { get; init; }
         }
     }
 }
