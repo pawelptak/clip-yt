@@ -123,6 +123,13 @@ namespace ClipYT.Controllers
             return View();
         }
 
+        
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
         private void CopyResponseHeader(object? value, string headerName)
         {
             if (value == null)
@@ -137,12 +144,6 @@ namespace ClipYT.Controllers
             }
 
             Response.Headers[headerName] = headerValue;
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
