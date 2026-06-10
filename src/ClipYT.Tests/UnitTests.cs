@@ -111,7 +111,7 @@ namespace ClipYT.Tests
             var mediaFileModel = new MediaFileModel { Url = new Uri(invalidUrl) };
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<OperationCanceledException>(
+            var exception = await Assert.ThrowsAsync<InvalidOperationException>(
                 () => _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel)
             );
 
@@ -170,7 +170,7 @@ namespace ClipYT.Tests
 
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<OperationCanceledException>(
+            var exception = await Assert.ThrowsAsync<ArgumentException>(
                 () => _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel)
             );
         }
@@ -210,7 +210,7 @@ namespace ClipYT.Tests
             {
                 await _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel);
             }
-            catch (OperationCanceledException)
+            catch (ArgumentException)
             {
                 // Assert
                 var outputFilesExist = Directory.GetFiles(_outputFolder).Any(file => !file.EndsWith(".gitkeep"));

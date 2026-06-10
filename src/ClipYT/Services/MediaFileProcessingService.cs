@@ -166,7 +166,7 @@ namespace ClipYT.Services
 
                 if (process.ExitCode != 0)
                 {
-                    throw new OperationCanceledException($"FFmpeg process exited with code {process.ExitCode}");
+                    throw new InvalidOperationException($"FFmpeg process exited with code {process.ExitCode}");
                 }
             }
 
@@ -277,7 +277,7 @@ namespace ClipYT.Services
 
                     if (attempt == maxRetries)
                     {
-                        throw new OperationCanceledException($"Yt-dlp process exited with code {process.ExitCode}");
+                        throw new InvalidOperationException($"Yt-dlp process exited with code {process.ExitCode}");
                     }
 
                     await Task.Delay(1000); // Sleep for 1 second before retrying
@@ -335,7 +335,7 @@ namespace ClipYT.Services
                 if (process.ExitCode != 0)
                 {
                     var errorMessage = errorLines.LastOrDefault() ?? $"Yt-dlp preview resolution exited with code {process.ExitCode}";
-                    throw new OperationCanceledException(errorMessage);
+                    throw new InvalidOperationException(errorMessage);
                 }
             }
 
