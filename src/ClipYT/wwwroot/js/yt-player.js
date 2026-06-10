@@ -1,43 +1,49 @@
-﻿var player;
+var player;
 var playerReady = false;
-var iframeWindow;
+var pauseAtEndTime = false;
 
-function onYouTubeIframeAPIReady() {
-    player = new YT.Player('yt-player', {
-        height: '100%',
-        width: '100%',
-        events: {
-            'onReady': () => {
-                playerReady = true;
-                iframeWindow = player.getIframe().contentWindow;
-            },
-            'onStateChange': playVideoUntilEndTime,
-            'onError': onPlayerError
-        }
+document.addEventListener("DOMContentLoaded", initializePlayer);
+
+function initializePlayer() {
+    player = document.getElementById("yt-player");
+    if (!player) {
+        return;
+    }
+
+    playerReady = true;
+    player.addEventListener("timeupdate", playVideoUntilEndTime);
+    player.addEventListener("error", onPlayerError);
+    player.addEventListener("loadedmetadata", function () {
+        toggleYtVideoValidationError(true);
     });
 }
 
 function updateInputFromPlayer(inputElementId) {
-    var currentTime = player.getCurrentTime();
+    if (!playerReady) {
+        return;
+    }
+
+    var currentTime = player.currentTime;
     const element = document.getElementById(inputElementId);
     element.value = convertToTimestampFormat(currentTime);
 
-
-    const e = new Event("change");
-    element.dispatchEvent(e); // Manually trigger the 'change' event
+    const changedEvent = new Event("change");
+    element.dispatchEvent(changedEvent);
 
     const input = $('#' + inputElementId);
-    input.trigger('input'); // To make the clear button appear
-
-    input.valid(); // Manually trigger client-side validation
+    input.trigger('input');
+    input.valid();
 }
 
 function updatePlayerFromInput(event) {
+    if (!playerReady) {
+        return;
+    }
+
     const element = $(event.target);
-    var test = element.val();
     const elementTimeSeconds = convertToSeconds(element.val());
     if (!isNaN(elementTimeSeconds)) {
-        player.seekTo(elementTimeSeconds);
+        player.currentTime = elementTimeSeconds;
     }
 }
 
@@ -67,59 +73,94 @@ function convertToSeconds(timestamp) {
 
 async function updateVideoFrame(videoUrl) {
     await waitForPlayerToBeLoaded();
-    var videoId = getIdFromYoutubeUrl(videoUrl);
     toggleYtVideoValidationError(true);
-    player.cueVideoById(videoId);
+
+    try {
+        const previewInfo = await getPreviewInfo(videoUrl);
+        loadPlayerSource(previewInfo.streamUrl, previewInfo.contentType);
+    } catch (error) {
+        clearVideoFrame();
+        console.log(error);
+        setPlayerErrorMessage(error.message || "Unable to load video preview.");
+        toggleYtVideoValidationError(false);
+    }
+}
+
+function clearVideoFrame() {
+    if (!playerReady) {
+        return;
+    }
+
+    pauseAtEndTime = false;
+    player.pause();
+    player.removeAttribute("src");
+    player.load();
 }
 
 function waitForPlayerToBeLoaded() {
-    return new Promise(resolve => {
-        const interval = setInterval(() => {
+    return new Promise(function (resolve) {
+        const interval = setInterval(function () {
             if (playerReady === true) {
                 clearInterval(interval);
                 resolve();
-            } else {
-                console.log("Player not ready");
             }
         }, 100);
     });
 }
 
-function getIdFromYoutubeUrl(url) {
-    var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-    var match = url.match(regExp);
+async function getPreviewInfo(videoUrl) {
+    const appData = document.getElementById("app-data");
+    const previewInfoUrl = appData.getAttribute("data-preview-info-url");
+    const response = await fetch(`${previewInfoUrl}?url=${encodeURIComponent(videoUrl)}`);
 
-    return (match && match[7].length == 11) ? match[7] : false;
+    const payload = await response.json();
+    if (!response.ok || !payload.isSuccessful || !payload.streamUrl) {
+        throw new Error(payload.errorMessage || "Unable to resolve preview stream.");
+    }
+
+    return payload;
 }
 
+function loadPlayerSource(streamUrl, contentType) {
+    pauseAtEndTime = false;
+    player.pause();
+    player.src = streamUrl;
+    if (contentType) {
+        player.type = contentType;
+    }
 
-var pauseAtEndTime = false;
+    player.load();
+}
+
 function startClipPreview() {
+    if (!playerReady) {
+        return;
+    }
+
     const videoStartTime = $("#videoStartInput").val();
     const videoLength = $("#videoLengthInput").val();
     if (!videoStartTime || videoLength <= 0) {
         return;
     }
-    const startTimeSeconds = convertToSeconds(videoStartTime)
-    player.seekTo(startTimeSeconds);
-    player.playVideo();
+
+    const startTimeSeconds = convertToSeconds(videoStartTime);
+    player.currentTime = startTimeSeconds;
     pauseAtEndTime = true;
+    player.play().catch(function (error) {
+        console.log(error);
+    });
 }
 
-function playVideoUntilEndTime(event) {
-    if (event.data == YT.PlayerState.PLAYING && pauseAtEndTime) {
-        // Monitor the playback position to pause at the end timestamp
-        var checkTime = setInterval(function () {
-            var currentTimeSeconds = player.getCurrentTime();
-            var endTimeString = $("#videoEndInput").val();
-            if (endTimeString) {
-                if (currentTimeSeconds >= convertToSeconds(endTimeString)) {
-                    player.pauseVideo();
-                    pauseAtEndTime = false;
-                    clearInterval(checkTime);
-                }
-            }
-        }, 100);
+function playVideoUntilEndTime() {
+    if (!pauseAtEndTime) {
+        return;
+    }
+
+    var currentTimeSeconds = player.currentTime;
+    var endTimeString = $("#videoEndInput").val();
+    if (endTimeString && currentTimeSeconds >= convertToSeconds(endTimeString)) {
+        player.pause();
+        pauseAtEndTime = false;
     }
 }
 
@@ -136,9 +177,9 @@ function isTimestampPositionValid(timestamp) {
     }
 
     const timeStampSeconds = convertToSeconds(timestamp);
-    videoLength = getCurrentVideoDuration();
+    const videoLength = getCurrentVideoDuration();
 
-    if (videoLength == 0) {
+    if (videoLength === 0) {
         return true;
     }
 
@@ -146,33 +187,37 @@ function isTimestampPositionValid(timestamp) {
 }
 
 function getCurrentVideoDuration() {
-    return player.getDuration();
+    if (!playerReady || isNaN(player.duration)) {
+        return 0;
+    }
+
+    return player.duration;
 }
 
-function onPlayerError(event) {
-    console.log(`Error code ${event.data}`)
-    if (event.data === 101 || event.data === 150) {
-        const errorMessage = "This video is probably age restricted. If so, you cannot download it.";
-        console.log(errorMessage);
-        $("#yt-video-validation-message").html(`
+function onPlayerError() {
+    const mediaError = player ? player.error : null;
+    let errorMessage = "Unable to play this video preview.";
+
+    if (mediaError && mediaError.code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) {
+        errorMessage = "This video preview format is not supported by your browser.";
+    }
+
+    setPlayerErrorMessage(errorMessage);
+    toggleYtVideoValidationError(false);
+}
+
+function setPlayerErrorMessage(errorMessage) {
+    $("#yt-video-validation-message").html(`
         <span class="field-validation-error" data-valmsg-replace="true">
             <span id="yt-video-error">${errorMessage}</span>
         </span>
     `);
-    } else {
-        const errorMessage = "An error occurred: " + event.data;
-        console.log(errorMessage);
-    }
-
-    toggleYtVideoValidationError(false);
 }
 
 function toggleYtVideoValidationError(isValid) {
     if (isValid) {
-        //$("#submit-button").prop("disabled", false);
         $("#yt-video-validation-message").hide();
     } else {
-        //$("#submit-button").prop("disabled", true);
         $("#yt-video-validation-message").show();
     }
 }

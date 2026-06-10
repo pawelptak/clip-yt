@@ -9,6 +9,7 @@ namespace ClipYT.Services
 {
     public class MediaFileProcessingService : IMediaFileProcessingService
     {
+        private const string PreviewFormatSelector = "b[ext=mp4]/b";
         private readonly string _youtubeDlpPath;
         private readonly string _ffmpegPath;
         private readonly string _outputFolder;
@@ -65,6 +66,32 @@ namespace ClipYT.Services
                 {
                     File.Delete(filePath);
                 }
+            }
+
+            return result;
+        }
+
+        public async Task<PreviewMediaResult> GetPreviewMediaAsync(Uri url)
+        {
+            var result = new PreviewMediaResult();
+
+            try
+            {
+                var streamUrl = await ExtractPreviewStreamUrlAsync(url.ToString());
+                result.IsSuccessful = !string.IsNullOrWhiteSpace(streamUrl);
+                result.StreamUrl = streamUrl;
+                result.ContentType = GetPreviewContentType(streamUrl);
+
+                if (!result.IsSuccessful)
+                {
+                    result.ErrorMessage = "Unable to resolve preview stream.";
+                }
+            }
+            catch (Exception ex)
+            {
+                result.IsSuccessful = false;
+                result.ErrorMessage = ex.Message;
+                Debug.WriteLine(ex, "An error occurred while resolving preview media.");
             }
 
             return result;
@@ -243,6 +270,84 @@ namespace ClipYT.Services
             }
 
             throw new InvalidOperationException("Unexpected error occurred during download.");
+        }
+
+        private async Task<string> ExtractPreviewStreamUrlAsync(string inputUrl)
+        {
+            var argsList = new List<string>
+            {
+                "--no-playlist",
+                "--no-warnings",
+                $"-f \"{PreviewFormatSelector}\"",
+                "-g",
+                inputUrl
+            };
+
+            var argsString = string.Join(" ", argsList);
+            var outputLines = new List<string>();
+            var errorLines = new List<string>();
+
+            using (var process = new Process())
+            {
+                process.StartInfo.FileName = _youtubeDlpPath;
+                process.StartInfo.Arguments = argsString;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+
+                process.OutputDataReceived += (sender, args) =>
+                {
+                    if (!string.IsNullOrWhiteSpace(args.Data))
+                    {
+                        outputLines.Add(args.Data.Trim());
+                    }
+                };
+
+                process.ErrorDataReceived += (sender, args) =>
+                {
+                    if (!string.IsNullOrWhiteSpace(args.Data))
+                    {
+                        errorLines.Add(args.Data.Trim());
+                    }
+                };
+
+                process.Start();
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+                await process.WaitForExitAsync();
+
+                if (process.ExitCode != 0)
+                {
+                    var errorMessage = errorLines.LastOrDefault() ?? $"Yt-dlp preview resolution exited with code {process.ExitCode}";
+                    throw new OperationCanceledException(errorMessage);
+                }
+            }
+
+            var streamUrl = outputLines.LastOrDefault(line => Uri.TryCreate(line, UriKind.Absolute, out _));
+            if (string.IsNullOrWhiteSpace(streamUrl))
+            {
+                throw new InvalidOperationException("Yt-dlp did not return a preview stream URL.");
+            }
+
+            return streamUrl;
+        }
+
+        private static string GetPreviewContentType(string? streamUrl)
+        {
+            if (string.IsNullOrWhiteSpace(streamUrl) || !Uri.TryCreate(streamUrl, UriKind.Absolute, out var streamUri))
+            {
+                return "video/mp4";
+            }
+
+            var extension = Path.GetExtension(streamUri.AbsolutePath).ToLowerInvariant();
+
+            return extension switch
+            {
+                ".webm" => "video/webm",
+                ".mov" => "video/quicktime",
+                _ => "video/mp4"
+            };
         }
 
         private void ClearOutputDirectory()

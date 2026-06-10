@@ -5,5 +5,7 @@ namespace ClipYT.Interfaces
     public interface IMediaFileProcessingService
     {
         Task<ProcessingResult> ProcessMediaFileAsync(MediaFileModel model);
+
+        Task<PreviewMediaResult> GetPreviewMediaAsync(Uri url);
     }
 }

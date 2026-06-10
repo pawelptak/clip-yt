@@ -23,13 +23,12 @@
 
     const platforms = [youtubePlatformSource, tiktokPlatformSource, twitterPlatformSource, instagramPlatformSource, facebookPlatformSource];
 
-    var playerContainer = $('#player-container');
     $("#urlInput").on('input', function () {
         var inputUrl = $(this).val();
 
         for (let platform of platforms) {
             if (inputUrl.match(platform.regex)) {
-                handlePlatformEmbed(platform, inputUrl);
+                handlePlatformPreview(platform, inputUrl);
                 scrollToInputAfterVideoRendered();
                 platform.setUiMode();
 
@@ -41,43 +40,10 @@
         }
     });
 
-    function handlePlatformEmbed(platform, inputUrl) {
-        $(".twitter-tweet").remove();
-        $(".instagram-media").remove();
-        $(".fb-reel-container").remove();
-        setPlayerContainerStyle(isDefault = true);
-        $('#yt-player').hide();
-
-        switch (platform.regex) {
-            case ytRegex:
-                $('#yt-player').show();
-                playerContainer.css('display', '');
-                updateVideoFrame(inputUrl);
-                break;
-
-            case twitterRegex:
-                var twitterElement = createEmbeddedTwitterElement(transformTwitterUrlForEmbedding(inputUrl));
-                playerContainer.append(twitterElement);
-                setPlayerContainerStyle(isDefault = false);
-                twttr.widgets.load();
-                break;
-
-            case instagramRegex:
-                var instagramElement = createEmbeddedInstagramElement(inputUrl);
-                playerContainer.append(instagramElement);
-                setPlayerContainerStyle(isDefault = false);
-                if (window.instgrm) {
-                    window.instgrm.Embeds.process();
-                }
-                break;
-
-            case facebookRegex:
-                // TODO: does not work for URLs like https://www.facebook.com/share/r/17J3iJfAkM/?mibextid=wwXIfr
-                //var fbElement = createEmbeddedFacebookReelElement(inputUrl);
-                //playerContainer.append(fbElement);
-                setPlayerContainerStyle(isDefault = false);
-                break;
-        }
+    function handlePlatformPreview(platform, inputUrl) {
+        setPlayerContainerStyle();
+        $('#yt-player').show();
+        updateVideoFrame(inputUrl);
     }
 
     function waitForVideoToRender() {
@@ -100,103 +66,22 @@
         urlInput[0].scrollIntoView({ behavior: 'smooth' });
     }
 
-    function setPlayerContainerStyle(isDefault) {
+    function setPlayerContainerStyle() {
         var container = $('#player-container');
-        container.removeClass('default-style flex-style');
-        if (isDefault) {
-            container.addClass('default-style');
-        } else {
-            container.addClass('flex-style');
-        }
+        container.removeClass('default-style');
+        container.addClass('default-style');
     }
 
     function resetUi() {
         $("#player-container").attr("style", "display: none !important");
         $("#video-details").hide();
         toggleYtVideoValidationError(true);
+        clearVideoFrame();
 
         // Clear all clip inputs
         $("#videoStartInput").val('');
         $("#videoEndInput").val('');
         $("#videoLengthInput").val('');
-    }
-
-    function transformTwitterUrlForEmbedding(url) {
-        // Extract the tweet ID
-        const tweetIdMatch = url.match(/status\/(\d+)/);
-
-        if (tweetIdMatch && tweetIdMatch[1]) {
-            const tweetId = tweetIdMatch[1];
-
-            return `https://twitter.com/i/status/${tweetId}`;
-        } else {
-            console.warn('Invalid Twitter URL. Could not extract tweet ID.');
-
-            return url;
-        }
-    }
-
-    function createEmbeddedTwitterElement(url) {
-        const blockquote = $('<blockquote>', {
-            class: 'twitter-tweet',
-            'data-media-max-width': '640',
-            align: 'center',
-            dnt: 'false'
-        });
-
-        const videoAnchor = $('<a>', {
-            href: url,
-        });
-
-        blockquote.append(videoAnchor);
-
-        return blockquote;
-    }
-
-    function createEmbeddedInstagramElement(url) {
-        const blockquote = $('<blockquote>', {
-            class: 'instagram-media',
-            'data-instgrm-permalink': url,
-        });
-
-        return blockquote;
-    }
-
-    // TODO: needs to be fixed of URLs like https://www.facebook.com/share/r/17J3iJfAkM/?mibextid=wwXIfr
-    function createEmbeddedFacebookReelElement(url) {
-        const container = $('<div>', {
-            class: 'fb-reel-container',
-            css: {
-                position: 'relative',
-                width: '100%',
-                'max-width': '320px',
-                'aspect-ratio': '9 / 16',
-                'border-radius': '12px',
-                overflow: 'hidden',
-                margin: '0 auto'
-            }
-        });
-
-        const iframe = $('<iframe>', {
-            class: 'fb-reel-embed',
-            src: `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false&width=420`,
-            allowfullscreen: 'true',
-            scrolling: 'no',
-            frameborder: 0,
-            css: {
-                position: 'absolute',
-                inset: 0,
-                width: '100%',
-                height: '100%',
-                border: 'none',
-                'border-radius': '12px'
-            }
-        });
-
-        container.append(iframe);
-        $('#player-container').append(container);
-
-        return container;
     }
 
     $("input[name='Format']").on('change', function () {
@@ -234,11 +119,7 @@ class MediaPlatformSource {
         document.documentElement.style.setProperty('--accent-color-highlight', this.accentColorHighlight);
         $("#logo-img").attr('src', this.logoUrl);
 
-        if (this.showPlayer) {
-            $("#player-container").show();
-        } else {
-            $("#player-container").hide();
-        }
+        $("#player-container").show();
 
         if (this.showClipButtons) {
             $("#get-current-end-btn").show();
