@@ -1,11 +1,13 @@
 var player;
 var playerReady = false;
 var pauseAtEndTime = false;
+var previewLoadingIndicator;
 
 document.addEventListener("DOMContentLoaded", initializePlayer);
 
 function initializePlayer() {
     player = document.getElementById("yt-player");
+    previewLoadingIndicator = document.getElementById("preview-loading-indicator");
     if (!player) {
         return;
     }
@@ -14,7 +16,11 @@ function initializePlayer() {
     player.addEventListener("timeupdate", playVideoUntilEndTime);
     player.addEventListener("error", onPlayerError);
     player.addEventListener("loadedmetadata", function () {
+        setPreviewLoadingState(false);
         toggleYtVideoValidationError(true);
+    });
+    player.addEventListener("canplay", function () {
+        setPreviewLoadingState(false);
     });
 }
 
@@ -74,11 +80,13 @@ function convertToSeconds(timestamp) {
 async function updateVideoFrame(videoUrl) {
     await waitForPlayerToBeLoaded();
     toggleYtVideoValidationError(true);
+    setPreviewLoadingState(true);
 
     try {
         const previewInfo = await getPreviewInfo(videoUrl);
         loadPlayerSource(previewInfo.streamUrl, previewInfo.contentType);
     } catch (error) {
+        setPreviewLoadingState(false);
         clearVideoFrame();
         console.log(error);
         setPlayerErrorMessage(error.message || "Unable to load video preview.");
@@ -91,6 +99,7 @@ function clearVideoFrame() {
         return;
     }
 
+    setPreviewLoadingState(false);
     pauseAtEndTime = false;
     player.pause();
     player.removeAttribute("src");
@@ -130,6 +139,18 @@ function loadPlayerSource(streamUrl, contentType) {
     }
 
     player.load();
+}
+
+function setPreviewLoadingState(isLoading) {
+    if (!previewLoadingIndicator) {
+        return;
+    }
+
+    if (isLoading) {
+        previewLoadingIndicator.classList.add("preview-loading-indicator-visible");
+    } else {
+        previewLoadingIndicator.classList.remove("preview-loading-indicator-visible");
+    }
 }
 
 function startClipPreview() {
@@ -195,6 +216,7 @@ function getCurrentVideoDuration() {
 }
 
 function onPlayerError() {
+    setPreviewLoadingState(false);
     const mediaError = player ? player.error : null;
     let errorMessage = "Unable to play this video preview.";
 
