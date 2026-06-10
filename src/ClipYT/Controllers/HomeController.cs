@@ -1,6 +1,7 @@
 ﻿using ClipYT.Interfaces;
 using ClipYT.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using System.Net;
 using System.Diagnostics;
 
@@ -10,12 +11,18 @@ namespace ClipYT.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IMemoryCache _memoryCache;
         private readonly IMediaFileProcessingService _mediaFileProcessingService;
 
-        public HomeController(ILogger<HomeController> logger, IHttpClientFactory httpClientFactory, IMediaFileProcessingService mediaFileProcessingService)
+        public HomeController(
+            ILogger<HomeController> logger,
+            IHttpClientFactory httpClientFactory,
+            IMemoryCache memoryCache,
+            IMediaFileProcessingService mediaFileProcessingService)
         {
             _logger = logger;
             _httpClientFactory = httpClientFactory;
+            _memoryCache = memoryCache;
             _mediaFileProcessingService = mediaFileProcessingService;
         }
 
@@ -67,6 +74,8 @@ namespace ClipYT.Controllers
                 return BadRequest(result);
             }
 
+            CachePreviewMediaResult(mediaUrl, result);
+
             return Json(new PreviewMediaResult
             {
                 IsSuccessful = true,
@@ -88,7 +97,20 @@ namespace ClipYT.Controllers
                 return BadRequest();
             }
 
-            var previewResult = await _mediaFileProcessingService.GetPreviewMediaAsync(mediaUrl);
+            var previewResult = GetCachedPreviewMediaResult(mediaUrl);
+
+            if (previewResult == null)
+            {
+                previewResult = await _mediaFileProcessingService.GetPreviewMediaAsync(mediaUrl);
+
+                if (!previewResult.IsSuccessful || string.IsNullOrWhiteSpace(previewResult.StreamUrl))
+                {
+                    return NotFound();
+                }
+
+                CachePreviewMediaResult(mediaUrl, previewResult);
+            }
+
             if (!previewResult.IsSuccessful || string.IsNullOrWhiteSpace(previewResult.StreamUrl))
             {
                 return NotFound();
@@ -149,6 +171,41 @@ namespace ClipYT.Controllers
             }
 
             Response.Headers[headerName] = headerValue;
+        }
+
+        private PreviewMediaResult? GetCachedPreviewMediaResult(Uri mediaUrl)
+        {
+            var cacheKey = GetPreviewCacheKey(mediaUrl);
+
+            if (_memoryCache.TryGetValue(cacheKey, out PreviewMediaResult? cachedPreviewMediaResult))
+            {
+                return cachedPreviewMediaResult;
+            }
+
+            return null;
+        }
+
+        private void CachePreviewMediaResult(Uri mediaUrl, PreviewMediaResult previewMediaResult)
+        {
+            if (!previewMediaResult.IsSuccessful || string.IsNullOrWhiteSpace(previewMediaResult.StreamUrl))
+            {
+                return;
+            }
+
+            var cacheKey = GetPreviewCacheKey(mediaUrl);
+            var cachedPreviewMediaResult = new PreviewMediaResult
+            {
+                IsSuccessful = true,
+                StreamUrl = previewMediaResult.StreamUrl,
+                ContentType = previewMediaResult.ContentType
+            };
+
+            _memoryCache.Set(cacheKey, cachedPreviewMediaResult, TimeSpan.FromMinutes(5));
+        }
+
+        private static string GetPreviewCacheKey(Uri mediaUrl)
+        {
+            return $"preview-media:{mediaUrl}";
         }
     }
 }

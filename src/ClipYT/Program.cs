@@ -1,11 +1,13 @@
 using ClipYT.Interfaces;
 using ClipYT.Services;
+using Microsoft.Extensions.Caching.Memory;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
+builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<IMediaFileProcessingService, MediaFileProcessingService>();
 builder.Services.AddSingleton<IRandomCaptionService, RandomCaptionService>();
 builder.Services.AddSignalR();
