@@ -38,7 +38,7 @@ namespace ClipYT.Services
 
                 if (!string.IsNullOrEmpty(model.StartTimestamp) && !string.IsNullOrEmpty(model.EndTimestamp))
                 {
-                    await CutAndConvertFileAsync(filePath, model.StartTimestamp, model.EndTimestamp, async (progress) => await SendProgressToHubAsync(progress));
+                    await CutAndConvertFileAsync(filePath, model.Url.ToString(), model.StartTimestamp, model.EndTimestamp, model.Format, async (progress) => await SendProgressToHubAsync(progress));
                 }
 
                 var fileBytes = await File.ReadAllBytesAsync(filePath);
@@ -102,37 +102,40 @@ namespace ClipYT.Services
             await _hubContext.Clients.All.SendAsync("ReceiveProgress", progress);
         }
 
-        private async Task CutAndConvertFileAsync(string filePath, string startTime, string endTime, Action<string> onProgress)
+        private async Task CutAndConvertFileAsync(string filePath, string inputUrl, string startTime, string endTime, Format format, Action<string> onProgress)
         {
             var argsList = new List<string>();
+            var clipDuration = GetClipDuration(startTime, endTime, inputUrl);
+            var clipLength = FormatTimeSpanForFfmpeg(clipDuration);
 
             var inputArg = $"-i \"{filePath}\"";
-            var cutArg = $"-ss {startTime} -to {endTime}";
+            var cutArg = $"-ss {startTime} -t {clipLength}";
 
-
-            var audioConversionArg = $"-c:a copy";
-
-            var outputFileName = $"{Guid.NewGuid()}.mp4";
+            var outputExtension = format == Format.MP3 ? "mp3" : "mp4";
+            var outputFileName = $"{Guid.NewGuid()}.{outputExtension}";
             var outputArg = Path.Combine(_outputFolder, outputFileName);
 
 
             argsList.Add(inputArg);
             argsList.Add(cutArg);
 
-            // Experimental conversion. Do not delete for now
-            //var extensionNoDot = Path.GetExtension(filePath).Replace(".", string.Empty);
-            //if (extensionNoDot != nameof(Format.MP3).ToLower())
-            //{
-            //    var videoConversionArg = $"-c:v libx265 -crf 0 -preset ultrafast";
-            //    argsList.Add(videoConversionArg);
-            //}
+            if (format == Format.MP3)
+            {
+                argsList.Add("-vn");
+                argsList.Add("-c:a libmp3lame");
+            }
+            else
+            {
+                argsList.Add("-c:v libx264");
+                argsList.Add("-preset veryfast");
+                argsList.Add("-crf 18");
+                argsList.Add("-c:a aac");
+                argsList.Add("-movflags +faststart");
+            }
 
-            argsList.Add(audioConversionArg);
             argsList.Add(outputArg);
 
             var argsString = string.Join(" ", argsList);
-
-            var clipLength = GetTimeDifference(startTime, endTime);
 
             using (var process = new Process())
             {
@@ -170,14 +173,26 @@ namespace ClipYT.Services
             File.Replace(outputArg, filePath, null);
         }
 
-        private static string GetTimeDifference(string startTime, string endTime)
+        private static TimeSpan GetClipDuration(string startTime, string endTime, string inputUrl)
         {
             TimeSpan startTimeSpan = TimeSpan.Parse(startTime);
             TimeSpan endTimeSpan = TimeSpan.Parse(endTime);
 
-            TimeSpan diff = startTimeSpan - endTimeSpan;
+            TimeSpan diff = endTimeSpan - startTimeSpan;
+            if (diff <= TimeSpan.Zero)
+            {
+                throw new OperationCanceledException("End timestamp must be greater than start timestamp.");
+            }
 
-            return diff.ToString(@"hh\:mm\:ss");
+
+            diff = diff.Add(TimeSpan.FromMilliseconds(200));
+
+            return diff;
+        }
+
+        private static string FormatTimeSpanForFfmpeg(TimeSpan timeSpan)
+        {
+            return timeSpan.ToString(@"hh\:mm\:ss\.fff");
         }
 
         private async Task<string> DownloadMediaFileAsync(string inputUrl, Format outputFormat, Quality outputQuality, Action<string> onProgress, int maxRetries = 1)
