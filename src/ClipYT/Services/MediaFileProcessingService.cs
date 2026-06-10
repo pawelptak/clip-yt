@@ -181,7 +181,7 @@ namespace ClipYT.Services
             TimeSpan diff = endTimeSpan - startTimeSpan;
             if (diff <= TimeSpan.Zero)
             {
-                throw new OperationCanceledException("End timestamp must be greater than start timestamp.");
+                throw new ArgumentException("End timestamp must be greater than start timestamp.");
             }
 
 

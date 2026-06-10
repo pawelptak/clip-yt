@@ -134,10 +134,6 @@ function loadPlayerSource(streamUrl, contentType) {
     pauseAtEndTime = false;
     player.pause();
     player.src = streamUrl;
-    if (contentType) {
-        player.type = contentType;
-    }
-
     player.load();
 }
 
