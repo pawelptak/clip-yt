@@ -127,8 +127,6 @@ async function updateVideoFrame(videoUrl, shouldLoadPreview = true) {
         }
         clearVideoFrame();
         console.log(error);
-        setPlayerErrorMessage(error.message || "Unable to load video preview.");
-        toggleYtVideoValidationError(false);
     }
 }
 
