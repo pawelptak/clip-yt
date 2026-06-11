@@ -189,6 +189,12 @@ body {
     height: 360px;
 }
 
+@media (max-width: 768px) {
+    .default-style {
+        height: 200px;
+    }
+}
+
 .clear-input-container:has(.time-input) {
     max-width: 130px;
 }
