@@ -3,10 +3,14 @@
 
 <div class="d-flex flex-column align-items-center">
     <div class="mb-4" id="player-container">
-        <div id="preview-loading-indicator" class="preview-loading-indicator">
-            <div class="preview-loading-spinner"></div>
-            <span>Loading preview...</span>
+        <div id="video-loading-overlay" class="video-loading-overlay">
+            <div class="shimmer-effect"></div>
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <span class="loading-text">Loading preview...</span>
+            </div>
         </div>
+        <img id="video-thumbnail" alt="Video thumbnail" />
         <video id="yt-player" controls playsinline preload="metadata"></video>
     </div>
 
@@ -107,6 +111,7 @@
      data-clipfb-logo="@Url.Content("~/images/clipfb_logo_gradient.svg")"
      data-download-url="@Url.Action("DownloadFile")"
      data-preview-info-url="@Url.Action("PreviewInfo")"
+     data-thumbnail-url="@Url.Action("ThumbnailUrl")"
      data-mp3-format="@ClipYT.Enums.Format.MP3.ToString()"
      data-progress-hub-url="@Url.Content("~/progressHub")">
 </div>

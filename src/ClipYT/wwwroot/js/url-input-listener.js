@@ -19,7 +19,7 @@
     const tiktokPlatformSource = new MediaPlatformSource(tiktokRegex, cliptokLogoUrl, false, false, false, "#6020f3", "#351287", "#871248");
     const twitterPlatformSource = new MediaPlatformSource(twitterRegex, clipxLogoUrl, true, true, true, "#1DA1F2", "#2f62b5", "#01a55c");
     const instagramPlatformSource = new MediaPlatformSource(instagramRegex, clipstagramLogoUrl, true, true, false, "#a83299", "#8c2a7f", "#017fa5");
-    const facebookPlatformSource = new MediaPlatformSource(facebookRegex, clipfbLogoUrl, false, true, false, "#ff3796", "#b80060", "#00c784");
+    const facebookPlatformSource = new MediaPlatformSource(facebookRegex, clipfbLogoUrl, true, true, false, "#ff3796", "#b80060", "#00c784");
 
     const platforms = [youtubePlatformSource, tiktokPlatformSource, twitterPlatformSource, instagramPlatformSource, facebookPlatformSource];
 
@@ -42,8 +42,7 @@
 
     function handlePlatformPreview(platform, inputUrl) {
         setPlayerContainerStyle();
-        $('#yt-player').show();
-        updateVideoFrame(inputUrl);
+        updateVideoFrame(inputUrl, platform.showPlayer);
     }
 
     function waitForVideoToRender() {
@@ -101,6 +100,16 @@
 });
 
 class MediaPlatformSource {
+    /**
+     * @param {string} regex - URL regex pattern for platform detection
+     * @param {string} logoUrl - Platform logo URL
+     * @param {boolean} showPlayer - Whether to load video preview (thumbnail always loads)
+     * @param {boolean} showClipButtons - Whether to show clip editing buttons
+     * @param {boolean} enableQualitySelector - Whether to enable quality selector
+     * @param {string} accentColorCode - Primary accent color
+     * @param {string} accentColorDarkCode - Dark accent color
+     * @param {string} accentColorHighlight - Highlight accent color
+     */
     constructor(regex, logoUrl, showPlayer, showClipButtons, enableQualitySelector, accentColorCode, accentColorDarkCode, accentColorHighlight) {
         this.regex = regex;
         this.logoUrl = logoUrl;
@@ -119,7 +128,6 @@ class MediaPlatformSource {
         document.documentElement.style.setProperty('--accent-color-highlight', this.accentColorHighlight);
         $("#logo-img").attr('src', this.logoUrl);
 
-        $("#player-container").show();
 
         if (this.showClipButtons) {
             $("#get-current-end-btn").show();

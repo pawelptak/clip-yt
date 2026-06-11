@@ -1,13 +1,16 @@
 var player;
 var playerReady = false;
 var pauseAtEndTime = false;
-var previewLoadingIndicator;
+var thumbnail;
+var loadingOverlay;
 
 document.addEventListener("DOMContentLoaded", initializePlayer);
 
 function initializePlayer() {
     player = document.getElementById("yt-player");
-    previewLoadingIndicator = document.getElementById("preview-loading-indicator");
+    thumbnail = document.getElementById("video-thumbnail");
+    loadingOverlay = document.getElementById("video-loading-overlay");
+
     if (!player) {
         return;
     }
@@ -16,11 +19,11 @@ function initializePlayer() {
     player.addEventListener("timeupdate", playVideoUntilEndTime);
     player.addEventListener("error", onPlayerError);
     player.addEventListener("loadedmetadata", function () {
-        setPreviewLoadingState(false);
         toggleYtVideoValidationError(true);
     });
     player.addEventListener("canplay", function () {
-        setPreviewLoadingState(false);
+        hideLoadingOverlay();
+        showPlayer();
     });
 }
 
@@ -77,16 +80,51 @@ function convertToSeconds(timestamp) {
     return totalSeconds;
 }
 
-async function updateVideoFrame(videoUrl) {
+async function updateVideoFrame(videoUrl, shouldLoadPreview = true) {
     await waitForPlayerToBeLoaded();
     toggleYtVideoValidationError(true);
-    setPreviewLoadingState(true);
+
+    hidePlayer();
+    hideThumbnail();
+    hideLoadingOverlay();
+
+    $("#player-container").show();
+    showLoadingOverlay();
 
     try {
-        const previewInfo = await getPreviewInfo(videoUrl);
-        loadPlayerSource(previewInfo.streamUrl, previewInfo.contentType);
+        const thumbnailPromise = getThumbnailUrl(videoUrl).then(thumbnailUrl => {
+            if (thumbnailUrl) {
+                return showThumbnail(thumbnailUrl).catch(error => {
+                    console.log("Thumbnail failed to load:", error);
+                    return null;
+                });
+            }
+            return null;
+        });
+
+        let previewPromise;
+        if (shouldLoadPreview) {
+            previewPromise = getPreviewInfo(videoUrl).then(previewInfo => {
+                loadPlayerSource(previewInfo.streamUrl, previewInfo.contentType);
+                return previewInfo;
+            });
+        } else {
+            // For platforms without preview (e.g., TikTok)
+            // Just wait for thumbnail and hide loading when done
+            previewPromise = thumbnailPromise.then(() => {
+                hideLoadingOverlay();
+                return null;
+            });
+        }
+
+        await Promise.all([thumbnailPromise, previewPromise]);
+
     } catch (error) {
-        setPreviewLoadingState(false);
+        hideLoadingOverlay();
+        hideThumbnail();
+        if (shouldLoadPreview) {
+            showPlayer();
+        }
         clearVideoFrame();
         console.log(error);
         setPlayerErrorMessage(error.message || "Unable to load video preview.");
@@ -99,7 +137,8 @@ function clearVideoFrame() {
         return;
     }
 
-    setPreviewLoadingState(false);
+    hideThumbnail();
+    hideLoadingOverlay();
     pauseAtEndTime = false;
     player.pause();
     player.removeAttribute("src");
@@ -115,6 +154,24 @@ function waitForPlayerToBeLoaded() {
             }
         }, 100);
     });
+}
+
+async function getThumbnailUrl(videoUrl) {
+    const appData = document.getElementById("app-data");
+    const thumbnailUrlEndpoint = appData.getAttribute("data-thumbnail-url");
+
+    try {
+        const response = await fetch(`${thumbnailUrlEndpoint}?url=${encodeURIComponent(videoUrl)}`);
+        const payload = await response.json();
+
+        if (response.ok && payload.isSuccessful && payload.thumbnailUrl) {
+            return payload.thumbnailUrl;
+        }
+    } catch (error) {
+        console.log("Failed to load thumbnail:", error);
+    }
+
+    return null;
 }
 
 async function getPreviewInfo(videoUrl) {
@@ -137,16 +194,73 @@ function loadPlayerSource(streamUrl, contentType) {
     player.load();
 }
 
-function setPreviewLoadingState(isLoading) {
-    if (!previewLoadingIndicator) {
+function showThumbnail(thumbnailUrl) {
+    if (!thumbnail) {
+        return Promise.resolve();
+    }
+
+    return new Promise((resolve, reject) => {
+        thumbnail.onload = () => {
+            if (player && player.style.display === "block") {
+                resolve();
+                return;
+            }
+
+            thumbnail.style.display = "block";
+            setTimeout(() => {
+                thumbnail.classList.add("fade-in");
+            }, 10);
+            resolve();
+        };
+        thumbnail.onerror = () => {
+            reject(new Error("Failed to load thumbnail"));
+        };
+        thumbnail.src = thumbnailUrl;
+    });
+}
+
+function hideThumbnail() {
+    if (!thumbnail) {
         return;
     }
 
-    if (isLoading) {
-        previewLoadingIndicator.classList.add("preview-loading-indicator-visible");
-    } else {
-        previewLoadingIndicator.classList.remove("preview-loading-indicator-visible");
+    thumbnail.classList.remove("fade-in");
+    thumbnail.style.display = "none";
+    thumbnail.removeAttribute("src");
+}
+
+function showLoadingOverlay() {
+    if (!loadingOverlay) {
+        return;
     }
+
+    loadingOverlay.style.display = "flex";
+}
+
+function hideLoadingOverlay() {
+    if (!loadingOverlay) {
+        return;
+    }
+
+    loadingOverlay.style.display = "none";
+}
+
+function showPlayer() {
+    if (!player) {
+        return;
+    }
+
+    hideThumbnail();
+    hideLoadingOverlay();
+    player.style.display = "block";
+}
+
+function hidePlayer() {
+    if (!player) {
+        return;
+    }
+
+    player.style.display = "none";
 }
 
 function startClipPreview() {
@@ -212,7 +326,9 @@ function getCurrentVideoDuration() {
 }
 
 function onPlayerError() {
-    setPreviewLoadingState(false);
+    hideLoadingOverlay();
+    hideThumbnail();
+    showPlayer();
     const mediaError = player ? player.error : null;
     let errorMessage = "Unable to play this video preview.";
 

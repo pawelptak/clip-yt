@@ -54,7 +54,9 @@ namespace ClipYT.Tests
             clientProxyMock.Setup(cp => cp.SendCoreAsync(It.IsAny<string>(), It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
                            .Returns(Task.CompletedTask); // Thx https://stackoverflow.com/a/56269592
 
-            _mediaFileProcessingService = new MediaFileProcessingService(configuration, hubContextMock.Object);
+            var httpClientFactoryMock = new Mock<IHttpClientFactory>();
+
+            _mediaFileProcessingService = new MediaFileProcessingService(configuration, hubContextMock.Object, httpClientFactoryMock.Object);
             _outputFolder = outputFolder;
         }
 

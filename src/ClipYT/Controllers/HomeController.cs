@@ -57,6 +57,19 @@ namespace ClipYT.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> ThumbnailUrl(string url)
+        {
+            if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))
+            {
+                return BadRequest(new { isSuccessful = false, errorMessage = "The provided URL is invalid." });
+            }
+
+            var thumbnailUrl = await _mediaFileProcessingService.GetThumbnailUrlAsync(mediaUrl);
+
+            return Json(new { isSuccessful = true, thumbnailUrl });
+        }
+
+        [HttpGet]
         public async Task<IActionResult> PreviewInfo(string url)
         {
             if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))
