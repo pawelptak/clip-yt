@@ -32,7 +32,6 @@ jobs:
           host: ${{ secrets.RASPBERRY_SSH_HOST }}
           username: ${{ secrets.RASPBERRY_SSH_USER }}
           key: ${{ secrets.RASPBERRY_SSH_PRIVATE_KEY }}
-          command_timeout: 10m
           script: |
             cd ApkiPawla/clipyt
             docker compose pull
