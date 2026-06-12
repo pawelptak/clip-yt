@@ -36,7 +36,7 @@
                     <div class="input-wrapper">
                         <span class="label-text">Clip start</span>
                         <div class="d-flex gap-1">
-                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "time-input", inputmode = "numeric", data_val = "true", data_val_timestamp = "Timestamp exceeds the video length." }) }" />
+                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "time-input", inputmode = "numeric", data_val = "true", data_val_timestamp = "Timestamp exceeds the video length.", data_precise_time = "" }) }" />
                             <button type="button" id="get-current-start-btn" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoStartInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                         </div>
                     </div>
@@ -47,7 +47,7 @@
                     <div class="input-wrapper">
                         <span class="label-text">Clip end</span>
                         <div class="d-flex gap-1">
-                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "time-input", inputmode = "numeric" }) }" />
+                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "time-input", inputmode = "numeric", data_precise_time = "" }) }" />
                             <button type="button" id="get-current-end-btn" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoEndInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                         </div>
                     </div>
@@ -122,13 +122,13 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="~/js/yt-player.js?v=5.0.4"></script>
+    <script src="~/js/yt-player.js?v=5.0.7"></script>
     <script src="~/js/helpers.js?v=5.0.1"></script>
     <script src="~/js/custom-validation.js?v=5.0.1"></script>
     <script src="~/js/url-input-listener.js?v=5.0.3"></script>
-    <script src="~/js/video-time-controls.js?v=5.0.1"></script>
-    <script src="~/js/ajax-download.js?v=5.0.1"></script>
-    <script src="~/js/clear-input-button.js?v=5.0.1"></script>
+    <script src="~/js/video-time-controls.js?v=5.0.3"></script>
+    <script src="~/js/ajax-download.js?v=5.0.3"></script>
+    <script src="~/js/clear-input-button.js?v=5.0.2"></script>
     <script src="~/js/signalr/dist/browser/signalr.min.js"></script>
     <script src="~/js/signalr/signalr-setup-hub.js"></script>
 }

@@ -38,7 +38,11 @@ function updateInputFromPlayer(inputElementId) {
 
     var currentTime = player.currentTime;
     const element = document.getElementById(inputElementId);
-    element.value = convertToTimestampFormat(currentTime);
+
+    const preciseTimestamp = convertToTimestampFormat(currentTime);
+    element.setAttribute('data-precise-time', preciseTimestamp);
+
+    element.value = convertToTimestampFormatWithoutMilliseconds(currentTime);
 
     const changedEvent = new Event("change");
     element.dispatchEvent(changedEvent);
@@ -64,6 +68,20 @@ function convertToTimestampFormat(seconds) {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = Math.floor(seconds % 60);
+    const milliseconds = Math.floor((seconds % 1) * 1000);
+
+    const formattedHours = hours < 10 ? `0${hours}` : hours;
+    const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+    const formattedSeconds = remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
+    const formattedMilliseconds = milliseconds.toString().padStart(3, '0');
+
+    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}.${formattedMilliseconds}`;
+}
+
+function convertToTimestampFormatWithoutMilliseconds(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
 
     const formattedHours = hours < 10 ? `0${hours}` : hours;
     const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
@@ -77,11 +95,30 @@ function convertToSeconds(timestamp) {
 
     const hours = parseInt(timeParts[0], 10) || 0;
     const minutes = parseInt(timeParts[1], 10) || 0;
-    const seconds = parseFloat(timeParts[2]) || 0;
 
-    const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+    const secondsPart = timeParts[2] || '0';
+    const [seconds, milliseconds] = secondsPart.split('.');
+
+    const secondsValue = parseFloat(seconds) || 0;
+    const millisecondsValue = milliseconds ? parseFloat(`0.${milliseconds}`) : 0;
+
+    const totalSeconds = (hours * 3600) + (minutes * 60) + secondsValue + millisecondsValue;
 
     return totalSeconds;
+}
+
+function getPreciseTimeFromInput(inputElementId) {
+    const element = document.getElementById(inputElementId);
+    if (!element) {
+        return 0;
+    }
+
+    const preciseTime = element.getAttribute('data-precise-time');
+    if (preciseTime) {
+        return convertToSeconds(preciseTime);
+    }
+
+    return convertToSeconds(element.value);
 }
 
 async function updateVideoFrame(videoUrl, shouldLoadPreview = true) {
@@ -327,9 +364,10 @@ function startClipPreview() {
         return;
     }
 
-    const startTimeSeconds = convertToSeconds(videoStartTime);
+    const startTimeSeconds = getPreciseTimeFromInput('videoStartInput');
     player.currentTime = startTimeSeconds;
     pauseAtEndTime = true;
+
     player.play().catch(function (error) {
         console.log(error);
     });
@@ -342,9 +380,13 @@ function playVideoUntilEndTime() {
 
     var currentTimeSeconds = player.currentTime;
     var endTimeString = $("#videoEndInput").val();
-    if (endTimeString && currentTimeSeconds >= convertToSeconds(endTimeString)) {
-        player.pause();
-        pauseAtEndTime = false;
+    if (endTimeString) {
+        var endTimeSeconds = getPreciseTimeFromInput('videoEndInput');
+        if (currentTimeSeconds >= endTimeSeconds - 0.05) {
+            player.currentTime = endTimeSeconds;
+            player.pause();
+            pauseAtEndTime = false;
+        }
     }
 }
 
