@@ -2,12 +2,52 @@
     const appData = document.getElementById('app-data');
     const downloadMethodUrl = appData.getAttribute('data-download-url');
 
+    function preparePreciseTimestamps(form) {
+        const startInput = document.getElementById('videoStartInput');
+        const endInput = document.getElementById('videoEndInput');
+        const disabledInputs = [];
+
+        $('#preciseStartTime, #preciseEndTime').remove();
+
+        if (startInput && startInput.getAttribute('data-precise-time')) {
+            $('<input>').attr({
+                type: 'hidden',
+                id: 'preciseStartTime',
+                name: 'StartTimestamp',
+                value: startInput.getAttribute('data-precise-time')
+            }).appendTo(form);
+            $(startInput).attr('disabled', true);
+            disabledInputs.push(startInput);
+        }
+
+        if (endInput && endInput.getAttribute('data-precise-time')) {
+            $('<input>').attr({
+                type: 'hidden',
+                id: 'preciseEndTime',
+                name: 'EndTimestamp',
+                value: endInput.getAttribute('data-precise-time')
+            }).appendTo(form);
+            $(endInput).attr('disabled', true);
+            disabledInputs.push(endInput);
+        }
+
+        return disabledInputs;
+    }
+
+    function cleanupPreciseTimestamps(disabledInputs) {
+        disabledInputs.forEach(input => {
+            $(input).attr('disabled', false);
+        });
+    }
+
     $('form').on('submit', function (e) {
         e.preventDefault();
 
         if (!$(this).valid()) {
             return;
         }
+
+        const disabledInputs = preparePreciseTimestamps(this);
 
         connectToHub();
         var $button = $('#submit-button');
@@ -16,10 +56,14 @@
         $("#progressText").text("Download is starting");
         $("#progress-container").css('display', 'flex');
 
+        var formData = $(this).serialize();
+
+        cleanupPreciseTimestamps(disabledInputs);
+
         $.ajax({
             url: downloadMethodUrl,
             type: 'POST',
-            data: $(this).serialize(),
+            data: formData,
             xhrFields: {
                 responseType: 'blob'
             },

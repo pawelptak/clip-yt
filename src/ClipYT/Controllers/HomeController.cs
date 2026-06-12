@@ -13,17 +13,20 @@ namespace ClipYT.Controllers
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IMemoryCache _memoryCache;
         private readonly IMediaFileProcessingService _mediaFileProcessingService;
+        private readonly IMetadataService _metadataService;
 
         public HomeController(
             ILogger<HomeController> logger,
             IHttpClientFactory httpClientFactory,
             IMemoryCache memoryCache,
-            IMediaFileProcessingService mediaFileProcessingService)
+            IMediaFileProcessingService mediaFileProcessingService,
+            IMetadataService metadataService)
         {
             _logger = logger;
             _httpClientFactory = httpClientFactory;
             _memoryCache = memoryCache;
             _mediaFileProcessingService = mediaFileProcessingService;
+            _metadataService = metadataService;
         }
 
         public IActionResult Index()
@@ -64,9 +67,22 @@ namespace ClipYT.Controllers
                 return BadRequest(new { isSuccessful = false, errorMessage = "The provided URL is invalid." });
             }
 
-            var thumbnailUrl = await _mediaFileProcessingService.GetThumbnailUrlAsync(mediaUrl);
+            var thumbnailUrl = await _metadataService.GetThumbnailUrlAsync(mediaUrl);
 
             return Json(new { isSuccessful = true, thumbnailUrl });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> VideoTitle(string url)
+        {
+            if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))
+            {
+                return BadRequest(new { isSuccessful = false, errorMessage = "The provided URL is invalid." });
+            }
+
+            var title = await _metadataService.GetTitleAsync(mediaUrl);
+
+            return Json(new { isSuccessful = true, title });
         }
 
         [HttpGet]

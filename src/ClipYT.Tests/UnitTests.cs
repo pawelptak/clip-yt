@@ -54,9 +54,7 @@ namespace ClipYT.Tests
             clientProxyMock.Setup(cp => cp.SendCoreAsync(It.IsAny<string>(), It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
                            .Returns(Task.CompletedTask); // Thx https://stackoverflow.com/a/56269592
 
-            var httpClientFactoryMock = new Mock<IHttpClientFactory>();
-
-            _mediaFileProcessingService = new MediaFileProcessingService(configuration, hubContextMock.Object, httpClientFactoryMock.Object);
+            _mediaFileProcessingService = new MediaFileProcessingService(configuration, hubContextMock.Object);
             _outputFolder = outputFolder;
         }
 
@@ -243,7 +241,8 @@ namespace ClipYT.Tests
         {
             var loggerMock = new Mock<ILogger<HomeController>>();
             var memoryCache = new MemoryCache(new MemoryCacheOptions());
-            var controller = new HomeController(loggerMock.Object, httpClientFactory, memoryCache, mediaFileProcessingService);
+            var thumbnailServiceMock = new Mock<IMetadataService>();
+            var controller = new HomeController(loggerMock.Object, httpClientFactory, memoryCache, mediaFileProcessingService, thumbnailServiceMock.Object);
             controller.ControllerContext = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext()
@@ -273,6 +272,14 @@ namespace ClipYT.Tests
             protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage requestMessage, CancellationToken cancellationToken)
             {
                 return Task.FromResult(ResponseMessage);
+            }
+        }
+
+        private sealed class HttpClientFactory : IHttpClientFactory
+        {
+            public HttpClient CreateClient(string name)
+            {
+                return new HttpClient();
             }
         }
 

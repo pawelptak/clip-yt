@@ -76,6 +76,12 @@
     $("#videoStartInput").on("change", updateVideoEndInput);
     $("#videoLengthInput").on("change", updateVideoEndInput);
 
+    $(".time-input").on("input", function () {
+        if (document.activeElement === this) {
+            this.removeAttribute('data-precise-time');
+        }
+    });
+
     //$("#videoStartInput").on("blur", updatePlayerFromInput); // Experimental feature. Won't delete.
 
     Inputmask("99:99:99", {

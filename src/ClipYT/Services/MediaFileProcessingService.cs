@@ -14,15 +14,13 @@ namespace ClipYT.Services
         private readonly string _ffmpegPath;
         private readonly string _outputFolder;
         private readonly IHubContext<ProgressHub> _hubContext;
-        private readonly IHttpClientFactory _httpClientFactory;
 
-        public MediaFileProcessingService(IConfiguration configuration, IHubContext<ProgressHub> hubContext, IHttpClientFactory httpClientFactory)
+        public MediaFileProcessingService(IConfiguration configuration, IHubContext<ProgressHub> hubContext)
         {
             _ffmpegPath = configuration["Config:FFmpegPath"];
             _youtubeDlpPath = configuration["Config:YoutubeDlpPath"];
             _outputFolder = configuration["Config:OutputFolder"];
             _hubContext = hubContext;
-            _httpClientFactory = httpClientFactory;
         }
 
         public async Task<ProcessingResult> ProcessMediaFileAsync(MediaFileModel model)
@@ -99,18 +97,6 @@ namespace ClipYT.Services
             return result;
         }
 
-        public async Task<string?> GetThumbnailUrlAsync(Uri url)
-        {
-            try
-            {
-                return await ExtractThumbnailUrlAsync(url.ToString());
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        }
-
         private async Task SendProgressToHubAsync(string progress)
         {
             await _hubContext.Clients.All.SendAsync("ReceiveProgress", progress);
@@ -147,7 +133,7 @@ namespace ClipYT.Services
                 argsList.Add("-movflags +faststart");
             }
 
-            argsList.Add(outputArg);
+            argsList.Add($"\"{outputArg}\"");
 
             var argsString = string.Join(" ", argsList);
 
@@ -355,173 +341,6 @@ namespace ClipYT.Services
             var streamUrl = outputLines.LastOrDefault(line => Uri.TryCreate(line, UriKind.Absolute, out _));
 
             return streamUrl;
-        }
-
-        private async Task<string?> ExtractThumbnailUrlAsync(string inputUrl)
-        {
-            // For YouTube, construct thumbnail URL directly (instant)
-            if (Regex.IsMatch(inputUrl, Constants.RegexConstants.YoutubeUrlRegex))
-            {
-                var videoId = ExtractYouTubeVideoId(inputUrl);
-                if (!string.IsNullOrWhiteSpace(videoId))
-                {
-                    return $"https://i.ytimg.com/vi/{videoId}/hqdefault.jpg";
-                }
-            }
-
-            // For TikTok, try official oEmbed API first
-            if (Regex.IsMatch(inputUrl, Constants.RegexConstants.TiktokUrlRegex))
-            {
-                var tiktokThumbnail = await TryGetTikTokOEmbedThumbnailAsync(inputUrl);
-                if (!string.IsNullOrWhiteSpace(tiktokThumbnail))
-                {
-                    return tiktokThumbnail;
-                }
-            }
-
-            // For Facebook, skip Open Graph (they block scraping) and use yt-dlp directly
-            var skipOpenGraph = Regex.IsMatch(inputUrl, Constants.RegexConstants.FacebookUrlRegex);
-
-            if (!skipOpenGraph)
-            {
-                // For other platforms (Twitter, Instagram), try Open Graph tags first
-                var ogThumbnail = await TryGetOpenGraphThumbnailAsync(inputUrl);
-                if (!string.IsNullOrWhiteSpace(ogThumbnail))
-                {
-                    return ogThumbnail;
-                }
-            }
-
-            // Fallback to yt-dlp
-            var argsList = new List<string>
-            {
-                "--no-playlist",
-                "--no-warnings",
-                "--skip-download",
-                "--no-check-certificates",
-                "--get-thumbnail",
-                inputUrl
-            };
-
-            var argsString = string.Join(" ", argsList);
-            var outputLines = new List<string>();
-
-            using (var process = new Process())
-            {
-                process.StartInfo.FileName = _youtubeDlpPath;
-                process.StartInfo.Arguments = argsString;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = true;
-
-                process.OutputDataReceived += (sender, args) =>
-                {
-                    if (!string.IsNullOrWhiteSpace(args.Data))
-                    {
-                        outputLines.Add(args.Data.Trim());
-                    }
-                };
-
-                process.Start();
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
-                await process.WaitForExitAsync();
-
-                if (process.ExitCode != 0)
-                {
-                    return null;
-                }
-            }
-
-            var thumbnailUrl = outputLines.LastOrDefault(line => Uri.TryCreate(line, UriKind.Absolute, out _));
-
-            return thumbnailUrl;
-        }
-
-        private async Task<string?> TryGetOpenGraphThumbnailAsync(string url)
-        {
-            try
-            {
-                var client = _httpClientFactory.CreateClient();
-
-                using var request = new HttpRequestMessage(HttpMethod.Get, url);
-
-                using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-                if (!response.IsSuccessStatusCode)
-                {
-                    return null;
-                }
-
-                var html = await response.Content.ReadAsStringAsync();
-
-                // Try og:image first (Open Graph)
-                var ogImageMatch = Regex.Match(html, @"<meta\s+property=[""']og:image[""']\s+content=[""']([^""']+)[""']", RegexOptions.IgnoreCase);
-                if (ogImageMatch.Success)
-                {
-                    return ogImageMatch.Groups[1].Value;
-                }
-
-                // Try twitter:image (Twitter Cards)
-                var twitterImageMatch = Regex.Match(html, @"<meta\s+name=[""']twitter:image[""']\s+content=[""']([^""']+)[""']", RegexOptions.IgnoreCase);
-                if (twitterImageMatch.Success)
-                {
-                    return twitterImageMatch.Groups[1].Value;
-                }
-
-                return null;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        private async Task<string?> TryGetTikTokOEmbedThumbnailAsync(string url)
-        {
-            try
-            {
-                var client = _httpClientFactory.CreateClient();
-                client.Timeout = TimeSpan.FromSeconds(5);
-
-                // TikTok official oEmbed API
-                var oembedUrl = $"https://www.tiktok.com/oembed?url={Uri.EscapeDataString(url)}";
-
-                using var request = new HttpRequestMessage(HttpMethod.Get, oembedUrl);
-
-                using var response = await client.SendAsync(request);
-                if (!response.IsSuccessStatusCode)
-                {
-                    return null;
-                }
-
-                var json = await response.Content.ReadAsStringAsync();
-
-                var thumbnailMatch = Regex.Match(json, @"""thumbnail_url""\s*:\s*""([^""]+)""");
-                if (thumbnailMatch.Success)
-                {
-                    var thumbnailUrl = thumbnailMatch.Groups[1].Value;
-                    thumbnailUrl = Regex.Unescape(thumbnailUrl);
-                    return thumbnailUrl;
-                }
-
-                return null;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        private static string? ExtractYouTubeVideoId(string url)
-        {
-            var match = Regex.Match(url, Constants.RegexConstants.YoutubeUrlRegex);
-            if (match.Success && match.Groups.Count >= 6)
-            {
-                return match.Groups[5].Value;
-            }
-
-            return null;
         }
 
         private static string GetPreviewContentType(string? streamUrl)
