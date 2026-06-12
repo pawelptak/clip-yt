@@ -125,11 +125,15 @@ body {
     backdrop-filter: blur(4px);
     line-height: 1.4;
     word-wrap: break-word;
-    transition: opacity 0.4s ease-in-out;
+    transition: opacity 0.3s ease-in-out;
 }
 
 .video-title-overlay.fade-in {
     opacity: 1;
+}
+
+#player-container:hover .video-title-overlay {
+    opacity: 0.5;
 }
 
 #video-title-text {
