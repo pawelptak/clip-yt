@@ -133,7 +133,7 @@ namespace ClipYT.Services
                 argsList.Add("-movflags +faststart");
             }
 
-            argsList.Add(outputArg);
+            argsList.Add($"\"{outputArg}\"");
 
             var argsString = string.Join(" ", argsList);
 
