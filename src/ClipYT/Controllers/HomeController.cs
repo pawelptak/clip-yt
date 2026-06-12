@@ -13,17 +13,20 @@ namespace ClipYT.Controllers
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IMemoryCache _memoryCache;
         private readonly IMediaFileProcessingService _mediaFileProcessingService;
+        private readonly IThumbnailService _thumbnailService;
 
         public HomeController(
             ILogger<HomeController> logger,
             IHttpClientFactory httpClientFactory,
             IMemoryCache memoryCache,
-            IMediaFileProcessingService mediaFileProcessingService)
+            IMediaFileProcessingService mediaFileProcessingService,
+            IThumbnailService thumbnailService)
         {
             _logger = logger;
             _httpClientFactory = httpClientFactory;
             _memoryCache = memoryCache;
             _mediaFileProcessingService = mediaFileProcessingService;
+            _thumbnailService = thumbnailService;
         }
 
         public IActionResult Index()
@@ -64,7 +67,7 @@ namespace ClipYT.Controllers
                 return BadRequest(new { isSuccessful = false, errorMessage = "The provided URL is invalid." });
             }
 
-            var thumbnailUrl = await _mediaFileProcessingService.GetThumbnailUrlAsync(mediaUrl);
+            var thumbnailUrl = await _thumbnailService.GetThumbnailUrlAsync(mediaUrl);
 
             return Json(new { isSuccessful = true, thumbnailUrl });
         }

@@ -7,7 +7,5 @@ namespace ClipYT.Interfaces
         Task<ProcessingResult> ProcessMediaFileAsync(MediaFileModel model);
 
         Task<PreviewMediaResult> GetPreviewMediaAsync(Uri url);
-
-        Task<string?> GetThumbnailUrlAsync(Uri url);
     }
 }
