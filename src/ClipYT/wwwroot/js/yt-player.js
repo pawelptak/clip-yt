@@ -3,6 +3,8 @@ var playerReady = false;
 var pauseAtEndTime = false;
 var thumbnail;
 var loadingOverlay;
+var videoTitleOverlay;
+var videoTitleText;
 
 document.addEventListener("DOMContentLoaded", initializePlayer);
 
@@ -10,6 +12,8 @@ function initializePlayer() {
     player = document.getElementById("yt-player");
     thumbnail = document.getElementById("video-thumbnail");
     loadingOverlay = document.getElementById("video-loading-overlay");
+    videoTitleOverlay = document.getElementById("video-title-overlay");
+    videoTitleText = document.getElementById("video-title-text");
 
     if (!player) {
         return;
@@ -87,6 +91,7 @@ async function updateVideoFrame(videoUrl, shouldLoadPreview = true) {
     hidePlayer();
     hideThumbnail();
     hideLoadingOverlay();
+    hideVideoTitle();
 
     $("#player-container").show();
     showLoadingOverlay();
@@ -100,6 +105,14 @@ async function updateVideoFrame(videoUrl, shouldLoadPreview = true) {
                 });
             }
             return null;
+        });
+
+        const titlePromise = getVideoTitle(videoUrl).then(title => {
+            if (title) {
+                showVideoTitle(title);
+            }
+        }).catch(error => {
+            console.log("Title failed to load:", error);
         });
 
         let previewPromise;
@@ -117,11 +130,12 @@ async function updateVideoFrame(videoUrl, shouldLoadPreview = true) {
             });
         }
 
-        await Promise.all([thumbnailPromise, previewPromise]);
+        await Promise.all([thumbnailPromise, titlePromise, previewPromise]);
 
     } catch (error) {
         hideLoadingOverlay();
         hideThumbnail();
+        hideVideoTitle();
         if (shouldLoadPreview) {
             showPlayer();
         }
@@ -137,6 +151,7 @@ function clearVideoFrame() {
 
     hideThumbnail();
     hideLoadingOverlay();
+    hideVideoTitle();
     pauseAtEndTime = false;
     player.pause();
     player.removeAttribute("src");
@@ -167,6 +182,24 @@ async function getThumbnailUrl(videoUrl) {
         }
     } catch (error) {
         console.log("Failed to load thumbnail:", error);
+    }
+
+    return null;
+}
+
+async function getVideoTitle(videoUrl) {
+    const appData = document.getElementById("app-data");
+    const videoTitleEndpoint = appData.getAttribute("data-video-title-url");
+
+    try {
+        const response = await fetch(`${videoTitleEndpoint}?url=${encodeURIComponent(videoUrl)}`);
+        const payload = await response.json();
+
+        if (response.ok && payload.isSuccessful && payload.title) {
+            return payload.title;
+        }
+    } catch (error) {
+        console.log("Failed to load video title:", error);
     }
 
     return null;
@@ -225,6 +258,28 @@ function hideThumbnail() {
     thumbnail.classList.remove("fade-in");
     thumbnail.style.display = "none";
     thumbnail.removeAttribute("src");
+}
+
+function showVideoTitle(title) {
+    if (!videoTitleOverlay || !videoTitleText) {
+        return;
+    }
+
+    videoTitleText.textContent = title;
+    videoTitleOverlay.style.display = "block";
+    setTimeout(() => {
+        videoTitleOverlay.classList.add("fade-in");
+    }, 10);
+}
+
+function hideVideoTitle() {
+    if (!videoTitleOverlay || !videoTitleText) {
+        return;
+    }
+
+    videoTitleOverlay.classList.remove("fade-in");
+    videoTitleOverlay.style.display = "none";
+    videoTitleText.textContent = "";
 }
 
 function showLoadingOverlay() {

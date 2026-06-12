@@ -73,6 +73,19 @@ namespace ClipYT.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> VideoTitle(string url)
+        {
+            if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))
+            {
+                return BadRequest(new { isSuccessful = false, errorMessage = "The provided URL is invalid." });
+            }
+
+            var title = await _metadataService.GetTitleAsync(mediaUrl);
+
+            return Json(new { isSuccessful = true, title });
+        }
+
+        [HttpGet]
         public async Task<IActionResult> PreviewInfo(string url)
         {
             if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))
