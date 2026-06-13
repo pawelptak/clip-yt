@@ -56,9 +56,9 @@
         toggleYtVideoValidationError(true);
         clearVideoFrame();
 
-        // Clear all clip inputs
-        $("#videoStartInput").val('');
-        $("#videoEndInput").val('');
+        // Clear all clip inputs and precise time attributes
+        $("#videoStartInput").val('').removeAttr('data-precise-time');
+        $("#videoEndInput").val('').removeAttr('data-precise-time');
         $("#videoLengthInput").val('');
     }
 

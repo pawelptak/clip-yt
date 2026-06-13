@@ -51,6 +51,7 @@
 
         const videoEndInput = $("#videoEndInput");
         videoEndInput.val(endTimeFormatted);
+        videoEndInput[0].removeAttribute('data-precise-time');
         updateVideoLengthInput(); // In case the end time has been clipped, update the length value
         videoEndInput.trigger('input'); // To make the clear button appear
         videoEndInput.valid();
@@ -70,13 +71,17 @@
     $("#videoEndInput").on("change", updateVideoLengthInput);
     $("#videoEndInput").on("change", function () {
         var currentValue = $(this).val();
-        $(this).val(clipToVideoLength(currentValue));
+        var clippedValue = clipToVideoLength(currentValue);
+        if (currentValue !== clippedValue) {
+            $(this).val(clippedValue);
+            this.removeAttribute('data-precise-time'); // Clear precise time if value was clipped
+        }
     });
     $("#videoStartInput").on("change", updateVideoLengthInput);
     $("#videoStartInput").on("change", updateVideoEndInput);
     $("#videoLengthInput").on("change", updateVideoEndInput);
 
-    $(".time-input").on("input", function () {
+    $(".time-input").on("input change", function () {
         if (document.activeElement === this) {
             this.removeAttribute('data-precise-time');
         }
