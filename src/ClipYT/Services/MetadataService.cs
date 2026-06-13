@@ -26,62 +26,39 @@ namespace ClipYT.Services
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<string?> GetThumbnailUrlAsync(Uri url)
+        public async Task<string?> GetTitleAsync(Uri inputUri)
         {
-            try
+            var uriString = inputUri.ToString();
+            if (Regex.IsMatch(uriString, Constants.RegexConstants.YoutubeUrlRegex))
             {
-                return await ExtractThumbnailUrlAsync(url.ToString());
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        }
-
-        public async Task<string?> GetTitleAsync(Uri url)
-        {
-            try
-            {
-                return await ExtractTitleAsync(url.ToString());
-            }
-            catch (Exception exception)
-            {
-                return null;
-            }
-        }
-
-        private async Task<string?> ExtractTitleAsync(string inputUrl)
-        {
-            if (Regex.IsMatch(inputUrl, Constants.RegexConstants.YoutubeUrlRegex))
-            {
-                var title = await TryGetYouTubeTitleAsync(inputUrl);
+                var title = await TryGetYouTubeTitleAsync(uriString);
                 if (!string.IsNullOrWhiteSpace(title))
                 {
                     return title;
                 }
             }
 
-            if (Regex.IsMatch(inputUrl, Constants.RegexConstants.TiktokUrlRegex))
+            if (Regex.IsMatch(uriString, Constants.RegexConstants.TiktokUrlRegex))
             {
-                var title = await TryGetTikTokOEmbedTitleAsync(inputUrl);
+                var title = await TryGetTikTokOEmbedTitleAsync(uriString);
                 if (!string.IsNullOrWhiteSpace(title))
                 {
                     return title;
                 }
             }
 
-            if (Regex.IsMatch(inputUrl, Constants.RegexConstants.TwitterUrlRegex) ||
-                Regex.IsMatch(inputUrl, Constants.RegexConstants.FacebookUrlRegex) ||
-                Regex.IsMatch(inputUrl, Constants.RegexConstants.InstagramUrlRegex))
+            if (Regex.IsMatch(uriString, Constants.RegexConstants.TwitterUrlRegex) ||
+                Regex.IsMatch(uriString, Constants.RegexConstants.FacebookUrlRegex) ||
+                Regex.IsMatch(uriString, Constants.RegexConstants.InstagramUrlRegex))
             {
-                var title = await TryGetMetaTitleAsync(inputUrl);
+                var title = await TryGetMetaTitleAsync(uriString);
                 if (!string.IsNullOrWhiteSpace(title))
                 {
                     return title;
                 }
             }
 
-            var ogTitle = await TryGetOpenGraphTitleAsync(inputUrl);
+            var ogTitle = await TryGetOpenGraphTitleAsync(uriString);
             if (!string.IsNullOrWhiteSpace(ogTitle))
             {
                 return ogTitle;
@@ -90,6 +67,45 @@ namespace ClipYT.Services
             return null;
         }
 
+        public async Task<string?> GetThumbnailUrlAsync(Uri inputUri)
+        {
+            var uriString = inputUri.ToString();
+
+            if (Regex.IsMatch(uriString, Constants.RegexConstants.YoutubeUrlRegex))
+            {
+                var videoId = ExtractYouTubeVideoId(uriString);
+                if (!string.IsNullOrWhiteSpace(videoId))
+                {
+                    return string.Format(YouTubeThumbnailUrl, videoId);
+                }
+            }
+
+            if (Regex.IsMatch(uriString, Constants.RegexConstants.InstagramUrlRegex) || Regex.IsMatch(uriString, Constants.RegexConstants.FacebookUrlRegex))
+            {
+                var metaThumbnailUrl = await TryGetMetaThumbnailAsync(uriString);
+                if (!string.IsNullOrWhiteSpace(metaThumbnailUrl))
+                {
+                    return metaThumbnailUrl;
+                }
+            }
+
+            if (Regex.IsMatch(uriString, Constants.RegexConstants.TiktokUrlRegex))
+            {
+                var tiktokThumbnail = await TryGetTikTokOEmbedThumbnailAsync(uriString);
+                if (!string.IsNullOrWhiteSpace(tiktokThumbnail))
+                {
+                    return tiktokThumbnail;
+                }
+            }
+
+            var ogThumbnail = await TryGetOpenGraphThumbnailAsync(uriString);
+            if (!string.IsNullOrWhiteSpace(ogThumbnail))
+            {
+                return ogThumbnail;
+            }
+
+            return null;
+        }
         private async Task<string?> TryGetYouTubeTitleAsync(string url)
         {
             try
@@ -202,44 +218,6 @@ namespace ClipYT.Services
             {
                 return null;
             }
-        }
-
-        private async Task<string?> ExtractThumbnailUrlAsync(string inputUrl)
-        {
-            if (Regex.IsMatch(inputUrl, Constants.RegexConstants.YoutubeUrlRegex))
-            {
-                var videoId = ExtractYouTubeVideoId(inputUrl);
-                if (!string.IsNullOrWhiteSpace(videoId))
-                {
-                    return string.Format(YouTubeThumbnailUrl, videoId);
-                }
-            }
-
-            if (Regex.IsMatch(inputUrl, Constants.RegexConstants.InstagramUrlRegex) || Regex.IsMatch(inputUrl, Constants.RegexConstants.FacebookUrlRegex))
-            {
-                var metaThumbnailUrl = await TryGetMetaThumbnailAsync(inputUrl);
-                if (!string.IsNullOrWhiteSpace(metaThumbnailUrl))
-                {
-                    return metaThumbnailUrl;
-                }
-            }
-
-            if (Regex.IsMatch(inputUrl, Constants.RegexConstants.TiktokUrlRegex))
-            {
-                var tiktokThumbnail = await TryGetTikTokOEmbedThumbnailAsync(inputUrl);
-                if (!string.IsNullOrWhiteSpace(tiktokThumbnail))
-                {
-                    return tiktokThumbnail;
-                }
-            }
-
-            var ogThumbnail = await TryGetOpenGraphThumbnailAsync(inputUrl);
-            if (!string.IsNullOrWhiteSpace(ogThumbnail))
-            {
-                return ogThumbnail;
-            }
-
-            return null;
         }
 
         private async Task<string?> TryGetMetaThumbnailAsync(string url)
