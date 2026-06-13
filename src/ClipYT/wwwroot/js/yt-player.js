@@ -39,9 +39,15 @@ function updateInputFromPlayer(inputElementId) {
     var currentTime = player.currentTime;
     const element = document.getElementById(inputElementId);
 
+    // Set precise timestamp (with milliseconds) in hidden input
     const preciseTimestamp = convertToTimestampFormat(currentTime);
-    element.setAttribute('data-precise-time', preciseTimestamp);
+    const hiddenInputId = inputElementId === 'videoStartInput' ? 'preciseStartTimestamp' : 'preciseEndTimestamp';
+    const hiddenInput = document.getElementById(hiddenInputId);
+    if (hiddenInput) {
+        hiddenInput.value = preciseTimestamp;
+    }
 
+    // Set display value (without milliseconds) in visible input
     element.value = convertToTimestampFormatWithoutMilliseconds(currentTime);
 
     const changedEvent = new Event("change");

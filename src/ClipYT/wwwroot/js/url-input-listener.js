@@ -56,10 +56,12 @@
         toggleYtVideoValidationError(true);
         clearVideoFrame();
 
-        // Clear all clip inputs and precise time attributes
-        $("#videoStartInput").val('').removeAttr('data-precise-time');
-        $("#videoEndInput").val('').removeAttr('data-precise-time');
+        // Clear all clip inputs and hidden precise timestamps
+        $("#videoStartInput").val('');
+        $("#videoEndInput").val('');
         $("#videoLengthInput").val('');
+        $("#preciseStartTimestamp").val('');
+        $("#preciseEndTimestamp").val('');
     }
 
     $("input[name='Format']").on('change', function () {

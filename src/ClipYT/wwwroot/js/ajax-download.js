@@ -2,44 +2,6 @@
     const appData = document.getElementById('app-data');
     const downloadMethodUrl = appData.getAttribute('data-download-url');
 
-    function preparePreciseTimestamps(form) {
-        const startInput = document.getElementById('videoStartInput');
-        const endInput = document.getElementById('videoEndInput');
-        const disabledInputs = [];
-
-        $('#preciseStartTime, #preciseEndTime').remove();
-
-        if (startInput && startInput.getAttribute('data-precise-time')) {
-            $('<input>').attr({
-                type: 'hidden',
-                id: 'preciseStartTime',
-                name: 'StartTimestamp',
-                value: startInput.getAttribute('data-precise-time')
-            }).appendTo(form);
-            $(startInput).attr('disabled', true);
-            disabledInputs.push(startInput);
-        }
-
-        if (endInput && endInput.getAttribute('data-precise-time')) {
-            $('<input>').attr({
-                type: 'hidden',
-                id: 'preciseEndTime',
-                name: 'EndTimestamp',
-                value: endInput.getAttribute('data-precise-time')
-            }).appendTo(form);
-            $(endInput).attr('disabled', true);
-            disabledInputs.push(endInput);
-        }
-
-        return disabledInputs;
-    }
-
-    function cleanupPreciseTimestamps(disabledInputs) {
-        disabledInputs.forEach(input => {
-            $(input).attr('disabled', false);
-        });
-    }
-
     $('form').on('submit', function (e) {
         e.preventDefault();
 
@@ -47,7 +9,14 @@
             return;
         }
 
-        const disabledInputs = preparePreciseTimestamps(this);
+        // Disable empty precise timestamp inputs so they don't override visible inputs
+        const preciseStartInput = $('#preciseStartTimestamp');
+        const preciseEndInput = $('#preciseEndTimestamp');
+        const isStartEmpty = !preciseStartInput.val();
+        const isEndEmpty = !preciseEndInput.val();
+
+        if (isStartEmpty) preciseStartInput.prop('disabled', true);
+        if (isEndEmpty) preciseEndInput.prop('disabled', true);
 
         connectToHub();
         var $button = $('#submit-button');
@@ -58,7 +27,9 @@
 
         var formData = $(this).serialize();
 
-        cleanupPreciseTimestamps(disabledInputs);
+        // Re-enable inputs after serialization
+        if (isStartEmpty) preciseStartInput.prop('disabled', false);
+        if (isEndEmpty) preciseEndInput.prop('disabled', false);
 
         $.ajax({
             url: downloadMethodUrl,

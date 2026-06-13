@@ -5,6 +5,7 @@
     function isValidTimeFormat(timeStr) {
         return timeStr.match(timeFormatRegex);
     }
+
     function setLengthInputDefaultValue(defaultValue) {
         const videoLengthInput = $("#videoLengthInput");
         videoLengthInput.val(defaultValue);
@@ -51,7 +52,7 @@
 
         const videoEndInput = $("#videoEndInput");
         videoEndInput.val(endTimeFormatted);
-        videoEndInput[0].removeAttribute('data-precise-time');
+        $('#preciseEndTimestamp').val(''); // Clear precise timestamp since we're setting a calculated value
         updateVideoLengthInput(); // In case the end time has been clipped, update the length value
         videoEndInput.trigger('input'); // To make the clear button appear
         videoEndInput.valid();
@@ -74,16 +75,18 @@
         var clippedValue = clipToVideoLength(currentValue);
         if (currentValue !== clippedValue) {
             $(this).val(clippedValue);
-            this.removeAttribute('data-precise-time'); // Clear precise time if value was clipped
+            $('#preciseEndTimestamp').val(''); // Clear precise timestamp if value was clipped
         }
     });
     $("#videoStartInput").on("change", updateVideoLengthInput);
     $("#videoStartInput").on("change", updateVideoEndInput);
     $("#videoLengthInput").on("change", updateVideoEndInput);
 
+    // Clear precise timestamps when user manually edits time inputs
     $(".time-input").on("input change", function () {
         if (document.activeElement === this) {
-            this.removeAttribute('data-precise-time');
+            const hiddenInputId = this.id === 'videoStartInput' ? 'preciseStartTimestamp' : 'preciseEndTimestamp';
+            $('#' + hiddenInputId).val('');
         }
     });
 
