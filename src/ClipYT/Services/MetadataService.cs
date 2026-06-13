@@ -141,7 +141,7 @@ namespace ClipYT.Services
         {
             try
             {
-                var client = CreateBrowserLikeHttpClient();
+                var client = _httpClientFactory.CreateClient();
                 using var request = CreateBrowserLikeRequest(url);
                 using var response = await client.SendAsync(request);
 
@@ -224,7 +224,7 @@ namespace ClipYT.Services
         {
             try
             {
-                var client = CreateBrowserLikeHttpClient();
+                var client = _httpClientFactory.CreateClient();
                 using var request = CreateBrowserLikeRequest(url);
                 using var response = await client.SendAsync(request);
 
@@ -301,19 +301,6 @@ namespace ClipYT.Services
             {
                 return null;
             }
-        }
-
-        private static HttpClient CreateBrowserLikeHttpClient()
-        {
-            var handler = new HttpClientHandler
-            {
-                AutomaticDecompression = System.Net.DecompressionMethods.All
-            };
-
-            var client = new HttpClient(handler);
-            client.Timeout = TimeSpan.FromSeconds(TimeoutSeconds);
-
-            return client;
         }
 
         private static HttpRequestMessage CreateBrowserLikeRequest(string url)
