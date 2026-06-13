@@ -84,10 +84,137 @@ body {
     }
 
 #yt-player {
-    border-radius: 12px;
+    border-radius: 30px;
+    background-color: black;
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+
+#video-thumbnail {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 30px;
+    display: none;
+    opacity: 0;
+    z-index: 1;
+    transition: opacity 0.4s ease-in-out;
+}
+
+#video-thumbnail.fade-in {
+    opacity: 1;
+}
+
+.video-title-overlay {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    max-width: calc(100% - 24px);
+    z-index: 4;
+    display: none;
+    opacity: 0;
+    backdrop-filter: blur(4px);
+    line-height: 1.4;
+    word-wrap: break-word;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.video-title-overlay.fade-in {
+    opacity: 1;
+}
+
+#player-container:hover .video-title-overlay {
+    opacity: 0.5;
+}
+
+#video-title-text {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.video-loading-overlay {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.6) 0%, rgba(45, 45, 45, 0.6) 100%);
+    border-radius: 30px;
+    overflow: hidden;
+    z-index: 3;
+    backdrop-filter: blur(2px);
+}
+
+.shimmer-effect {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.08) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    animation: shimmer 2s infinite;
+    transform: translateX(-100%);
+}
+
+.loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    z-index: 1;
+}
+
+.loading-spinner {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-top-color: var(--accent-color);
+    animation: spin 1s linear infinite;
+}
+
+.loading-text {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 #player-container {
+    position: relative;
     width: 100%;
     max-width: 640px;
     justify-content: center;
@@ -99,8 +226,10 @@ body {
     height: 360px;
 }
 
-.flex-style {
-    display: flex !important;
+@media (max-width: 768px) {
+    .default-style {
+        height: 200px;
+    }
 }
 
 .clear-input-container:has(.time-input) {
@@ -304,17 +433,6 @@ input[type=text] {
     }
 }
 
-.twitter-tweet.twitter-tweet-rendered {
-    overflow: hidden;
-    border-radius: 12px;
-    margin: 0 !important;
-}
-
-[id^="twitter-widget"] {
-    /* Workaround for hiding 1px white border around twitter video iframe */
-    transform: scale(1.01);
-}
-
 .clear-input-container {
     position: relative;
     display: flex;
@@ -357,11 +475,6 @@ input[type=text] {
 .clear-input--touched:hover + .clear-input-button,
 .clear-input--touched + .clear-input-button:hover {
     display: inline-flex;
-}
-
-.instagram-media {
-    border: none !important;
-    border-radius: 12px !important;
 }
 
 #progress-container {

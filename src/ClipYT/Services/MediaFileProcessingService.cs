@@ -9,6 +9,7 @@ namespace ClipYT.Services
 {
     public class MediaFileProcessingService : IMediaFileProcessingService
     {
+        private const string PreviewFormatSelector = "b[height<=360][ext=mp4]/b[height<=360]/b[ext=mp4]/b";
         private readonly string _youtubeDlpPath;
         private readonly string _ffmpegPath;
         private readonly string _outputFolder;
@@ -16,9 +17,9 @@ namespace ClipYT.Services
 
         public MediaFileProcessingService(IConfiguration configuration, IHubContext<ProgressHub> hubContext)
         {
-            _ffmpegPath = configuration["Config:FFmpegPath"];
-            _youtubeDlpPath = configuration["Config:YoutubeDlpPath"];
-            _outputFolder = configuration["Config:OutputFolder"];
+            _ffmpegPath = configuration["Config:FFmpegPath"] ?? throw new ArgumentNullException(nameof(configuration), "Config:FFmpegPath is missing");
+            _youtubeDlpPath = configuration["Config:YoutubeDlpPath"] ?? throw new ArgumentNullException(nameof(configuration), "Config:YoutubeDlpPath is missing");
+            _outputFolder = configuration["Config:OutputFolder"] ?? throw new ArgumentNullException(nameof(configuration), "Config:OutputFolder is missing");
             _hubContext = hubContext;
         }
 
@@ -26,18 +27,23 @@ namespace ClipYT.Services
         {
             ClearOutputDirectory();
 
-            string filePath = null;
+            string? filePath = null;
             var result = new ProcessingResult();
 
             try
             {
+                if (model.Url == null)
+                {
+                    throw new ArgumentNullException(nameof(model.Url), "URL cannot be null");
+                }
+
                 var isTikTokUrl = Regex.IsMatch(model.Url.ToString(), Constants.RegexConstants.TiktokUrlRegex);
                 var maxRetires = isTikTokUrl ? 3 : 1; // Downloading TikTok video using yt-dlp sometimes fails, so it is retried
                 filePath = await DownloadMediaFileAsync(model.Url.ToString(), model.Format, model.Quality, async (progress) => await SendProgressToHubAsync(progress), maxRetires);
 
                 if (!string.IsNullOrEmpty(model.StartTimestamp) && !string.IsNullOrEmpty(model.EndTimestamp))
                 {
-                    await CutAndConvertFileAsync(filePath, model.StartTimestamp, model.EndTimestamp, async (progress) => await SendProgressToHubAsync(progress));
+                    await CutAndConvertFileAsync(filePath, model.Url.ToString(), model.StartTimestamp, model.EndTimestamp, model.Format, async (progress) => await SendProgressToHubAsync(progress));
                 }
 
                 var fileBytes = await File.ReadAllBytesAsync(filePath);
@@ -70,42 +76,71 @@ namespace ClipYT.Services
             return result;
         }
 
+        public async Task<PreviewMediaResult> GetPreviewMediaAsync(Uri url)
+        {
+            var result = new PreviewMediaResult();
+
+            try
+            {
+                var streamUrl = await ExtractPreviewStreamUrlAsync(url.ToString());
+                result.IsSuccessful = !string.IsNullOrWhiteSpace(streamUrl);
+                result.StreamUrl = streamUrl;
+                result.ContentType = GetPreviewContentType(streamUrl);
+
+                if (!result.IsSuccessful)
+                {
+                    result.ErrorMessage = "Unable to resolve preview stream.";
+                }
+            }
+            catch (Exception ex)
+            {
+                result.IsSuccessful = false;
+                result.ErrorMessage = ex.Message;
+                Debug.WriteLine(ex, "An error occurred while resolving preview media.");
+            }
+
+            return result;
+        }
+
         private async Task SendProgressToHubAsync(string progress)
         {
             await _hubContext.Clients.All.SendAsync("ReceiveProgress", progress);
         }
 
-        private async Task CutAndConvertFileAsync(string filePath, string startTime, string endTime, Action<string> onProgress)
+        private async Task CutAndConvertFileAsync(string filePath, string inputUrl, string startTime, string endTime, Format format, Action<string> onProgress)
         {
             var argsList = new List<string>();
+            var clipDuration = GetClipDuration(startTime, endTime, inputUrl);
+            var clipLength = FormatTimeSpanForFfmpeg(clipDuration);
 
             var inputArg = $"-i \"{filePath}\"";
-            var cutArg = $"-ss {startTime} -to {endTime}";
+            var cutArg = $"-ss {startTime} -t {clipLength}";
 
-
-            var audioConversionArg = $"-c:a copy";
-
-            var outputFileName = $"{Guid.NewGuid()}.mp4";
+            var outputExtension = format == Format.MP3 ? "mp3" : "mp4";
+            var outputFileName = $"{Guid.NewGuid()}.{outputExtension}";
             var outputArg = Path.Combine(_outputFolder, outputFileName);
 
 
             argsList.Add(inputArg);
             argsList.Add(cutArg);
 
-            // Experimental conversion. Do not delete for now
-            //var extensionNoDot = Path.GetExtension(filePath).Replace(".", string.Empty);
-            //if (extensionNoDot != nameof(Format.MP3).ToLower())
-            //{
-            //    var videoConversionArg = $"-c:v libx265 -crf 0 -preset ultrafast";
-            //    argsList.Add(videoConversionArg);
-            //}
+            if (format == Format.MP3)
+            {
+                argsList.Add("-vn");
+                argsList.Add("-c:a libmp3lame");
+            }
+            else
+            {
+                argsList.Add("-c:v libx264");
+                argsList.Add("-preset veryfast");
+                argsList.Add("-crf 18");
+                argsList.Add("-c:a aac");
+                argsList.Add("-movflags +faststart");
+            }
 
-            argsList.Add(audioConversionArg);
-            argsList.Add(outputArg);
+            argsList.Add($"\"{outputArg}\"");
 
             var argsString = string.Join(" ", argsList);
-
-            var clipLength = GetTimeDifference(startTime, endTime);
 
             using (var process = new Process())
             {
@@ -136,21 +171,33 @@ namespace ClipYT.Services
 
                 if (process.ExitCode != 0)
                 {
-                    throw new OperationCanceledException($"FFmpeg process exited with code {process.ExitCode}");
+                    throw new InvalidOperationException($"FFmpeg process exited with code {process.ExitCode}");
                 }
             }
 
             File.Replace(outputArg, filePath, null);
         }
 
-        private static string GetTimeDifference(string startTime, string endTime)
+        private static TimeSpan GetClipDuration(string startTime, string endTime, string inputUrl)
         {
             TimeSpan startTimeSpan = TimeSpan.Parse(startTime);
             TimeSpan endTimeSpan = TimeSpan.Parse(endTime);
 
-            TimeSpan diff = startTimeSpan - endTimeSpan;
+            TimeSpan diff = endTimeSpan - startTimeSpan;
+            if (diff <= TimeSpan.Zero)
+            {
+                throw new ArgumentException("End timestamp must be greater than start timestamp.");
+            }
 
-            return diff.ToString(@"hh\:mm\:ss");
+
+            diff = diff.Add(TimeSpan.FromMilliseconds(200));
+
+            return diff;
+        }
+
+        private static string FormatTimeSpanForFfmpeg(TimeSpan timeSpan)
+        {
+            return timeSpan.ToString(@"hh\:mm\:ss\.fff");
         }
 
         private async Task<string> DownloadMediaFileAsync(string inputUrl, Format outputFormat, Quality outputQuality, Action<string> onProgress, int maxRetries = 1)
@@ -194,7 +241,7 @@ namespace ClipYT.Services
             }
 
             var argsString = string.Join(" ", argsList);
-            string filePath = null;
+            string? filePath = null;
 
             for (int attempt = 1; attempt <= maxRetries; attempt++)
             {
@@ -235,7 +282,7 @@ namespace ClipYT.Services
 
                     if (attempt == maxRetries)
                     {
-                        throw new OperationCanceledException($"Yt-dlp process exited with code {process.ExitCode}");
+                        throw new InvalidOperationException($"Yt-dlp process exited with code {process.ExitCode}");
                     }
 
                     await Task.Delay(1000); // Sleep for 1 second before retrying
@@ -243,6 +290,79 @@ namespace ClipYT.Services
             }
 
             throw new InvalidOperationException("Unexpected error occurred during download.");
+        }
+
+        private async Task<string> ExtractPreviewStreamUrlAsync(string inputUrl)
+        {
+            var argsList = new List<string>
+            {
+                "--no-playlist",
+                "--no-warnings",
+                $"-f \"{PreviewFormatSelector}\"",
+                "-g",
+                inputUrl
+            };
+
+            var argsString = string.Join(" ", argsList);
+            var outputLines = new List<string>();
+            var errorLines = new List<string>();
+
+            using (var process = new Process())
+            {
+                process.StartInfo.FileName = _youtubeDlpPath;
+                process.StartInfo.Arguments = argsString;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+
+                process.OutputDataReceived += (sender, args) =>
+                {
+                    if (!string.IsNullOrWhiteSpace(args.Data))
+                    {
+                        outputLines.Add(args.Data.Trim());
+                    }
+                };
+
+                process.ErrorDataReceived += (sender, args) =>
+                {
+                    if (!string.IsNullOrWhiteSpace(args.Data))
+                    {
+                        errorLines.Add(args.Data.Trim());
+                    }
+                };
+
+                process.Start();
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+                await process.WaitForExitAsync();
+
+                if (process.ExitCode != 0)
+                {
+                    throw new InvalidOperationException("Unable to load video preview.");
+                }
+            }
+
+            var streamUrl = outputLines.LastOrDefault(line => Uri.TryCreate(line, UriKind.Absolute, out _));
+
+            return streamUrl ?? throw new InvalidOperationException("Unable to get stream URL from preview.");
+        }
+
+        private static string GetPreviewContentType(string? streamUrl)
+        {
+            if (string.IsNullOrWhiteSpace(streamUrl) || !Uri.TryCreate(streamUrl, UriKind.Absolute, out var streamUri))
+            {
+                return "video/mp4";
+            }
+
+            var extension = Path.GetExtension(streamUri.AbsolutePath).ToLowerInvariant();
+
+            return extension switch
+            {
+                ".webm" => "video/webm",
+                ".mov" => "video/quicktime",
+                _ => "video/mp4"
+            };
         }
 
         private void ClearOutputDirectory()

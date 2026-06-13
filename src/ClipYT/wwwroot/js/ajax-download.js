@@ -9,6 +9,15 @@
             return;
         }
 
+        // Disable empty precise timestamp inputs so they don't override visible inputs
+        const preciseStartInput = $('#preciseStartTimestamp');
+        const preciseEndInput = $('#preciseEndTimestamp');
+        const isStartEmpty = !preciseStartInput.val();
+        const isEndEmpty = !preciseEndInput.val();
+
+        if (isStartEmpty) preciseStartInput.prop('disabled', true);
+        if (isEndEmpty) preciseEndInput.prop('disabled', true);
+
         connectToHub();
         var $button = $('#submit-button');
         $button.addClass('rotating');
@@ -16,10 +25,16 @@
         $("#progressText").text("Download is starting");
         $("#progress-container").css('display', 'flex');
 
+        var formData = $(this).serialize();
+
+        // Re-enable inputs after serialization
+        if (isStartEmpty) preciseStartInput.prop('disabled', false);
+        if (isEndEmpty) preciseEndInput.prop('disabled', false);
+
         $.ajax({
             url: downloadMethodUrl,
             type: 'POST',
-            data: $(this).serialize(),
+            data: formData,
             xhrFields: {
                 responseType: 'blob'
             },

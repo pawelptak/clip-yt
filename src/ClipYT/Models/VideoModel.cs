@@ -8,7 +8,7 @@ namespace ClipYT.Models
     {
         [Required]
         [RegularExpression($"{RegexConstants.YoutubeUrlRegex}|{RegexConstants.TiktokUrlRegex}|{RegexConstants.TwitterUrlRegex}|{RegexConstants.InstagramUrlRegex}|{RegexConstants.FacebookUrlRegex}", ErrorMessage = "The provided input is not a valid URL.")]
-        public Uri Url { get; set; }
+        public Uri? Url { get; set; }
 
         public string? StartTimestamp { get; set; }
 

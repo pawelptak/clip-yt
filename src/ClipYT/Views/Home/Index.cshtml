@@ -3,7 +3,18 @@
 
 <div class="d-flex flex-column align-items-center">
     <div class="mb-4" id="player-container">
-        <div id="yt-player"></div>
+        <div id="video-loading-overlay" class="video-loading-overlay">
+            <div class="shimmer-effect"></div>
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <span class="loading-text">Loading preview...</span>
+            </div>
+        </div>
+        <div id="video-title-overlay" class="video-title-overlay">
+            <span id="video-title-text"></span>
+        </div>
+        <img id="video-thumbnail" alt="Video thumbnail" />
+        <video id="yt-player" controls playsinline preload="metadata"></video>
     </div>
 
     <form id="app-form" method="post">
@@ -20,6 +31,10 @@
         </div>
 
         <div id="video-details">
+            @* Hidden inputs for precise timestamps with milliseconds from video player *@
+            <input type="hidden" id="preciseStartTimestamp" name="StartTimestamp" value="" />
+            <input type="hidden" id="preciseEndTimestamp" name="EndTimestamp" value="" />
+
             <div class="d-flex gap-3 justify-content-between flex-wrap mb-3">
                 <div class="d-flex flex-column">
                     <div class="input-wrapper">
@@ -102,22 +117,22 @@
      data-clipstagram-logo="@Url.Content("~/images/clipstagram_logo_gradient.svg")"
      data-clipfb-logo="@Url.Content("~/images/clipfb_logo_gradient.svg")"
      data-download-url="@Url.Action("DownloadFile")"
+     data-preview-info-url="@Url.Action("PreviewInfo")"
+     data-thumbnail-url="@Url.Action("ThumbnailUrl")"
+     data-video-title-url="@Url.Action("VideoTitle")"
      data-mp3-format="@ClipYT.Enums.Format.MP3.ToString()"
      data-progress-hub-url="@Url.Content("~/progressHub")">
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script src="~/js/yt-player.js"></script>
-    <script src="https://www.youtube.com/iframe_api"></script>
-    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-    <script async src="//www.instagram.com/embed.js"></script>
-    <script src="~/js/helpers.js"></script>
-    <script src="~/js/custom-validation.js"></script>
-    <script src="~/js/url-input-listener.js"></script>
-    <script src="~/js/video-time-controls.js"></script>
-    <script src="~/js/ajax-download.js"></script>
-    <script src="~/js/clear-input-button.js"></script>
+    <script src="~/js/yt-player.js?v=5.0.8"></script>
+    <script src="~/js/helpers.js?v=5.0.8"></script>
+    <script src="~/js/custom-validation.js?v=5.0.8"></script>
+    <script src="~/js/url-input-listener.js?v=5.0.8"></script>
+    <script src="~/js/video-time-controls.js?v=5.0.8"></script>
+    <script src="~/js/ajax-download.js?v=5.0.8"></script>
+    <script src="~/js/clear-input-button.js?v=5.0.8"></script>
     <script src="~/js/signalr/dist/browser/signalr.min.js"></script>
     <script src="~/js/signalr/signalr-setup-hub.js"></script>
 }
