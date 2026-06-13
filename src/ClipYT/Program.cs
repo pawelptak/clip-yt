@@ -10,8 +10,7 @@ builder.Services.AddHttpClient(string.Empty)
     .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
     {
         AutomaticDecompression = System.Net.DecompressionMethods.All
-    })
-    .SetHandlerLifetime(TimeSpan.FromMinutes(5));
+    });
 
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<IUrlValidationService, UrlValidationService>();
