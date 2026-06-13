@@ -17,9 +17,9 @@ namespace ClipYT.Services
 
         public MediaFileProcessingService(IConfiguration configuration, IHubContext<ProgressHub> hubContext)
         {
-            _ffmpegPath = configuration["Config:FFmpegPath"];
-            _youtubeDlpPath = configuration["Config:YoutubeDlpPath"];
-            _outputFolder = configuration["Config:OutputFolder"];
+            _ffmpegPath = configuration["Config:FFmpegPath"] ?? throw new ArgumentNullException(nameof(configuration), "Config:FFmpegPath is missing");
+            _youtubeDlpPath = configuration["Config:YoutubeDlpPath"] ?? throw new ArgumentNullException(nameof(configuration), "Config:YoutubeDlpPath is missing");
+            _outputFolder = configuration["Config:OutputFolder"] ?? throw new ArgumentNullException(nameof(configuration), "Config:OutputFolder is missing");
             _hubContext = hubContext;
         }
 
@@ -27,11 +27,16 @@ namespace ClipYT.Services
         {
             ClearOutputDirectory();
 
-            string filePath = null;
+            string? filePath = null;
             var result = new ProcessingResult();
 
             try
             {
+                if (model.Url == null)
+                {
+                    throw new ArgumentNullException(nameof(model.Url), "URL cannot be null");
+                }
+
                 var isTikTokUrl = Regex.IsMatch(model.Url.ToString(), Constants.RegexConstants.TiktokUrlRegex);
                 var maxRetires = isTikTokUrl ? 3 : 1; // Downloading TikTok video using yt-dlp sometimes fails, so it is retried
                 filePath = await DownloadMediaFileAsync(model.Url.ToString(), model.Format, model.Quality, async (progress) => await SendProgressToHubAsync(progress), maxRetires);
@@ -236,7 +241,7 @@ namespace ClipYT.Services
             }
 
             var argsString = string.Join(" ", argsList);
-            string filePath = null;
+            string? filePath = null;
 
             for (int attempt = 1; attempt <= maxRetries; attempt++)
             {
@@ -340,7 +345,7 @@ namespace ClipYT.Services
 
             var streamUrl = outputLines.LastOrDefault(line => Uri.TryCreate(line, UriKind.Absolute, out _));
 
-            return streamUrl;
+            return streamUrl ?? throw new InvalidOperationException("Unable to get stream URL from preview.");
         }
 
         private static string GetPreviewContentType(string? streamUrl)

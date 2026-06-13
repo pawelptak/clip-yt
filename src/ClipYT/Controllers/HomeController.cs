@@ -56,6 +56,11 @@ namespace ClipYT.Controllers
 
             var fileModel = result.FileModel;
 
+            if (fileModel == null)
+            {
+                return null;
+            }
+
             return File(fileModel.Data, System.Net.Mime.MediaTypeNames.Application.Octet, fileModel.Name);
         }
 
@@ -179,7 +184,7 @@ namespace ClipYT.Controllers
             return View();
         }
 
-        
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

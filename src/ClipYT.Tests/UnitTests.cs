@@ -26,14 +26,14 @@ namespace ClipYT.Tests
         public UnitTests()
         {
             var currentDirectory = Directory.GetCurrentDirectory();
-            var solutionDirectory = Directory.GetParent(currentDirectory).Parent.Parent.Parent.FullName;
+            var solutionDirectory = Directory.GetParent(currentDirectory)?.Parent?.Parent?.Parent?.FullName ?? throw new InvalidOperationException("Unable to find solution directory");
             var clipYTProjectDirectory = Path.Combine(solutionDirectory, "ClipYT");
 
             var ffmpegPath = Path.Combine(clipYTProjectDirectory, "Utilities", "ffmpeg.exe");
             var youtubeDlpPath = Path.Combine(clipYTProjectDirectory, "Utilities", "yt-dlp.exe");
             var outputFolder = Path.Combine(clipYTProjectDirectory, "Output");
 
-            var inMemorySettings = new Dictionary<string, string>
+            var inMemorySettings = new Dictionary<string, string?>
             {
                 { "Config:FFmpegPath", ffmpegPath },
                 { "Config:YoutubeDlpPath", youtubeDlpPath },
@@ -134,6 +134,7 @@ namespace ClipYT.Tests
             var fileModel = result.FileModel;
 
             // Assert
+            Assert.NotNull(fileModel);
             Assert.True(fileModel.Data.Length > 0);
         }
 
@@ -154,6 +155,7 @@ namespace ClipYT.Tests
             var fileModel = result.FileModel;
 
             // Assert
+            Assert.NotNull(fileModel);
             Assert.True(fileModel.Data.Length > 0);
         }
 
@@ -234,6 +236,7 @@ namespace ClipYT.Tests
             var fileModel = result.FileModel;
 
             // Assert
+            Assert.NotNull(fileModel);
             Assert.True(fileModel.Data.Length > 0);
         }
 
