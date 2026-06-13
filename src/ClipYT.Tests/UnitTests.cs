@@ -307,24 +307,21 @@ namespace ClipYT.Tests
             Assert.False(result3, "Should block localhost");
         }
 
-        [Fact]
-        public async Task UrlValidationService_AllowsSupportedPlatforms()
+        [Theory]
+        [InlineData("https://www.youtube.com/watch?v=dQw4w9WgXcQ")]
+        [InlineData("https://www.tiktok.com/@rickastleyofficial/video/7081656622094929158")]
+        [InlineData("https://x.com/i/status/1842206140693664182")]
+        [InlineData("https://www.instagram.com/p/DAEQq8lvpvD/")]
+        [InlineData("https://www.facebook.com/reel/713709415093896")]
+        public async Task UrlValidationService_AllowsSupportedPlatforms(string inputUrl)
         {
             // Arrange
             var urlValidationService = new UrlValidationService();
 
             // Act & Assert - Should allow supported platforms
-            var youtubeUrl = new Uri("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-            var result1 = await urlValidationService.IsUrlValidAsync(youtubeUrl);
-            Assert.True(result1, "Should allow YouTube URLs");
-
-            var tiktokUrl = new Uri("https://www.tiktok.com/@rickastleyofficial/video/7081656622094929158");
-            var result2 = await urlValidationService.IsUrlValidAsync(tiktokUrl);
-            Assert.True(result2, "Should allow TikTok URLs");
-
-            var twitterUrl = new Uri("https://x.com/i/status/1842206140693664182");
-            var result3 = await urlValidationService.IsUrlValidAsync(twitterUrl);
-            Assert.True(result3, "Should allow Twitter URLs");
+            var url = new Uri(inputUrl);
+            var result = await urlValidationService.IsUrlValidAsync(url);
+            Assert.True(result, $"Should allow URLs like: {inputUrl}");
         }
 
     }
