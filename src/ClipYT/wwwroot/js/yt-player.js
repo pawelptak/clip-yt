@@ -114,14 +114,18 @@ function convertToSeconds(timestamp) {
 }
 
 function getPreciseTimeFromInput(inputElementId) {
+    // Try to get precise value from hidden input first
+    const hiddenInputId = inputElementId === 'videoStartInput' ? 'preciseStartTimestamp' : 'preciseEndTimestamp';
+    const hiddenInput = document.getElementById(hiddenInputId);
+
+    if (hiddenInput && hiddenInput.value) {
+        return convertToSeconds(hiddenInput.value);
+    }
+
+    // Fallback to visible input value
     const element = document.getElementById(inputElementId);
     if (!element) {
         return 0;
-    }
-
-    const preciseTime = element.getAttribute('data-precise-time');
-    if (preciseTime) {
-        return convertToSeconds(preciseTime);
     }
 
     return convertToSeconds(element.value);
