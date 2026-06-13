@@ -1,6 +1,5 @@
 using ClipYT.Interfaces;
 using ClipYT.Services;
-using Microsoft.Extensions.Caching.Memory;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient();
 builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<IUrlValidationService, UrlValidationService>();
 builder.Services.AddSingleton<IMetadataService, MetadataService>();
 builder.Services.AddSingleton<IMediaFileProcessingService, MediaFileProcessingService>();
 builder.Services.AddSingleton<IRandomCaptionService, RandomCaptionService>();

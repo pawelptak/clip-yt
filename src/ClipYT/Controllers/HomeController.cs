@@ -13,17 +13,20 @@ namespace ClipYT.Controllers
         private readonly IMemoryCache _memoryCache;
         private readonly IMediaFileProcessingService _mediaFileProcessingService;
         private readonly IMetadataService _metadataService;
+        private readonly IUrlValidationService _urlValidationService;
 
         public HomeController(
             IHttpClientFactory httpClientFactory,
             IMemoryCache memoryCache,
             IMediaFileProcessingService mediaFileProcessingService,
-            IMetadataService metadataService)
+            IMetadataService metadataService,
+            IUrlValidationService urlValidationService)
         {
             _httpClientFactory = httpClientFactory;
             _memoryCache = memoryCache;
             _mediaFileProcessingService = mediaFileProcessingService;
             _metadataService = metadataService;
+            _urlValidationService = urlValidationService;
         }
 
         public IActionResult Index()
@@ -77,6 +80,11 @@ namespace ClipYT.Controllers
                 return BadRequest(new { isSuccessful = false, errorMessage = "The provided URL is invalid." });
             }
 
+            if (!await _urlValidationService.IsUrlValidAsync(mediaUrl))
+            {
+                return BadRequest(new { isSuccessful = false, errorMessage = "The provided URL is not allowed." });
+            }
+
             var thumbnailUrl = await _metadataService.GetThumbnailUrlAsync(mediaUrl);
 
             return Json(new { isSuccessful = true, thumbnailUrl });
@@ -88,6 +96,11 @@ namespace ClipYT.Controllers
             if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))
             {
                 return BadRequest(new { isSuccessful = false, errorMessage = "The provided URL is invalid." });
+            }
+
+            if (!await _urlValidationService.IsUrlValidAsync(mediaUrl))
+            {
+                return BadRequest(new { isSuccessful = false, errorMessage = "The provided URL is not allowed." });
             }
 
             var title = await _metadataService.GetTitleAsync(mediaUrl);
@@ -104,6 +117,15 @@ namespace ClipYT.Controllers
                 {
                     IsSuccessful = false,
                     ErrorMessage = "The provided URL is invalid."
+                });
+            }
+
+            if (!await _urlValidationService.IsUrlValidAsync(mediaUrl))
+            {
+                return BadRequest(new PreviewMediaResult
+                {
+                    IsSuccessful = false,
+                    ErrorMessage = "The provided URL is not allowed."
                 });
             }
 
@@ -131,7 +153,7 @@ namespace ClipYT.Controllers
                 return BadRequest();
             }
 
-            if (mediaUrl.Scheme != Uri.UriSchemeHttp && mediaUrl.Scheme != Uri.UriSchemeHttps)
+            if (!await _urlValidationService.IsUrlValidAsync(mediaUrl))
             {
                 return BadRequest();
             }

@@ -243,7 +243,9 @@ namespace ClipYT.Tests
         {
             var memoryCache = new MemoryCache(new MemoryCacheOptions());
             var thumbnailServiceMock = new Mock<IMetadataService>();
-            var controller = new HomeController(httpClientFactory, memoryCache, mediaFileProcessingService, thumbnailServiceMock.Object);
+            var urlValidationServiceMock = new Mock<IUrlValidationService>();
+            urlValidationServiceMock.Setup(x => x.IsUrlValidAsync(It.IsAny<Uri>())).ReturnsAsync(true);
+            var controller = new HomeController(httpClientFactory, memoryCache, mediaFileProcessingService, thumbnailServiceMock.Object, urlValidationServiceMock.Object);
             controller.ControllerContext = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext()
@@ -282,6 +284,47 @@ namespace ClipYT.Tests
             {
                 return new HttpClient();
             }
+        }
+
+        [Fact]
+        public async Task UrlValidationService_BlocksUnsupportedPlatforms()
+        {
+            // Arrange
+            var urlValidationService = new UrlValidationService();
+
+            // Act & Assert - Should block arbitrary URLs
+            var maliciousUrl = new Uri("https://evil.com/malicious");
+            var result1 = await urlValidationService.IsUrlValidAsync(maliciousUrl);
+            Assert.False(result1, "Should block non-platform URLs");
+
+            // Should block internal IPs even if scheme is valid
+            var internalUrl = new Uri("http://192.168.1.1/admin");
+            var result2 = await urlValidationService.IsUrlValidAsync(internalUrl);
+            Assert.False(result2, "Should block private IP addresses");
+
+            var localhostUrl = new Uri("http://localhost:8080/api");
+            var result3 = await urlValidationService.IsUrlValidAsync(localhostUrl);
+            Assert.False(result3, "Should block localhost");
+        }
+
+        [Fact]
+        public async Task UrlValidationService_AllowsSupportedPlatforms()
+        {
+            // Arrange
+            var urlValidationService = new UrlValidationService();
+
+            // Act & Assert - Should allow supported platforms
+            var youtubeUrl = new Uri("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+            var result1 = await urlValidationService.IsUrlValidAsync(youtubeUrl);
+            Assert.True(result1, "Should allow YouTube URLs");
+
+            var tiktokUrl = new Uri("https://www.tiktok.com/@rickastleyofficial/video/7081656622094929158");
+            var result2 = await urlValidationService.IsUrlValidAsync(tiktokUrl);
+            Assert.True(result2, "Should allow TikTok URLs");
+
+            var twitterUrl = new Uri("https://x.com/i/status/1842206140693664182");
+            var result3 = await urlValidationService.IsUrlValidAsync(twitterUrl);
+            Assert.True(result3, "Should allow Twitter URLs");
         }
 
     }
