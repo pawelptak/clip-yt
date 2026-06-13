@@ -9,20 +9,17 @@ namespace ClipYT.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IMemoryCache _memoryCache;
         private readonly IMediaFileProcessingService _mediaFileProcessingService;
         private readonly IMetadataService _metadataService;
 
         public HomeController(
-            ILogger<HomeController> logger,
             IHttpClientFactory httpClientFactory,
             IMemoryCache memoryCache,
             IMediaFileProcessingService mediaFileProcessingService,
             IMetadataService metadataService)
         {
-            _logger = logger;
             _httpClientFactory = httpClientFactory;
             _memoryCache = memoryCache;
             _mediaFileProcessingService = mediaFileProcessingService;
@@ -40,7 +37,7 @@ namespace ClipYT.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult?> DownloadFile(MediaFileModel model)
+        public async Task<ActionResult> DownloadFile(MediaFileModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -51,14 +48,22 @@ namespace ClipYT.Controllers
 
             if (!result.IsSuccessful)
             {
-                return null;
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    isSuccessful = false,
+                    errorMessage = result.ErrorMessage ?? "An error occurred while processing the file."
+                });
             }
 
             var fileModel = result.FileModel;
 
             if (fileModel == null)
             {
-                return null;
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    isSuccessful = false,
+                    errorMessage = "The file could not be generated."
+                });
             }
 
             return File(fileModel.Data, System.Net.Mime.MediaTypeNames.Application.Octet, fileModel.Name);

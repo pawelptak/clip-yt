@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using Moq;
 using System.Net;
 using System.Net.Http.Headers;
@@ -242,10 +241,9 @@ namespace ClipYT.Tests
 
         private static HomeController CreateHomeController(IMediaFileProcessingService mediaFileProcessingService, IHttpClientFactory httpClientFactory)
         {
-            var loggerMock = new Mock<ILogger<HomeController>>();
             var memoryCache = new MemoryCache(new MemoryCacheOptions());
             var thumbnailServiceMock = new Mock<IMetadataService>();
-            var controller = new HomeController(loggerMock.Object, httpClientFactory, memoryCache, mediaFileProcessingService, thumbnailServiceMock.Object);
+            var controller = new HomeController(httpClientFactory, memoryCache, mediaFileProcessingService, thumbnailServiceMock.Object);
             controller.ControllerContext = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext()
