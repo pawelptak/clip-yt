@@ -28,13 +28,17 @@ namespace ClipYT.Services
             "Dame da ne.",
             "You picked the wrong house.",
             "Get some help.",
-            "Wake up.",
             "Finish him.",
             "Mr. Salieri sends his regards.",
             "Why are you gay?",
             "Keep on keeping on.",
             "Kept you waiting, huh?",
-            "AISEM TIBITI OOO"
+            "AISEM TIBITI OOO",
+            "Hee heee!",
+            "Gapisz mi sie na bebech?",
+            "Tralalero tralala",
+            "Wilkommen im Lager",
+            "IDDQD"
         ];
     }
 }
