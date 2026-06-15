@@ -17,6 +17,8 @@ builder.Services.AddSingleton<IUrlValidationService, UrlValidationService>();
 builder.Services.AddSingleton<IMetadataService, MetadataService>();
 builder.Services.AddSingleton<IMediaFileProcessingService, MediaFileProcessingService>();
 builder.Services.AddSingleton<IRandomCaptionService, RandomCaptionService>();
+builder.Services.AddSingleton<IHolidayService, HolidayService>();
+builder.Services.AddSingleton<ITradingSundayService, TradingSundayService>();
 builder.Services.AddSignalR();
 var app = builder.Build();
 
