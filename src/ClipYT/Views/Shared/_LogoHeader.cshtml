@@ -1,15 +1,12 @@
 ﻿@using ClipYT.Interfaces;
 @inject IRandomCaptionService RandomCaptionService;
 @inject IHolidayService HolidayService;
+@inject ITradingSundayService TradingSundayService;
 
 <div class="d-flex justify-content-center mb-4">
     <a class="logo-a" href=@Url.Action("Index") title="@ViewBag.Version">
         <img src="~/images/clipyt_logo_gradient.svg" alt="ClipYT logo" id="logo-img" />
-        <span class="logo-caption">
-            @(string.IsNullOrWhiteSpace(HolidayService.GetTodaysHolidayName())
-                ? RandomCaptionService.GetRandomCaption()
-                : HolidayService.GetTodaysHolidayName())
-        </span>
+        <span class="logo-caption">@GetCaption()</span>
     </a>
 </div>
 
@@ -37,3 +34,26 @@
         font-weight: 900;
     }
 </style>
+
+@functions {
+    public string GetCaption()
+    {
+        var tradingSunday = TradingSundayService.IsTradingSunday();
+
+        if (tradingSunday is true)
+        {
+            return "Niedziela Handlowa!";
+        }
+
+        if (tradingSunday is false)
+        {
+            return "Niedziela Niehandlowa.";
+        }
+
+        var todaysHolidayName = HolidayService.GetTodaysHolidayName();
+
+        return string.IsNullOrWhiteSpace(todaysHolidayName)
+            ? RandomCaptionService.GetRandomCaption()
+            : todaysHolidayName;
+    }
+}

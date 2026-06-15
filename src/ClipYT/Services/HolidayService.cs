@@ -10,7 +10,7 @@ namespace ClipYT.Services
             { (1, 2), "National Introvert Day" },
             { (1, 4), "National Spaghetti Day" },
             { (1, 17), "International Pizza Day" },
-            { (1, 18), "Blue Monday :(" },
+            { (1, 18), "Blue Monday" },
             { (1, 19), "National Popcorn Day" },
             { (1, 28), "International LEGO Day" },
             { (2, 5), "World Nutella Day" },
