@@ -1,11 +1,16 @@
 ﻿@using ClipYT.Interfaces;
 @inject IRandomCaptionService RandomCaptionService;
+@inject IHolidayService HolidayService;
 
 <div class="d-flex justify-content-center mb-4">
-        <a class="logo-a" href=@Url.Action("Index") title="@ViewBag.Version">
-            <img src="~/images/clipyt_logo_gradient.svg" alt="ClipYT logo" id="logo-img" />
-            <span class="logo-caption">@RandomCaptionService.GetRandomCaption()</span>
-        </a>
+    <a class="logo-a" href=@Url.Action("Index") title="@ViewBag.Version">
+        <img src="~/images/clipyt_logo_gradient.svg" alt="ClipYT logo" id="logo-img" />
+        <span class="logo-caption">
+            @(string.IsNullOrWhiteSpace(HolidayService.GetTodaysHolidayName())
+                ? RandomCaptionService.GetRandomCaption()
+                : HolidayService.GetTodaysHolidayName())
+        </span>
+    </a>
 </div>
 
 <style>
