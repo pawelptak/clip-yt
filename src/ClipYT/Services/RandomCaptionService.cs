@@ -5,7 +5,7 @@ namespace ClipYT.Services
     public class RandomCaptionService : IRandomCaptionService
     {
         private readonly Random _random;
-        private readonly IList<string> _captions;
+        private readonly List<string> _captions;
 
         public RandomCaptionService()
         {
@@ -15,8 +15,7 @@ namespace ClipYT.Services
 
         public string GetRandomCaption() => _captions[_random.Next(_captions.Count)];
 
-        // Do not put captions with apostrophes because the used font does not support them :)
-        private IList<string> BuildCaptions() => new List<string> {
+        private List<string> BuildCaptions() => [
             "Believe in yourself.",
             "Think about it.",
             "Never gonna give you up.",
@@ -36,6 +35,6 @@ namespace ClipYT.Services
             "Keep on keeping on.",
             "Kept you waiting, huh?",
             "AISEM TIBITI OOO"
-        };
+        ];
     }
 }
