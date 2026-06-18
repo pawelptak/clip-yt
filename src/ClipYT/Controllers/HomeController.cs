@@ -177,13 +177,11 @@ namespace ClipYT.Controllers
                 return NotFound();
             }
 
-            // If it's a local file (TikTok), serve it directly
             if (previewResult.IsLocalFile)
             {
                 return ServeLocalFile(previewResult);
             }
 
-            // Otherwise, proxy the remote stream (YouTube, Twitter, etc.)
             var client = _httpClientFactory.CreateClient();
             using var requestMessage = new HttpRequestMessage(HttpMethod.Get, previewResult.StreamUrl);
 
