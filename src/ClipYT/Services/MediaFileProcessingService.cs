@@ -49,7 +49,6 @@ namespace ClipYT.Services
                 var isTikTokUrl = Regex.IsMatch(model.Url.ToString(), Constants.RegexConstants.TiktokUrlRegex);
                 var previewCachePath = Path.Combine(_previewCacheFolder, "tiktok-preview.mp4");
 
-                // Check if we can reuse TikTok preview file
                 var canReusePreview = isTikTokUrl
                     && File.Exists(previewCachePath)
                     && string.IsNullOrEmpty(model.StartTimestamp)
@@ -58,16 +57,11 @@ namespace ClipYT.Services
 
                 if (canReusePreview)
                 {
-                    // Reuse the preview file - no need to download again!
                     var fileInfo = new FileInfo(previewCachePath);
-                    Debug.WriteLine($"[TikTok Reuse] Using cached preview file: {previewCachePath} ({fileInfo.Length / 1024 / 1024:F2} MB)");
-                    await SendProgressToHubAsync("Using cached preview file...");
                     filePath = previewCachePath;
                 }
                 else
                 {
-                    // Download normally
-                    Debug.WriteLine($"[TikTok Download] Cannot reuse preview. IsTikTok: {isTikTokUrl}, FileExists: {File.Exists(previewCachePath)}, NoTimestamps: {string.IsNullOrEmpty(model.StartTimestamp) && string.IsNullOrEmpty(model.EndTimestamp)}, Format: {model.Format}");
                     var maxRetires = isTikTokUrl ? 3 : 1;
                     filePath = await DownloadMediaFileAsync(model.Url.ToString(), model.Format, model.Quality, async (progress) => await SendProgressToHubAsync(progress), maxRetires);
 
@@ -78,7 +72,6 @@ namespace ClipYT.Services
                 }
 
                 var fileBytes = await File.ReadAllBytesAsync(filePath);
-                Debug.WriteLine($"[Submit] File read completed. Size: {fileBytes.Length / 1024 / 1024:F2} MB");
 
                 var fileModel = new FileModel
                 {
@@ -99,7 +92,6 @@ namespace ClipYT.Services
             }
             finally
             {
-                // Always clean up after submit - including TikTok preview cache
                 if (filePath != null && File.Exists(filePath))
                 {
                     File.Delete(filePath);
@@ -120,7 +112,6 @@ namespace ClipYT.Services
                 if (isTikTokUrl)
                 {
                     // For TikTok, download to cache and serve from there
-                    // This avoids 403 errors from expired URLs
                     var cachedFilePath = await DownloadTikTokPreviewToCacheAsync(url.ToString());
                     result.IsSuccessful = !string.IsNullOrWhiteSpace(cachedFilePath);
                     result.StreamUrl = cachedFilePath;
@@ -134,7 +125,6 @@ namespace ClipYT.Services
                 }
                 else
                 {
-                    // For other platforms (YouTube, Twitter, Instagram), use direct streaming
                     var streamUrl = await ExtractPreviewStreamUrlAsync(url.ToString());
                     result.IsSuccessful = !string.IsNullOrWhiteSpace(streamUrl);
                     result.StreamUrl = streamUrl;
@@ -349,26 +339,14 @@ namespace ClipYT.Services
 
         private async Task<string> ExtractPreviewStreamUrlAsync(string inputUrl)
         {
-            var isTikTokUrl = Regex.IsMatch(inputUrl, Constants.RegexConstants.TiktokUrlRegex);
-
             var argsList = new List<string>
             {
                 "--no-playlist",
-                "--no-warnings"
+                "--no-warnings",
+                $"-f \"{PreviewFormatSelector}\"",
+                "-g",
+                inputUrl
             };
-
-            if (isTikTokUrl)
-            {
-                // Use TikTok-specific format selector to avoid download issues
-                argsList.Add("-f \"b[url!^='https://www.tiktok.com/']/b\"");
-            }
-            else
-            {
-                argsList.Add($"-f \"{PreviewFormatSelector}\"");
-            }
-
-            argsList.Add("-g");
-            argsList.Add(inputUrl);
 
             var argsString = string.Join(" ", argsList);
             var outputLines = new List<string>();
@@ -417,7 +395,6 @@ namespace ClipYT.Services
 
         private async Task<string> DownloadTikTokPreviewToCacheAsync(string inputUrl)
         {
-            // Clean up old previews before starting
             CleanupAllPreviewFiles();
 
             var cachedFilePath = Path.Combine(_previewCacheFolder, "tiktok-preview.mp4");
