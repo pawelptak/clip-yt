@@ -177,6 +177,13 @@ namespace ClipYT.Controllers
                 return NotFound();
             }
 
+            // If it's a local file (TikTok), serve it directly
+            if (previewResult.IsLocalFile)
+            {
+                return ServeLocalFile(previewResult);
+            }
+
+            // Otherwise, proxy the remote stream (YouTube, Twitter, etc.)
             var client = _httpClientFactory.CreateClient();
             using var requestMessage = new HttpRequestMessage(HttpMethod.Get, previewResult.StreamUrl);
 
@@ -258,7 +265,8 @@ namespace ClipYT.Controllers
             {
                 IsSuccessful = true,
                 StreamUrl = previewMediaResult.StreamUrl,
-                ContentType = previewMediaResult.ContentType
+                ContentType = previewMediaResult.ContentType,
+                IsLocalFile = previewMediaResult.IsLocalFile
             };
 
             _memoryCache.Set(cacheKey, cachedPreviewMediaResult, TimeSpan.FromMinutes(5));
@@ -267,6 +275,27 @@ namespace ClipYT.Controllers
         private static string GetPreviewCacheKey(Uri mediaUrl)
         {
             return $"preview-media:{mediaUrl}";
+        }
+
+        private IActionResult ServeLocalFile(PreviewMediaResult previewResult)
+        {
+            if (!System.IO.File.Exists(previewResult.StreamUrl))
+            {
+                return NotFound();
+            }
+
+            var fileStream = new FileStream(
+                previewResult.StreamUrl, 
+                FileMode.Open, 
+                FileAccess.Read, 
+                FileShare.Read, 
+                4096, 
+                FileOptions.Asynchronous);
+
+            return new FileStreamResult(fileStream, previewResult.ContentType ?? "video/mp4")
+            {
+                EnableRangeProcessing = true
+            };
         }
     }
 }
