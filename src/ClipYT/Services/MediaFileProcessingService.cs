@@ -3,14 +3,14 @@ using ClipYT.Interfaces;
 using ClipYT.Models;
 using Microsoft.AspNetCore.SignalR;
 using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ClipYT.Services
 {
     public class MediaFileProcessingService : IMediaFileProcessingService
     {
-        private const string PreviewFormatSelector = "b[height<=360][ext=mp4]/b[height<=360]/b[ext=mp4]/b";
-
         private readonly string _youtubeDlpPath;
         private readonly string _ffmpegPath;
         private readonly string _outputFolder;
@@ -34,7 +34,7 @@ namespace ClipYT.Services
 
         public async Task<ProcessingResult> ProcessMediaFileAsync(MediaFileModel model)
         {
-            ClearOutputDirectory();
+            //ClearOutputDirectory();
 
             string? filePath = null;
             var result = new ProcessingResult();
@@ -46,22 +46,21 @@ namespace ClipYT.Services
                     throw new ArgumentNullException(nameof(model.Url), "URL cannot be null");
                 }
 
-                var isTikTokUrl = Regex.IsMatch(model.Url.ToString(), Constants.RegexConstants.TiktokUrlRegex);
-                var previewCachePath = Path.Combine(_previewCacheFolder, "tiktok-preview.mp4");
-
-                var canReusePreview = isTikTokUrl
-                    && File.Exists(previewCachePath)
+                var previewCacheKey = GetPreviewCacheKey(model.Url.ToString());
+                var previewCachePath = string.Empty;
+                var canReusePreview = TryGetCachedPreviewFilePath(previewCacheKey, out previewCachePath)
                     && string.IsNullOrEmpty(model.StartTimestamp)
                     && string.IsNullOrEmpty(model.EndTimestamp)
-                    && model.Format == Enums.Format.MP4;
+                    && model.Format == Format.MP4
+                    && model.Quality == Quality.Minimal;
 
                 if (canReusePreview)
                 {
-                    var fileInfo = new FileInfo(previewCachePath);
                     filePath = previewCachePath;
                 }
                 else
                 {
+                    var isTikTokUrl = Regex.IsMatch(model.Url.ToString(), Constants.RegexConstants.TiktokUrlRegex);
                     var maxRetires = isTikTokUrl ? 3 : 1;
                     filePath = await DownloadMediaFileAsync(model.Url.ToString(), model.Format, model.Quality, async (progress) => await SendProgressToHubAsync(progress), maxRetires);
 
@@ -92,9 +91,9 @@ namespace ClipYT.Services
             }
             finally
             {
-                if (filePath != null && File.Exists(filePath))
+                if (filePath != null)
                 {
-                    File.Delete(filePath);
+                    TryDeleteFile(filePath);
                 }
             }
 
@@ -108,33 +107,31 @@ namespace ClipYT.Services
             try
             {
                 var isTikTokUrl = Regex.IsMatch(url.ToString(), Constants.RegexConstants.TiktokUrlRegex);
+                var previewCacheKey = GetPreviewCacheKey(url.ToString());
 
-                if (isTikTokUrl)
+                if (!TryGetCachedPreviewFilePath(previewCacheKey, out var cachedFilePath))
                 {
-                    // For TikTok, download to cache and serve from there
-                    var cachedFilePath = await DownloadTikTokPreviewToCacheAsync(url.ToString());
-                    result.IsSuccessful = !string.IsNullOrWhiteSpace(cachedFilePath);
-                    result.StreamUrl = cachedFilePath;
-                    result.ContentType = "video/mp4";
-                    result.IsLocalFile = true;
-
-                    if (!result.IsSuccessful)
-                    {
-                        result.ErrorMessage = "Unable to download TikTok preview.";
-                    }
+                    var previewQuality = Quality.Minimal;
+                    cachedFilePath = await DownloadMediaFileAsync(
+                        url.ToString(),
+                        Format.MP4,
+                        previewQuality,
+                        _ => { },
+                        maxRetries: isTikTokUrl ? 3 : 1,
+                        outputFolder: _previewCacheFolder,
+                        fileNamePrefix: previewCacheKey,
+                        noPlaylist: true,
+                        noWarnings: true);
                 }
-                else
-                {
-                    var streamUrl = await ExtractPreviewStreamUrlAsync(url.ToString());
-                    result.IsSuccessful = !string.IsNullOrWhiteSpace(streamUrl);
-                    result.StreamUrl = streamUrl;
-                    result.ContentType = GetPreviewContentType(streamUrl);
-                    result.IsLocalFile = false;
 
-                    if (!result.IsSuccessful)
-                    {
-                        result.ErrorMessage = "Unable to resolve preview stream.";
-                    }
+                result.IsSuccessful = !string.IsNullOrWhiteSpace(cachedFilePath);
+                result.StreamUrl = cachedFilePath;
+                result.ContentType = "video/mp4";
+                result.IsLocalFile = true;
+
+                if (!result.IsSuccessful)
+                {
+                    result.ErrorMessage = "Unable to download preview.";
                 }
             }
             catch (Exception ex)
@@ -245,13 +242,34 @@ namespace ClipYT.Services
             return timeSpan.ToString(@"hh\:mm\:ss\.fff");
         }
 
-        private async Task<string> DownloadMediaFileAsync(string inputUrl, Format outputFormat, Quality outputQuality, Action<string> onProgress, int maxRetries = 1)
+        private async Task<string> DownloadMediaFileAsync(
+            string inputUrl,
+            Format outputFormat,
+            Quality outputQuality,
+            Action<string> onProgress,
+            int maxRetries = 1,
+            string? outputFolder = null,
+            string? fileNamePrefix = null,
+            bool noPlaylist = false,
+            bool noWarnings = false)
         {
             var argsList = new List<string>();
 
             var urlArg = inputUrl;
-            var fileId = Guid.NewGuid();
-            var outputArg = $"-o {_outputFolder}/{fileId}_%(title).90s.%(ext)s";
+            var fileId = fileNamePrefix ?? Guid.NewGuid().ToString();
+            var targetOutputFolder = outputFolder ?? _outputFolder;
+            var outputTemplate = Path.Combine(targetOutputFolder, $"{fileId}_%(title).90s.%(ext)s");
+            var outputArg = $"-o \"{outputTemplate}\"";
+
+            if (noPlaylist)
+            {
+                argsList.Add("--no-playlist");
+            }
+
+            if (noWarnings)
+            {
+                argsList.Add("--no-warnings");
+            }
 
             argsList.Add(urlArg);
             argsList.Add(outputArg);
@@ -320,8 +338,8 @@ namespace ClipYT.Services
 
                     if (process.ExitCode == 0)
                     {
-                        filePath = Directory.GetFiles(_outputFolder)
-                            .Single(file => Path.GetFileName(file).StartsWith(fileId.ToString()));
+                        filePath = Directory.GetFiles(targetOutputFolder)
+                            .Single(file => Path.GetFileName(file).StartsWith(fileId));
                         return filePath;
                     }
 
@@ -337,148 +355,42 @@ namespace ClipYT.Services
             throw new InvalidOperationException("Unexpected error occurred during download.");
         }
 
-        private async Task<string> ExtractPreviewStreamUrlAsync(string inputUrl)
+        private bool TryGetCachedPreviewFilePath(string previewCacheKey, out string previewCachePath)
         {
-            var argsList = new List<string>
+            previewCachePath = string.Empty;
+
+            if (!Directory.Exists(_previewCacheFolder))
             {
-                "--no-playlist",
-                "--no-warnings",
-                $"-f \"{PreviewFormatSelector}\"",
-                "-g",
-                inputUrl
-            };
-
-            var argsString = string.Join(" ", argsList);
-            var outputLines = new List<string>();
-            var errorLines = new List<string>();
-
-            using (var process = new Process())
-            {
-                process.StartInfo.FileName = _youtubeDlpPath;
-                process.StartInfo.Arguments = argsString;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = true;
-
-                process.OutputDataReceived += (sender, args) =>
-                {
-                    if (!string.IsNullOrWhiteSpace(args.Data))
-                    {
-                        outputLines.Add(args.Data.Trim());
-                    }
-                };
-
-                process.ErrorDataReceived += (sender, args) =>
-                {
-                    if (!string.IsNullOrWhiteSpace(args.Data))
-                    {
-                        errorLines.Add(args.Data.Trim());
-                    }
-                };
-
-                process.Start();
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
-                await process.WaitForExitAsync();
-
-                if (process.ExitCode != 0)
-                {
-                    throw new InvalidOperationException("Unable to load video preview.");
-                }
+                return false;
             }
 
-            var streamUrl = outputLines.LastOrDefault(line => Uri.TryCreate(line, UriKind.Absolute, out _));
+            previewCachePath = Directory.GetFiles(_previewCacheFolder, $"{previewCacheKey}_*.mp4")
+                .OrderByDescending(File.GetLastWriteTimeUtc)
+                .FirstOrDefault() ?? string.Empty;
 
-            return streamUrl ?? throw new InvalidOperationException("Unable to get stream URL from preview.");
+            return !string.IsNullOrWhiteSpace(previewCachePath);
         }
 
-        private async Task<string> DownloadTikTokPreviewToCacheAsync(string inputUrl)
+        private static string GetPreviewCacheKey(string inputUrl)
         {
-            CleanupAllPreviewFiles();
+            var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(inputUrl));
 
-            var cachedFilePath = Path.Combine(_previewCacheFolder, "tiktok-preview.mp4");
-
-            var argsList = new List<string>
-            {
-                "--no-playlist",
-                "--no-warnings",
-                "-f \"b[url!^='https://www.tiktok.com/']/b[height<=360]/b\"",
-                $"-o \"{cachedFilePath}\"",
-                inputUrl
-            };
-
-            var argsString = string.Join(" ", argsList);
-
-            using (var process = new Process())
-            {
-                process.StartInfo.FileName = _youtubeDlpPath;
-                process.StartInfo.Arguments = argsString;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = true;
-
-                process.Start();
-                await process.WaitForExitAsync();
-
-                if (process.ExitCode != 0)
-                {
-                    throw new InvalidOperationException("Unable to download TikTok preview.");
-                }
-            }
-
-            if (!File.Exists(cachedFilePath))
-            {
-                throw new InvalidOperationException("TikTok preview file was not created.");
-            }
-
-            return cachedFilePath;
+            return Convert.ToHexString(bytes)[..16].ToLowerInvariant();
         }
 
-        private void CleanupAllPreviewFiles()
+        private static void TryDeleteFile(string filePath)
         {
             try
             {
-                if (!Directory.Exists(_previewCacheFolder))
+                if (File.Exists(filePath))
                 {
-                    return;
-                }
-
-                var files = Directory.GetFiles(_previewCacheFolder, "*.mp4");
-                foreach (var file in files)
-                {
-                    try
-                    {
-                        File.Delete(file);
-                    }
-                    catch
-                    {
-                        // Ignore deletion errors
-                    }
+                    File.Delete(filePath);
                 }
             }
             catch
             {
-                // Ignore cleanup errors
+                // Ignore cleanup errors. The download response is already prepared at this point.
             }
-        }
-
-        private static string GetPreviewContentType(string? streamUrl)
-        {
-            if (string.IsNullOrWhiteSpace(streamUrl) || !Uri.TryCreate(streamUrl, UriKind.Absolute, out var streamUri))
-            {
-                return "video/mp4";
-            }
-
-            var extension = Path.GetExtension(streamUri.AbsolutePath).ToLowerInvariant();
-
-            return extension switch
-            {
-                ".webm" => "video/webm",
-                ".mov" => "video/quicktime",
-                _ => "video/mp4"
-            };
         }
 
         private void ClearOutputDirectory()
