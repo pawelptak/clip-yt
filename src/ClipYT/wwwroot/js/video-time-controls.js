@@ -31,6 +31,14 @@
         videoLengthInput.valid();
     }
 
+    function autoFillVideoStartInput() {
+        const videoStartInput = $("#videoStartInput");
+        if (!videoStartInput.val() || videoStartInput.val().trim() === '') {
+            videoStartInput.val('00:00:00');
+            videoStartInput.trigger('input'); // To make the clear button appear
+        }
+    }
+
     function updateVideoEndInput() {
         const videoLengthInput = $("#videoLengthInput");
         const startTimeStr = $("#videoStartInput").val();
@@ -69,6 +77,7 @@
         return timeInputValue;
     }
 
+    $("#videoEndInput").on("change", autoFillVideoStartInput);
     $("#videoEndInput").on("change", updateVideoLengthInput);
     $("#videoEndInput").on("change", function () {
         var currentValue = $(this).val();
