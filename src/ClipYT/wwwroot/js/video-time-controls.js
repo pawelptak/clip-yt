@@ -33,7 +33,10 @@
 
     function autoFillVideoStartInput() {
         const videoStartInput = $("#videoStartInput");
-        if (!videoStartInput.val() || videoStartInput.val().trim() === '') {
+        const videoEndInput = $("#videoEndInput");
+
+        if (videoEndInput.val() && videoEndInput.val().trim() !== '' && 
+            (!videoStartInput.val() || videoStartInput.val().trim() === '')) {
             videoStartInput.val('00:00:00');
             videoStartInput.trigger('input'); // To make the clear button appear
         }
