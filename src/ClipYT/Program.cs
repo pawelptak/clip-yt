@@ -19,6 +19,8 @@ builder.Services.AddSingleton<IMediaFileProcessingService, MediaFileProcessingSe
 builder.Services.AddSingleton<IRandomCaptionService, RandomCaptionService>();
 builder.Services.AddSingleton<IHolidayService, HolidayService>();
 builder.Services.AddSingleton<ITradingSundayService, TradingSundayService>();
+builder.Services.AddHostedService<PreviewCacheCleanupService>();
+
 builder.Services.AddSignalR();
 var app = builder.Build();
 
