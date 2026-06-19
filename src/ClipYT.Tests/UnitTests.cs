@@ -20,7 +20,6 @@ namespace ClipYT.Tests
     public class UnitTests
     {
         private readonly MediaFileProcessingService _mediaFileProcessingService;
-        private readonly string _outputFolder;
 
         public UnitTests()
         {
@@ -54,7 +53,6 @@ namespace ClipYT.Tests
                            .Returns(Task.CompletedTask); // Thx https://stackoverflow.com/a/56269592
 
             _mediaFileProcessingService = new MediaFileProcessingService(configuration, hubContextMock.Object);
-            _outputFolder = outputFolder;
         }
 
         [Fact]
@@ -184,21 +182,26 @@ namespace ClipYT.Tests
         [InlineData("https://x.com/i/status/1842206140693664182")]
         [InlineData("https://www.instagram.com/p/DAEQq8lvpvD/")]
         [InlineData("https://www.facebook.com/reel/713709415093896")]
-        public async Task Output_Folder_Should_Be_Empty_After_Processing_Fails(string inputUrl) // Except the .gitkeep file
+        public async Task Output_Folder_Should_Not_Exist_After_Processing_Fails(string inputUrl)
         {
             // Arrange
             var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = "00:00:20", EndTimestamp = "00:00:10" };
+            string? sessionFolder = null;
 
             // Act
             try
             {
-                await _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel);
+                var result = await _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel);
+                sessionFolder = result.SessionFolder;
             }
             catch (ArgumentException)
             {
-                // Assert
-                var outputFilesExist = Directory.GetFiles(_outputFolder).Any(file => !file.EndsWith(".gitkeep"));
-                Assert.False(outputFilesExist, "Output folder is not empty.");
+            }
+
+            if (sessionFolder != null)
+            {
+                var sessionFolderExists = Directory.Exists(sessionFolder);
+                Assert.False(sessionFolderExists, $"Session folder {sessionFolder} was not cleaned up after error.");
             }
         }
 

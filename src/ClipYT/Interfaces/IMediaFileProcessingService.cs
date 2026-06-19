@@ -8,6 +8,6 @@ namespace ClipYT.Interfaces
 
         Task<PreviewMediaResult> GetPreviewMediaAsync(Uri url);
 
-        void CleanupOutputFolder();
+        void CleanupSessionFolder(string sessionFolder);
     }
 }

@@ -41,6 +41,12 @@ namespace ClipYT.Services
             string? filePath = null;
             var result = new ProcessingResult();
 
+            // Create unique session folder for this request
+            var sessionId = Guid.NewGuid().ToString("N");
+            var sessionFolder = Path.Combine(_outputFolder, sessionId);
+            Directory.CreateDirectory(sessionFolder);
+            result.SessionFolder = sessionFolder;
+
             try
             {
                 await SendProgressToHubAsync("Starting processing...");
@@ -72,7 +78,8 @@ namespace ClipYT.Services
                         model.Format,
                         model.Quality,
                         async (progress) => await SendProgressToHubAsync(progress),
-                        maxRetires);
+                        maxRetires,
+                        outputFolder: sessionFolder);
                     await SendProgressToHubAsync("Download completed.");
                 }
 
@@ -116,7 +123,7 @@ namespace ClipYT.Services
                 result.ErrorMessage = ex.Message;
                 Debug.WriteLine(ex, "An error occurred while processing the file.");
 
-                CleanupOutputFolder();
+                CleanupSessionFolder(sessionFolder);
 
                 throw;
             }
@@ -183,7 +190,9 @@ namespace ClipYT.Services
             var outputExtension = format == Format.MP3 ? "mp3" : "mp4";
             var baseFileName = RemoveIdFromFileName(Path.GetFileNameWithoutExtension(filePath));
             var outputFileName = $"{baseFileName}.{outputExtension}";
-            var outputFilePath = Path.Combine(_outputFolder, outputFileName);
+
+            var sessionFolder = Path.GetDirectoryName(filePath)!;
+            var outputFilePath = Path.Combine(sessionFolder, outputFileName);
 
             if (File.Exists(outputFilePath))
             {
@@ -452,43 +461,29 @@ namespace ClipYT.Services
             return Convert.ToHexString(bytes)[..16].ToLowerInvariant();
         }
 
-        public void CleanupOutputFolder()
+        public void CleanupSessionFolder(string sessionFolder)
         {
-            if (!Directory.Exists(_outputFolder))
+            if (string.IsNullOrEmpty(sessionFolder))
             {
                 return;
             }
 
-            foreach (var filePath in Directory.GetFiles(_outputFolder))
+            // Don't delete preview cache folder
+            if (sessionFolder.StartsWith(_previewCacheFolder, StringComparison.OrdinalIgnoreCase))
             {
-                // Skip .gitkeep
-                if (Path.GetFileName(filePath).Equals(".gitkeep", StringComparison.OrdinalIgnoreCase))
-                {
-                    continue;
-                }
-
-                // Skip preview-cache directory
-                if (filePath.StartsWith(_previewCacheFolder, StringComparison.OrdinalIgnoreCase))
-                {
-                    continue;
-                }
-
-                TryDeleteFile(filePath);
+                return;
             }
-        }
 
-        private static void TryDeleteFile(string filePath)
-        {
             try
             {
-                if (File.Exists(filePath))
+                if (Directory.Exists(sessionFolder))
                 {
-                    File.Delete(filePath);
+                    Directory.Delete(sessionFolder, recursive: true);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                // Ignore cleanup errors. The download response is already prepared at this point.
+                // Ignore cleanup errors - the response is already prepared
             }
         }
 

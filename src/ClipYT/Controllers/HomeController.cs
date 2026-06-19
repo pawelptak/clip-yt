@@ -73,7 +73,7 @@ namespace ClipYT.Controllers
             var stream = new FileStream(fileModel.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read, 
                 bufferSize: FileStreamConstants.StreamBufferSize, useAsync: true);
 
-            Response.RegisterForDispose(new CleanupCallback(_mediaFileProcessingService));
+            Response.RegisterForDispose(new CleanupCallback(_mediaFileProcessingService, result.SessionFolder!));
 
             return File(stream, System.Net.Mime.MediaTypeNames.Application.Octet, fileModel.Name);
         }
@@ -306,15 +306,17 @@ namespace ClipYT.Controllers
     internal class CleanupCallback : IDisposable
     {
         private readonly IMediaFileProcessingService _service;
+        private readonly string _sessionFolder;
 
-        public CleanupCallback(IMediaFileProcessingService service)
+        public CleanupCallback(IMediaFileProcessingService service, string sessionFolder)
         {
             _service = service;
+            _sessionFolder = sessionFolder;
         }
 
         public void Dispose()
         {
-            _service.CleanupOutputFolder();
+            _service.CleanupSessionFolder(_sessionFolder);
         }
     }
 }
