@@ -48,12 +48,16 @@ namespace ClipYT.Services
                 var previewCachePath = string.Empty;
 
                 var canReusePreview = TryGetCachedPreviewFilePath(previewCacheKey, out previewCachePath)
-                    && model.Format == Format.MP4
                     && model.Quality == Quality.Minimal;
 
                 if (canReusePreview)
                 {
                     filePath = CopyPreviewCacheFileToOutput(previewCachePath);
+
+                    if (model.Format == Format.MP3)
+                    {
+                        filePath = await ConvertToAudioAsync(filePath, async (progress) => await SendProgressToHubAsync(progress));
+                    }
                 }
                 else
                 {
@@ -365,6 +369,55 @@ namespace ClipYT.Services
             }
 
             throw new InvalidOperationException("Unexpected error occurred during download.");
+        }
+
+        private async Task<string> ConvertToAudioAsync(string inputFilePath, Action<string> onProgress)
+        {
+            var outputFilePath = Path.ChangeExtension(inputFilePath, ".mp3");
+
+            if (File.Exists(outputFilePath))
+            {
+                File.Delete(outputFilePath);
+            }
+
+            var argsList = new List<string>
+            {
+                $"-i \"{inputFilePath}\"",
+                "-vn",
+                "-c:a libmp3lame",
+                $"\"{outputFilePath}\""
+            };
+
+            var argsString = string.Join(" ", argsList);
+            using (var process = new Process())
+            {
+                process.StartInfo.FileName = _ffmpegPath;
+                process.StartInfo.Arguments = argsString;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+                process.StartInfo.UseShellExecute = false;
+
+                // FFmpeg reports progress as error output
+                process.ErrorDataReceived += (sender, args) =>
+                {
+                    var output = args.Data;
+                    if (!string.IsNullOrEmpty(output))
+                    {
+                        onProgress?.Invoke($"Converting to audio: {output}");
+                    }
+                };
+
+                process.Start();
+                process.BeginErrorReadLine();
+                await process.WaitForExitAsync();
+
+                if (process.ExitCode != 0)
+                {
+                    throw new InvalidOperationException($"FFmpeg process exited with code {process.ExitCode}");
+                }
+            }
+
+            return outputFilePath;
         }
 
         private bool TryGetCachedPreviewFilePath(string previewCacheKey, out string previewCachePath)
