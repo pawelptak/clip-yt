@@ -63,9 +63,7 @@ namespace ClipYT.Services
 
                 if (canReusePreview)
                 {
-                    await SendProgressToHubAsync("Reusing cached preview file...");
                     filePath = previewCachePath;
-                    await SendProgressToHubAsync("Preview file ready.");
                 }
                 else
                 {
@@ -103,7 +101,6 @@ namespace ClipYT.Services
                     await SendProgressToHubAsync("Clip cutting completed.");
                 }
 
-                await SendProgressToHubAsync("Reading file to memory...");
                 await SendProgressToHubAsync("Preparing file for download...");
 
                 var fileModel = new FileModel
