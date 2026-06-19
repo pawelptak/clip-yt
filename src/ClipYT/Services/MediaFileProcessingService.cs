@@ -46,9 +46,11 @@ namespace ClipYT.Services
             {
                 var previewCacheKey = GetPreviewCacheKey(model.Url.ToString());
                 var previewCachePath = string.Empty;
+                var hasClipTimestamps = HasClipTimestamps(model);
 
                 var canReusePreview = TryGetCachedPreviewFilePath(previewCacheKey, out previewCachePath)
-                    && model.Quality == Quality.Minimal;
+                    && (model.Format == Format.MP4 && model.Quality == Quality.Minimal)
+                    || (model.Format == Format.MP3);
 
                 if (canReusePreview)
                 {
@@ -72,9 +74,9 @@ namespace ClipYT.Services
                         maxRetires);
                 }
 
-                if (HasClipTimestamps(model))
+                if (hasClipTimestamps)
                 {
-                    await CutAndConvertFileAsync(
+                    filePath = await CutFileAsync(
                         filePath,
                         model.Url.ToString(),
                         model.StartTimestamp!,
@@ -104,10 +106,7 @@ namespace ClipYT.Services
             }
             finally
             {
-                if (filePath != null)
-                {
-                    TryDeleteFile(filePath);
-                }
+                CleanupOutputFolder();
             }
 
             return result;
@@ -160,7 +159,7 @@ namespace ClipYT.Services
             await _hubContext.Clients.All.SendAsync("ReceiveProgress", progress);
         }
 
-        private async Task CutAndConvertFileAsync(string filePath, string inputUrl, string startTime, string endTime, Format format, Action<string> onProgress)
+        private async Task<string> CutFileAsync(string filePath, string inputUrl, string startTime, string endTime, Format format, Action<string> onProgress)
         {
             var argsList = new List<string>();
             var clipDuration = GetClipDuration(startTime, endTime, inputUrl);
@@ -170,9 +169,14 @@ namespace ClipYT.Services
             var cutArg = $"-ss {startTime} -t {clipLength}";
 
             var outputExtension = format == Format.MP3 ? "mp3" : "mp4";
-            var outputFileName = $"{Guid.NewGuid()}.{outputExtension}";
-            var outputArg = Path.Combine(_outputFolder, outputFileName);
+            var baseFileName = RemoveIdFromFileName(Path.GetFileNameWithoutExtension(filePath));
+            var outputFileName = $"{baseFileName}.{outputExtension}";
+            var outputFilePath = Path.Combine(_outputFolder, outputFileName);
 
+            if (File.Exists(outputFilePath))
+            {
+                File.Delete(outputFilePath);
+            }
 
             argsList.Add(inputArg);
             argsList.Add(cutArg);
@@ -191,7 +195,7 @@ namespace ClipYT.Services
                 argsList.Add("-movflags +faststart");
             }
 
-            argsList.Add($"\"{outputArg}\"");
+            argsList.Add($"\"{outputFilePath}\"");
 
             var argsString = string.Join(" ", argsList);
 
@@ -228,7 +232,7 @@ namespace ClipYT.Services
                 }
             }
 
-            File.Replace(outputArg, filePath, null);
+            return outputFilePath;
         }
 
         private static TimeSpan GetClipDuration(string startTime, string endTime, string inputUrl)
@@ -441,6 +445,24 @@ namespace ClipYT.Services
             var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(inputUrl));
 
             return Convert.ToHexString(bytes)[..16].ToLowerInvariant();
+        }
+
+        private void CleanupOutputFolder()
+        {
+            if (!Directory.Exists(_outputFolder))
+            {
+                return;
+            }
+
+            foreach (var filePath in Directory.GetFiles(_outputFolder))
+            {
+                if (Path.GetFileName(filePath).Equals(".gitkeep", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                TryDeleteFile(filePath);
+            }
         }
 
         private static void TryDeleteFile(string filePath)
