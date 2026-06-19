@@ -55,11 +55,6 @@ namespace ClipYT.Services
                 if (canReusePreview)
                 {
                     filePath = CopyPreviewCacheFileToOutput(previewCachePath);
-
-                    if (model.Format == Format.MP3)
-                    {
-                        filePath = await ConvertToAudioAsync(filePath, async (progress) => await SendProgressToHubAsync(progress));
-                    }
                 }
                 else
                 {
@@ -72,6 +67,11 @@ namespace ClipYT.Services
                         model.Quality,
                         async (progress) => await SendProgressToHubAsync(progress),
                         maxRetires);
+                }
+
+                if (model.Format == Format.MP3)
+                {
+                    filePath = await ConvertToAudioAsync(filePath, async (progress) => await SendProgressToHubAsync(progress));
                 }
 
                 if (hasClipTimestamps)
