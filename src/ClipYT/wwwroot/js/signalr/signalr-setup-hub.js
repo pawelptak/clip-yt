@@ -11,6 +11,14 @@ var connection = new signalR.HubConnectionBuilder()
 
 connection.on("ReceiveProgress", function (progress) {
     $("#progressText").text(progress);
+
+    const overlay = document.getElementById("video-loading-overlay");
+    if (overlay && overlay.style.display !== "none") {
+        const textEl = overlay.querySelector(".loading-text");
+        if (textEl) {
+            textEl.textContent = progress;
+        }
+    }
 });
 
 async function connectToHub() {

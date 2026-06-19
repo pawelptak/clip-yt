@@ -3,6 +3,7 @@ var playerReady = false;
 var pauseAtEndTime = false;
 var thumbnail;
 var loadingOverlay;
+var loadingTextEl;
 var videoTitleOverlay;
 var videoTitleText;
 
@@ -12,6 +13,7 @@ function initializePlayer() {
     player = document.getElementById("yt-player");
     thumbnail = document.getElementById("video-thumbnail");
     loadingOverlay = document.getElementById("video-loading-overlay");
+    loadingTextEl = loadingOverlay ? loadingOverlay.querySelector(".loading-text") : null;
     videoTitleOverlay = document.getElementById("video-title-overlay");
     videoTitleText = document.getElementById("video-title-text");
 
@@ -135,6 +137,9 @@ function getPreciseTimeFromInput(inputElementId) {
 
 async function updateVideoFrame(videoUrl, shouldLoadPreview = true) {
     await waitForPlayerToBeLoaded();
+    if (typeof connectToHub === 'function') {
+        connectToHub();
+    }
     toggleYtVideoValidationError(true);
 
     hidePlayer();
@@ -351,6 +356,9 @@ function hideLoadingOverlay() {
     }
 
     loadingOverlay.style.display = "none";
+    if (loadingTextEl) {
+        loadingTextEl.textContent = "Loading preview...";
+    }
 }
 
 function showPlayer() {

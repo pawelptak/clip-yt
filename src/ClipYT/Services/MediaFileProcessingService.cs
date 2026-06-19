@@ -144,7 +144,7 @@ namespace ClipYT.Services
                         url.ToString(),
                         Format.MP4,
                         previewQuality,
-                        _ => { },
+                        async (progress) => await SendProgressToHubAsync(progress),
                         maxRetries: isTikTokUrl ? 3 : 1,
                         outputFolder: _previewCacheFolder,
                         fileNamePrefix: previewCacheKey);
