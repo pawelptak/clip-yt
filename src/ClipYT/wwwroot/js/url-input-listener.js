@@ -53,6 +53,7 @@
     function resetUi() {
         $("#player-container").attr("style", "display: none !important");
         $("#video-details").hide();
+        toggleSubmitButton(false);
         toggleYtVideoValidationError(true);
         clearVideoFrame();
 
@@ -103,7 +104,6 @@ class MediaPlatformSource {
     }
 
     setUiMode() {
-        $("#video-details").show();
         document.documentElement.style.setProperty('--accent-color', this.accentColorCode);
         document.documentElement.style.setProperty('--accent-color-dark', this.accentColorDarkCode);
         document.documentElement.style.setProperty('--accent-color-highlight', this.accentColorHighlight);

@@ -71,7 +71,14 @@ body {
 
     .play-button:disabled {
         filter: brightness(0.5);
+        cursor: not-allowed;
     }
+
+        .play-button:disabled:hover,
+        .play-button:disabled:focus {
+            box-shadow: none;
+            filter: brightness(0.5);
+        }
 
     .play-button:hover,
     .play-button:focus {

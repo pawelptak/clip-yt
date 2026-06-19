@@ -28,6 +28,8 @@ function initializePlayer() {
     player.addEventListener("canplay", function () {
         hideLoadingOverlay();
         showPlayer();
+        $("#video-details").show();
+        toggleSubmitButton(true);
     });
 }
 
@@ -140,6 +142,9 @@ async function updateVideoFrame(videoUrl, shouldLoadPreview = true) {
     hideLoadingOverlay();
     hideVideoTitle();
 
+    $("#video-details").hide();
+    toggleSubmitButton(false);
+
     $("#player-container").show();
     showLoadingOverlay();
 
@@ -170,9 +175,10 @@ async function updateVideoFrame(videoUrl, shouldLoadPreview = true) {
             });
         } else {
             // For platforms without preview (e.g., TikTok)
-            // Just wait for thumbnail and hide loading when done
             previewPromise = thumbnailPromise.then(() => {
                 hideLoadingOverlay();
+                $("#video-details").show();
+                toggleSubmitButton(true);
                 return null;
             });
         }
@@ -183,6 +189,8 @@ async function updateVideoFrame(videoUrl, shouldLoadPreview = true) {
         hideLoadingOverlay();
         hideThumbnail();
         hideVideoTitle();
+        $("#video-details").hide();
+        toggleSubmitButton(false);
         if (shouldLoadPreview) {
             showPlayer();
         }
@@ -353,6 +361,19 @@ function showPlayer() {
     hideThumbnail();
     hideLoadingOverlay();
     player.style.display = "block";
+}
+
+function toggleSubmitButton(enable) {
+    const submitButton = document.getElementById("submit-button");
+    if (!submitButton) {
+        return;
+    }
+
+    if (enable) {
+        submitButton.removeAttribute("disabled");
+    } else {
+        submitButton.setAttribute("disabled", "disabled");
+    }
 }
 
 function hidePlayer() {
