@@ -58,8 +58,8 @@ namespace ClipYT.Services
                 if (canReusePreview)
                 {
                     await SendProgressToHubAsync("Reusing cached preview file...");
-                    filePath = CopyPreviewCacheFileToOutput(previewCachePath);
-                    await SendProgressToHubAsync("Preview file copied.");
+                    filePath = previewCachePath;
+                    await SendProgressToHubAsync("Preview file ready.");
                 }
                 else
                 {
@@ -97,12 +97,11 @@ namespace ClipYT.Services
                 }
 
                 await SendProgressToHubAsync("Reading file to memory...");
-                var fileBytes = await File.ReadAllBytesAsync(filePath);
-                await SendProgressToHubAsync("File read completed.");
+                await SendProgressToHubAsync("Preparing file for download...");
 
                 var fileModel = new FileModel
                 {
-                    Data = fileBytes,
+                    FilePath = filePath,
                     Name = RemoveIdFromFileName(Path.GetFileName(filePath))
                 };
 
@@ -117,13 +116,9 @@ namespace ClipYT.Services
                 result.ErrorMessage = ex.Message;
                 Debug.WriteLine(ex, "An error occurred while processing the file.");
 
-                throw;
-            }
-            finally
-            {
-                await SendProgressToHubAsync("Cleaning up temporary files...");
                 CleanupOutputFolder();
-                await SendProgressToHubAsync("Cleanup completed.");
+
+                throw;
             }
 
             return result;
@@ -274,13 +269,6 @@ namespace ClipYT.Services
             return timeSpan.ToString(@"hh\:mm\:ss\.fff");
         }
 
-        private string CopyPreviewCacheFileToOutput(string previewCachePath)
-        {
-            var outputFilePath = Path.Combine(_outputFolder, Path.GetFileName(previewCachePath));
-            File.Copy(previewCachePath, outputFilePath, overwrite: true);
-
-            return outputFilePath;
-        }
 
         private static bool HasClipTimestamps(MediaFileModel model)
         {
@@ -464,7 +452,7 @@ namespace ClipYT.Services
             return Convert.ToHexString(bytes)[..16].ToLowerInvariant();
         }
 
-        private void CleanupOutputFolder()
+        public void CleanupOutputFolder()
         {
             if (!Directory.Exists(_outputFolder))
             {
@@ -473,7 +461,14 @@ namespace ClipYT.Services
 
             foreach (var filePath in Directory.GetFiles(_outputFolder))
             {
+                // Skip .gitkeep
                 if (Path.GetFileName(filePath).Equals(".gitkeep", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                // Skip preview-cache directory
+                if (filePath.StartsWith(_previewCacheFolder, StringComparison.OrdinalIgnoreCase))
                 {
                     continue;
                 }

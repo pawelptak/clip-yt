@@ -134,7 +134,8 @@ namespace ClipYT.Tests
 
             // Assert
             Assert.NotNull(fileModel);
-            Assert.True(fileModel.Data.Length > 0);
+            Assert.True(File.Exists(fileModel.FilePath));
+            Assert.True(new FileInfo(fileModel.FilePath).Length > 0);
         }
 
 
@@ -155,7 +156,8 @@ namespace ClipYT.Tests
 
             // Assert
             Assert.NotNull(fileModel);
-            Assert.True(fileModel.Data.Length > 0);
+            Assert.True(File.Exists(fileModel.FilePath));
+            Assert.True(new FileInfo(fileModel.FilePath).Length > 0);
         }
 
         [Theory]
@@ -174,25 +176,6 @@ namespace ClipYT.Tests
             var exception = await Assert.ThrowsAsync<ArgumentException>(
                 () => _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel)
             );
-        }
-
-        [Theory]
-        [InlineData("https://www.youtube.com/watch?v=dQw4w9WgXcQ")]
-        [InlineData("https://www.tiktok.com/@rickastleyofficial/video/7081656622094929158")]
-        [InlineData("https://x.com/i/status/1842206140693664182")]
-        [InlineData("https://www.instagram.com/p/DAEQq8lvpvD/")]
-        [InlineData("https://www.facebook.com/reel/713709415093896")]
-        public async Task Output_Folder_Should_Be_Empty_After_Processing_Completes(string inputUrl) // Except the .gitkeep file
-        {
-            // Arrange
-            var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = "00:00:10", EndTimestamp = "00:00:20" };
-
-            // Act
-            await _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel);
-
-            // Assert
-            var outputFilesExist = Directory.GetFiles(_outputFolder).Any(file => !file.EndsWith(".gitkeep"));
-            Assert.False(outputFilesExist, "Output folder is not empty.");
         }
 
         [Theory]
@@ -236,7 +219,8 @@ namespace ClipYT.Tests
 
             // Assert
             Assert.NotNull(fileModel);
-            Assert.True(fileModel.Data.Length > 0);
+            Assert.True(File.Exists(fileModel.FilePath));
+            Assert.True(new FileInfo(fileModel.FilePath).Length > 0);
         }
 
         private static HomeController CreateHomeController(IMediaFileProcessingService mediaFileProcessingService, IHttpClientFactory httpClientFactory)

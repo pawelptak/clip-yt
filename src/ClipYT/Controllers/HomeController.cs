@@ -1,4 +1,5 @@
-﻿using ClipYT.Interfaces;
+﻿using ClipYT.Constants;
+using ClipYT.Interfaces;
 using ClipYT.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -69,7 +70,12 @@ namespace ClipYT.Controllers
                 });
             }
 
-            return File(fileModel.Data, System.Net.Mime.MediaTypeNames.Application.Octet, fileModel.Name);
+            var stream = new FileStream(fileModel.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read, 
+                bufferSize: FileStreamConstants.StreamBufferSize, useAsync: true);
+
+            Response.RegisterForDispose(new CleanupCallback(_mediaFileProcessingService));
+
+            return File(stream, System.Net.Mime.MediaTypeNames.Application.Octet, fileModel.Name);
         }
 
         [HttpGet]
@@ -287,13 +293,28 @@ namespace ClipYT.Controllers
                 FileMode.Open, 
                 FileAccess.Read, 
                 FileShare.Read, 
-                4096, 
+                FileStreamConstants.StreamBufferSize,
                 FileOptions.Asynchronous);
 
             return new FileStreamResult(fileStream, previewResult.ContentType ?? "video/mp4")
             {
                 EnableRangeProcessing = true
             };
+        }
+    }
+
+    internal class CleanupCallback : IDisposable
+    {
+        private readonly IMediaFileProcessingService _service;
+
+        public CleanupCallback(IMediaFileProcessingService service)
+        {
+            _service = service;
+        }
+
+        public void Dispose()
+        {
+            _service.CleanupOutputFolder();
         }
     }
 }
