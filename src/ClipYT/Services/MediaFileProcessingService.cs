@@ -48,9 +48,10 @@ namespace ClipYT.Services
                 var previewCachePath = string.Empty;
                 var hasClipTimestamps = HasClipTimestamps(model);
 
-                var canReusePreview = TryGetCachedPreviewFilePath(previewCacheKey, out previewCachePath)
-                    && (model.Format == Format.MP4 && model.Quality == Quality.Minimal)
-                    || (model.Format == Format.MP3);
+                var previewFileExists = TryGetCachedPreviewFilePath(previewCacheKey, out previewCachePath);
+
+                var canReusePreview = previewFileExists
+                    && ((model.Format == Format.MP4 && model.Quality == Quality.Minimal) || (model.Format == Format.MP3));
 
                 if (canReusePreview)
                 {
@@ -69,7 +70,7 @@ namespace ClipYT.Services
                         maxRetires);
                 }
 
-                if (model.Format == Format.MP3)
+                if (model.Format == Format.MP3 && Path.GetExtension(filePath)?.ToLower() != ".mp3")
                 {
                     filePath = await ConvertToAudioAsync(filePath, async (progress) => await SendProgressToHubAsync(progress));
                 }
