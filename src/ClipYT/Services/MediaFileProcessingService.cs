@@ -25,7 +25,6 @@ namespace ClipYT.Services
             _previewCacheFolder = Path.Combine(_outputFolder, "preview-cache");
             _hubContext = hubContext;
 
-            // Ensure preview cache folder exists
             if (!Directory.Exists(_previewCacheFolder))
             {
                 Directory.CreateDirectory(_previewCacheFolder);
