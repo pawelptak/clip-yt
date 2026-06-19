@@ -34,40 +34,49 @@ namespace ClipYT.Services
 
         public async Task<ProcessingResult> ProcessMediaFileAsync(MediaFileModel model)
         {
-            //ClearOutputDirectory();
+            if (model.Url == null)
+            {
+                throw new ArgumentNullException(nameof(model.Url), "URL cannot be null");
+            }
 
             string? filePath = null;
             var result = new ProcessingResult();
 
             try
             {
-                if (model.Url == null)
-                {
-                    throw new ArgumentNullException(nameof(model.Url), "URL cannot be null");
-                }
-
                 var previewCacheKey = GetPreviewCacheKey(model.Url.ToString());
                 var previewCachePath = string.Empty;
+
                 var canReusePreview = TryGetCachedPreviewFilePath(previewCacheKey, out previewCachePath)
-                    && string.IsNullOrEmpty(model.StartTimestamp)
-                    && string.IsNullOrEmpty(model.EndTimestamp)
                     && model.Format == Format.MP4
                     && model.Quality == Quality.Minimal;
 
                 if (canReusePreview)
                 {
-                    filePath = previewCachePath;
+                    filePath = CopyPreviewCacheFileToOutput(previewCachePath);
                 }
                 else
                 {
                     var isTikTokUrl = Regex.IsMatch(model.Url.ToString(), Constants.RegexConstants.TiktokUrlRegex);
                     var maxRetires = isTikTokUrl ? 3 : 1;
-                    filePath = await DownloadMediaFileAsync(model.Url.ToString(), model.Format, model.Quality, async (progress) => await SendProgressToHubAsync(progress), maxRetires);
 
-                    if (!string.IsNullOrEmpty(model.StartTimestamp) && !string.IsNullOrEmpty(model.EndTimestamp))
-                    {
-                        await CutAndConvertFileAsync(filePath, model.Url.ToString(), model.StartTimestamp, model.EndTimestamp, model.Format, async (progress) => await SendProgressToHubAsync(progress));
-                    }
+                    filePath = await DownloadMediaFileAsync(
+                        model.Url.ToString(),
+                        model.Format,
+                        model.Quality,
+                        async (progress) => await SendProgressToHubAsync(progress),
+                        maxRetires);
+                }
+
+                if (HasClipTimestamps(model))
+                {
+                    await CutAndConvertFileAsync(
+                        filePath,
+                        model.Url.ToString(),
+                        model.StartTimestamp!,
+                        model.EndTimestamp!,
+                        model.Format,
+                        async (progress) => await SendProgressToHubAsync(progress));
                 }
 
                 var fileBytes = await File.ReadAllBytesAsync(filePath);
@@ -119,9 +128,7 @@ namespace ClipYT.Services
                         _ => { },
                         maxRetries: isTikTokUrl ? 3 : 1,
                         outputFolder: _previewCacheFolder,
-                        fileNamePrefix: previewCacheKey,
-                        noPlaylist: true,
-                        noWarnings: true);
+                        fileNamePrefix: previewCacheKey);
                 }
 
                 result.IsSuccessful = !string.IsNullOrWhiteSpace(cachedFilePath);
@@ -242,6 +249,20 @@ namespace ClipYT.Services
             return timeSpan.ToString(@"hh\:mm\:ss\.fff");
         }
 
+        private string CopyPreviewCacheFileToOutput(string previewCachePath)
+        {
+            var outputFilePath = Path.Combine(_outputFolder, Path.GetFileName(previewCachePath));
+            File.Copy(previewCachePath, outputFilePath, overwrite: true);
+
+            return outputFilePath;
+        }
+
+        private static bool HasClipTimestamps(MediaFileModel model)
+        {
+            return !string.IsNullOrEmpty(model.StartTimestamp)
+                && !string.IsNullOrEmpty(model.EndTimestamp);
+        }
+
         private async Task<string> DownloadMediaFileAsync(
             string inputUrl,
             Format outputFormat,
@@ -249,9 +270,7 @@ namespace ClipYT.Services
             Action<string> onProgress,
             int maxRetries = 1,
             string? outputFolder = null,
-            string? fileNamePrefix = null,
-            bool noPlaylist = false,
-            bool noWarnings = false)
+            string? fileNamePrefix = null)
         {
             var argsList = new List<string>();
 
@@ -261,15 +280,8 @@ namespace ClipYT.Services
             var outputTemplate = Path.Combine(targetOutputFolder, $"{fileId}_%(title).90s.%(ext)s");
             var outputArg = $"-o \"{outputTemplate}\"";
 
-            if (noPlaylist)
-            {
-                argsList.Add("--no-playlist");
-            }
-
-            if (noWarnings)
-            {
-                argsList.Add("--no-warnings");
-            }
+            argsList.Add("--no-playlist");
+            argsList.Add("--no-warnings");
 
             argsList.Add(urlArg);
             argsList.Add(outputArg);
@@ -390,24 +402,6 @@ namespace ClipYT.Services
             catch
             {
                 // Ignore cleanup errors. The download response is already prepared at this point.
-            }
-        }
-
-        private void ClearOutputDirectory()
-        {
-            if (!Directory.Exists(_outputFolder))
-            {
-                return;
-            }
-
-            DirectoryInfo di = new(_outputFolder);
-
-            foreach (var file in di.GetFiles())
-            {
-                if (!file.Name.EndsWith(".gitkeep"))
-                {
-                    file.Delete();
-                }
             }
         }
 
