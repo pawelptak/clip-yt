@@ -43,10 +43,13 @@ namespace ClipYT.Services
 
             try
             {
+                await SendProgressToHubAsync("Starting processing...");
+
                 var previewCacheKey = GetPreviewCacheKey(model.Url.ToString());
                 var previewCachePath = string.Empty;
                 var hasClipTimestamps = HasClipTimestamps(model);
 
+                await SendProgressToHubAsync("Checking preview cache...");
                 var previewFileExists = TryGetCachedPreviewFilePath(previewCacheKey, out previewCachePath);
 
                 var canReusePreview = previewFileExists
@@ -54,28 +57,35 @@ namespace ClipYT.Services
 
                 if (canReusePreview)
                 {
+                    await SendProgressToHubAsync("Reusing cached preview file...");
                     filePath = CopyPreviewCacheFileToOutput(previewCachePath);
+                    await SendProgressToHubAsync("Preview file copied.");
                 }
                 else
                 {
                     var isTikTokUrl = Regex.IsMatch(model.Url.ToString(), Constants.RegexConstants.TiktokUrlRegex);
                     var maxRetires = isTikTokUrl ? 3 : 1;
 
+                    await SendProgressToHubAsync("Starting download...");
                     filePath = await DownloadMediaFileAsync(
                         model.Url.ToString(),
                         model.Format,
                         model.Quality,
                         async (progress) => await SendProgressToHubAsync(progress),
                         maxRetires);
+                    await SendProgressToHubAsync("Download completed.");
                 }
 
                 if (model.Format == Format.MP3 && Path.GetExtension(filePath)?.ToLower() != ".mp3")
                 {
+                    await SendProgressToHubAsync("Converting to MP3...");
                     filePath = await ConvertToAudioAsync(filePath, async (progress) => await SendProgressToHubAsync(progress));
+                    await SendProgressToHubAsync("MP3 conversion completed.");
                 }
 
                 if (hasClipTimestamps)
                 {
+                    await SendProgressToHubAsync("Cutting clip...");
                     filePath = await CutFileAsync(
                         filePath,
                         model.Url.ToString(),
@@ -83,9 +93,12 @@ namespace ClipYT.Services
                         model.EndTimestamp!,
                         model.Format,
                         async (progress) => await SendProgressToHubAsync(progress));
+                    await SendProgressToHubAsync("Clip cutting completed.");
                 }
 
+                await SendProgressToHubAsync("Reading file to memory...");
                 var fileBytes = await File.ReadAllBytesAsync(filePath);
+                await SendProgressToHubAsync("File read completed.");
 
                 var fileModel = new FileModel
                 {
@@ -95,6 +108,8 @@ namespace ClipYT.Services
 
                 result.IsSuccessful = true;
                 result.FileModel = fileModel;
+
+                await SendProgressToHubAsync("Processing completed successfully!");
             }
             catch (Exception ex)
             {
@@ -106,7 +121,9 @@ namespace ClipYT.Services
             }
             finally
             {
+                await SendProgressToHubAsync("Cleaning up temporary files...");
                 CleanupOutputFolder();
+                await SendProgressToHubAsync("Cleanup completed.");
             }
 
             return result;
