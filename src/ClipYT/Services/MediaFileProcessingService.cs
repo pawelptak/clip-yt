@@ -87,13 +87,6 @@ namespace ClipYT.Services
                     await SendProgressToHubAsync("Download completed.");
                 }
 
-                if (model.Format == Format.MP3 && Path.GetExtension(filePath)?.ToLower() != ".mp3")
-                {
-                    await SendProgressToHubAsync("Converting to MP3...");
-                    filePath = await ConvertToAudioAsync(filePath, async (progress) => await SendProgressToHubAsync(progress));
-                    await SendProgressToHubAsync("MP3 conversion completed.");
-                }
-
                 if (hasClipTimestamps)
                 {
                     await SendProgressToHubAsync("Cutting clip...");
@@ -106,6 +99,13 @@ namespace ClipYT.Services
                         sessionFolder,
                         async (progress) => await SendProgressToHubAsync(progress));
                     await SendProgressToHubAsync("Clip cutting completed.");
+                }
+
+                if (model.Format == Format.MP3 && Path.GetExtension(filePath)?.ToLower() != ".mp3")
+                {
+                    await SendProgressToHubAsync("Converting to MP3...");
+                    filePath = await ConvertToAudioAsync(filePath, sessionFolder, async (progress) => await SendProgressToHubAsync(progress));
+                    await SendProgressToHubAsync("MP3 conversion completed.");
                 }
 
                 await SendProgressToHubAsync("Preparing file for download...");
@@ -195,10 +195,6 @@ namespace ClipYT.Services
 
             var outputFilePath = Path.Combine(sessionFolder, outputFileName);
 
-            if (File.Exists(outputFilePath))
-            {
-                File.Delete(outputFilePath);
-            }
 
             argsList.Add(inputArg);
             argsList.Add(cutArg);
@@ -366,9 +362,10 @@ namespace ClipYT.Services
             throw new InvalidOperationException("Unexpected error occurred during download.");
         }
 
-        private async Task<string> ConvertToAudioAsync(string inputFilePath, Action<string> onProgress)
+        private async Task<string> ConvertToAudioAsync(string inputFilePath, string sessionFolder, Action<string> onProgress)
         {
-            var outputFilePath = Path.ChangeExtension(inputFilePath, ".mp3");
+            var outputFileName = Path.GetFileNameWithoutExtension(inputFilePath) + ".mp3";
+            var outputFilePath = Path.Combine(sessionFolder, outputFileName);
 
             if (File.Exists(outputFilePath))
             {
