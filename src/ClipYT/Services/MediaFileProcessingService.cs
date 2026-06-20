@@ -128,8 +128,6 @@ namespace ClipYT.Services
                 Debug.WriteLine(ex, "An error occurred while processing the file.");
 
                 CleanupSessionFolder(sessionFolder);
-
-                throw;
             }
 
             return result;
