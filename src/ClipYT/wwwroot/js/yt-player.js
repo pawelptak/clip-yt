@@ -179,7 +179,7 @@ async function updateVideoFrame(videoUrl, shouldLoadPreview = true) {
                 return previewInfo;
             });
         } else {
-            // For platforms without preview (e.g., TikTok)
+            // For platforms without preview
             previewPromise = thumbnailPromise.then(() => {
                 hideLoadingOverlay();
                 $("#video-details").show();
