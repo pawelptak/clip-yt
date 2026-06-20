@@ -1,4 +1,5 @@
 ﻿using ClipYT.Enums;
+using ClipYT.Helpers;
 using ClipYT.Interfaces;
 using ClipYT.Models;
 using Microsoft.AspNetCore.SignalR;
@@ -16,14 +17,19 @@ namespace ClipYT.Services
         private readonly string _outputFolder;
         private readonly string _previewCacheFolder;
         private readonly IHubContext<ProgressHub> _hubContext;
+        private readonly IProcessRunner _processRunner;
 
-        public MediaFileProcessingService(IConfiguration configuration, IHubContext<ProgressHub> hubContext)
+        public MediaFileProcessingService(
+            IConfiguration configuration, 
+            IHubContext<ProgressHub> hubContext,
+            IProcessRunner processRunner)
         {
             _ffmpegPath = configuration["Config:FFmpegPath"] ?? throw new ArgumentNullException(nameof(configuration), "Config:FFmpegPath is missing");
             _youtubeDlpPath = configuration["Config:YoutubeDlpPath"] ?? throw new ArgumentNullException(nameof(configuration), "Config:YoutubeDlpPath is missing");
             _outputFolder = configuration["Config:OutputFolder"] ?? throw new ArgumentNullException(nameof(configuration), "Config:OutputFolder is missing");
             _previewCacheFolder = Path.Combine(_outputFolder, "preview-cache");
             _hubContext = hubContext;
+            _processRunner = processRunner;
 
             if (!Directory.Exists(_previewCacheFolder))
             {
@@ -217,37 +223,25 @@ namespace ClipYT.Services
 
             var argsString = string.Join(" ", argsList);
 
-            using (var process = new Process())
+            var result = await _processRunner.RunAsync(new ProcessRunnerOptions
             {
-                process.StartInfo.FileName = _ffmpegPath;
-                process.StartInfo.Arguments = argsString;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-
-                // FFmpeg reports progress as error output
-                process.ErrorDataReceived += (sender, args) =>
+                FileName = _ffmpegPath,
+                Arguments = argsString,
+                ErrorDataHandler = (output) =>
                 {
-                    var output = args.Data;
-                    if (!string.IsNullOrEmpty(output))
+                    var timePattern = @"time=(\d{2}:\d{2}:\d{2})"; // Regex to get the current video time
+                    var match = Regex.Match(output, timePattern);
+                    if (match.Success)
                     {
-                        var timePattern = @"time=(\d{2}:\d{2}:\d{2})"; // Regex to get the current video time
-                        var match = Regex.Match(output, timePattern);
-                        if (match.Success)
-                        {
-                            var time = match.Groups[1].Value;
-                            onProgress?.Invoke($"Processing your clip: {time} / {clipLength}");
-                        }
+                        var time = match.Groups[1].Value;
+                        onProgress?.Invoke($"Processing your clip: {time} / {clipLength}");
                     }
-                };
-
-                process.Start();
-                process.BeginErrorReadLine();
-                await process.WaitForExitAsync();
-
-                if (process.ExitCode != 0)
-                {
-                    throw new InvalidOperationException($"FFmpeg process exited with code {process.ExitCode}");
                 }
+            });
+
+            if (!result.IsSuccess)
+            {
+                throw new InvalidOperationException($"FFmpeg process exited with code {result.ExitCode}");
             }
 
             return outputFilePath;
@@ -339,48 +333,34 @@ namespace ClipYT.Services
 
             for (int attempt = 1; attempt <= maxRetries; attempt++)
             {
-                using (var process = new Process())
+                var result = await _processRunner.RunAsync(new ProcessRunnerOptions
                 {
-                    process.StartInfo.FileName = _youtubeDlpPath;
-                    process.StartInfo.Arguments = argsString;
-                    process.StartInfo.RedirectStandardOutput = true;
-                    process.StartInfo.RedirectStandardError = true;
-                    process.StartInfo.UseShellExecute = false;
-                    process.StartInfo.CreateNoWindow = true;
-
-                    process.OutputDataReceived += (sender, args) =>
+                    FileName = _youtubeDlpPath,
+                    Arguments = argsString,
+                    OutputDataHandler = (output) =>
                     {
-                        var output = args.Data;
-                        if (!string.IsNullOrEmpty(output))
+                        if (output.StartsWith("[download]"))
                         {
-                            if (output.StartsWith("[download]"))
-                            {
-                                var parts = output.Split(' ');
-                                var trimmed = string.Join(" ", parts.Skip(1)); // Skip the '[download]' prefix
-                                onProgress?.Invoke($"Downloading: {trimmed}");
-                            }
+                            var parts = output.Split(' ');
+                            var trimmed = string.Join(" ", parts.Skip(1)); // Skip the '[download]' prefix
+                            onProgress?.Invoke($"Downloading: {trimmed}");
                         }
-                    };
-
-                    process.Start();
-                    process.BeginOutputReadLine();
-                    process.BeginErrorReadLine();
-                    await process.WaitForExitAsync();
-
-                    if (process.ExitCode == 0)
-                    {
-                        filePath = Directory.GetFiles(targetOutputFolder)
-                            .Single(file => Path.GetFileName(file).StartsWith(fileId));
-                        return filePath;
                     }
+                });
 
-                    if (attempt == maxRetries)
-                    {
-                        throw new InvalidOperationException($"Yt-dlp process exited with code {process.ExitCode}");
-                    }
-
-                    await Task.Delay(1000); // Sleep for 1 second before retrying
+                if (result.IsSuccess)
+                {
+                    filePath = Directory.GetFiles(targetOutputFolder)
+                        .Single(file => Path.GetFileName(file).StartsWith(fileId));
+                    return filePath;
                 }
+
+                if (attempt == maxRetries)
+                {
+                    throw new InvalidOperationException($"Yt-dlp process exited with code {result.ExitCode}");
+                }
+
+                await Task.Delay(1000); // Sleep for 1 second before retrying
             }
 
             throw new InvalidOperationException("Unexpected error occurred during download.");
@@ -404,32 +384,20 @@ namespace ClipYT.Services
             };
 
             var argsString = string.Join(" ", argsList);
-            using (var process = new Process())
+
+            var result = await _processRunner.RunAsync(new ProcessRunnerOptions
             {
-                process.StartInfo.FileName = _ffmpegPath;
-                process.StartInfo.Arguments = argsString;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.UseShellExecute = false;
-
-                // FFmpeg reports progress as error output
-                process.ErrorDataReceived += (sender, args) =>
+                FileName = _ffmpegPath,
+                Arguments = argsString,
+                ErrorDataHandler = (output) =>
                 {
-                    var output = args.Data;
-                    if (!string.IsNullOrEmpty(output))
-                    {
-                        onProgress?.Invoke($"Converting to audio: {output}");
-                    }
-                };
-
-                process.Start();
-                process.BeginErrorReadLine();
-                await process.WaitForExitAsync();
-
-                if (process.ExitCode != 0)
-                {
-                    throw new InvalidOperationException($"FFmpeg process exited with code {process.ExitCode}");
+                    onProgress?.Invoke($"Converting to audio: {output}");
                 }
+            });
+
+            if (!result.IsSuccess)
+            {
+                throw new InvalidOperationException($"FFmpeg process exited with code {result.ExitCode}");
             }
 
             return outputFilePath;
@@ -477,8 +445,8 @@ namespace ClipYT.Services
                 {
                     Directory.Delete(sessionFolder, recursive: true);
                 }
-            }
-            catch (Exception ex)
+            }   
+            catch (Exception)
             {
                 // Ignore cleanup errors - the response is already prepared
             }
