@@ -381,9 +381,9 @@ function toggleSubmitButton(enable) {
     }
 
     if (enable) {
-        submitButton.removeAttribute("disabled");
+        submitButton.style.display = "flex";
     } else {
-        submitButton.setAttribute("disabled", "disabled");
+        submitButton.style.display = "none";
     }
 }
 
