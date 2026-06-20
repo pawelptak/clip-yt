@@ -53,7 +53,7 @@ namespace ClipYT.Services
                 return;
             }
 
-            var retentionThreshold = DateTime.Now.AddDays(-RetentionDays);
+            var retentionThreshold = DateTime.UtcNow.AddDays(-RetentionDays);
 
             try
             {
@@ -65,7 +65,7 @@ namespace ClipYT.Services
                     {
                         var fileInfo = new FileInfo(file);
 
-                        if (fileInfo.CreationTime < retentionThreshold)
+                        if (fileInfo.LastWriteTimeUtc < retentionThreshold)
                         {
                             File.Delete(file);
                         }
