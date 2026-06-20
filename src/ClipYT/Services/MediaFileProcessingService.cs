@@ -382,6 +382,7 @@ namespace ClipYT.Services
                 $"-i \"{inputFilePath}\"",
                 "-vn",
                 "-c:a libmp3lame",
+                "-q:a 7",
                 $"\"{outputFilePath}\""
             };
 
