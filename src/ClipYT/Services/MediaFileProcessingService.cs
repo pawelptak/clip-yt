@@ -103,6 +103,7 @@ namespace ClipYT.Services
                         model.StartTimestamp!,
                         model.EndTimestamp!,
                         model.Format,
+                        sessionFolder,
                         async (progress) => await SendProgressToHubAsync(progress));
                     await SendProgressToHubAsync("Clip cutting completed.");
                 }
@@ -181,7 +182,7 @@ namespace ClipYT.Services
             await _hubContext.Clients.All.SendAsync("ReceiveProgress", progress);
         }
 
-        private async Task<string> CutFileAsync(string filePath, string inputUrl, string startTime, string endTime, Format format, Action<string> onProgress)
+        private async Task<string> CutFileAsync(string filePath, string inputUrl, string startTime, string endTime, Format format, string sessionFolder, Action<string> onProgress)
         {
             var argsList = new List<string>();
             var clipDuration = GetClipDuration(startTime, endTime, inputUrl);
@@ -191,10 +192,9 @@ namespace ClipYT.Services
             var cutArg = $"-ss {startTime} -t {clipLength}";
 
             var outputExtension = format == Format.MP3 ? "mp3" : "mp4";
-            var baseFileName = RemoveIdFromFileName(Path.GetFileNameWithoutExtension(filePath));
+            var baseFileName = Path.GetFileNameWithoutExtension(filePath);
             var outputFileName = $"{baseFileName}.{outputExtension}";
 
-            var sessionFolder = Path.GetDirectoryName(filePath)!;
             var outputFilePath = Path.Combine(sessionFolder, outputFileName);
 
             if (File.Exists(outputFilePath))
