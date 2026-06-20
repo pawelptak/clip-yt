@@ -179,7 +179,7 @@ async function updateVideoFrame(videoUrl, shouldLoadPreview = true) {
                 return previewInfo;
             });
         } else {
-            // For platforms without preview
+            // For platforms without preview wait for thumbnail and hide loading when done
             previewPromise = thumbnailPromise.then(() => {
                 hideLoadingOverlay();
                 $("#video-details").show();
