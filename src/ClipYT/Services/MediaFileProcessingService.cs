@@ -177,7 +177,10 @@ namespace ClipYT.Services
 
         private async Task SendProgressToHubAsync(string progress)
         {
-            await _hubContext.Clients.All.SendAsync("ReceiveProgress", progress);
+            if (_hubContext?.Clients?.All != null)
+            {
+                await _hubContext.Clients.All.SendAsync("ReceiveProgress", progress);
+            }
         }
 
         private async Task<string> CutFileAsync(string filePath, string inputUrl, string startTime, string endTime, Format format, string sessionFolder, Action<string> onProgress)
