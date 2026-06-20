@@ -11,6 +11,7 @@ const string LogPath = "Output/logs/app-.log";
 const int MaxLogFileSizeBytes = 10 * 1024 * 1024; // 10 MB
 const int MaxRetainedLogFiles = 10;
 
+Directory.CreateDirectory(Path.GetDirectoryName(LogPath)!);
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
