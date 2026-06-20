@@ -194,7 +194,7 @@ namespace ClipYT.Services
             var outputFileName = $"{baseFileName}.{outputExtension}";
 
             var outputFilePath = Path.Combine(sessionFolder, outputFileName);
-
+            var tempOutputFilePath = Path.Combine(sessionFolder, $"{baseFileName}_temp_{Guid.NewGuid():N}.{outputExtension}");
 
             argsList.Add(inputArg);
             argsList.Add(cutArg);
@@ -213,7 +213,7 @@ namespace ClipYT.Services
                 argsList.Add("-movflags +faststart");
             }
 
-            argsList.Add($"\"{outputFilePath}\"");
+            argsList.Add($"\"{tempOutputFilePath}\"");
 
             var argsString = string.Join(" ", argsList);
 
@@ -235,9 +235,15 @@ namespace ClipYT.Services
 
             if (!result.IsSuccess)
             {
+                if (File.Exists(tempOutputFilePath))
+                {
+                    File.Delete(tempOutputFilePath);
+                }
                 var parsedError = ErrorMessageParser.ParseFfmpegError(result.StandardError);
                 throw new InvalidOperationException(parsedError);
             }
+
+            FinalizeTempFile(tempOutputFilePath, outputFilePath, filePath);
 
             return outputFilePath;
         }
@@ -366,11 +372,7 @@ namespace ClipYT.Services
         {
             var outputFileName = Path.GetFileNameWithoutExtension(inputFilePath) + ".mp3";
             var outputFilePath = Path.Combine(sessionFolder, outputFileName);
-
-            if (File.Exists(outputFilePath))
-            {
-                File.Delete(outputFilePath);
-            }
+            var tempOutputFilePath = Path.Combine(sessionFolder, $"{Path.GetFileNameWithoutExtension(inputFilePath)}_temp_{Guid.NewGuid():N}.mp3");
 
             var argsList = new List<string>
             {
@@ -378,7 +380,7 @@ namespace ClipYT.Services
                 "-vn",
                 "-c:a libmp3lame",
                 "-q:a 7",
-                $"\"{outputFilePath}\""
+                $"\"{tempOutputFilePath}\""
             };
 
             var argsString = string.Join(" ", argsList);
@@ -395,11 +397,34 @@ namespace ClipYT.Services
 
             if (!result.IsSuccess)
             {
+                if (File.Exists(tempOutputFilePath))
+                {
+                    File.Delete(tempOutputFilePath);
+                }
                 var parsedError = ErrorMessageParser.ParseFfmpegError(result.StandardError);
                 throw new InvalidOperationException(parsedError);
             }
 
+            FinalizeTempFile(tempOutputFilePath, outputFilePath, inputFilePath);
+
             return outputFilePath;
+        }
+
+        private void FinalizeTempFile(string tempFilePath, string outputFilePath, string originalInputFilePath)
+        {
+            if (File.Exists(outputFilePath))
+            {
+                File.Delete(outputFilePath);
+            }
+            File.Move(tempFilePath, outputFilePath);
+
+            var isFromPreviewCache = originalInputFilePath.StartsWith(_previewCacheFolder, StringComparison.OrdinalIgnoreCase);
+            if (!isFromPreviewCache 
+                && !string.Equals(originalInputFilePath, outputFilePath, StringComparison.OrdinalIgnoreCase) 
+                && File.Exists(originalInputFilePath))
+            {
+                File.Delete(originalInputFilePath);
+            }
         }
 
         private bool TryGetCachedPreviewFilePath(string previewCacheKey, out string previewCachePath)
