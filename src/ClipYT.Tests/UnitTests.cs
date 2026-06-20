@@ -107,18 +107,18 @@ namespace ClipYT.Tests
         [InlineData("https://x.com/i/status/invalid")]
         [InlineData("https://www.instagram.com/invalid")]
         [InlineData("https://www.facebook.com/reel/invalid")]
-        public async Task Invalid_Input_Url_Should_Return_Error_Message(string invalidUrl)
+        public async Task Invalid_Input_Url_Should_Return_Error(string invalidUrl)
         {
             // Arrange
             var mediaFileModel = new MediaFileModel { Url = new Uri(invalidUrl) };
 
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel)
-            );
+            // Act
+            var result = await _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel);
 
-            Assert.NotNull(exception.Message);
-            Assert.NotEmpty(exception.Message);
+            // Assert
+            Assert.False(result.IsSuccessful);
+            Assert.NotNull(result.ErrorMessage);
+            Assert.NotEmpty(result.ErrorMessage);
         }
 
         [Theory]
@@ -170,16 +170,17 @@ namespace ClipYT.Tests
         [InlineData("https://x.com/i/status/1842206140693664182")]
         [InlineData("https://www.instagram.com/p/DAEQq8lvpvD/")]
         [InlineData("https://www.facebook.com/reel/713709415093896")]
-        public async Task Invalid_Cut_Times_Should_Throw_Exception(string inputUrl)
+        public async Task Invalid_Cut_Times_Should_Return_Error(string inputUrl)
         {
             // Arrange
             var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = "00:00:20", EndTimestamp = "00:00:10" };
 
 
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel)
-            );
+            // Act
+            var result = await _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel);
+
+            // Assert
+            Assert.False(result.IsSuccessful);
         }
 
         [Theory]
@@ -197,7 +198,7 @@ namespace ClipYT.Tests
             // Act
             try
             {
-                var result = await _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel);
+            var result = await _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel);
                 sessionFolder = result.SessionFolder;
             }
             catch (ArgumentException)
