@@ -117,7 +117,8 @@ namespace ClipYT.Tests
                 () => _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel)
             );
 
-            Assert.Equal("Yt-dlp process exited with code 1", exception.Message);
+            Assert.NotNull(exception.Message);
+            Assert.NotEmpty(exception.Message);
         }
 
         [Theory]

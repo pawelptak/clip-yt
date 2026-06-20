@@ -74,7 +74,7 @@ namespace ClipYT.Services
                 else
                 {
                     var isTikTokUrl = Regex.IsMatch(model.Url.ToString(), Constants.RegexConstants.TiktokUrlRegex);
-                    var maxRetires = isTikTokUrl ? 3 : 1;
+                    var maxRetries = isTikTokUrl ? 3 : 1;
 
                     await SendProgressToHubAsync("Starting download...");
                     filePath = await DownloadMediaFileAsync(
@@ -82,7 +82,7 @@ namespace ClipYT.Services
                         model.Format,
                         model.Quality,
                         async (progress) => await SendProgressToHubAsync(progress),
-                        maxRetires,
+                        maxRetries,
                         outputFolder: sessionFolder);
                     await SendProgressToHubAsync("Download completed.");
                 }
@@ -241,7 +241,8 @@ namespace ClipYT.Services
 
             if (!result.IsSuccess)
             {
-                throw new InvalidOperationException($"FFmpeg process exited with code {result.ExitCode}");
+                var parsedError = ErrorMessageParser.ParseFfmpegError(result.StandardError);
+                throw new InvalidOperationException(parsedError);
             }
 
             return outputFilePath;
@@ -357,7 +358,8 @@ namespace ClipYT.Services
 
                 if (attempt == maxRetries)
                 {
-                    throw new InvalidOperationException($"Yt-dlp process exited with code {result.ExitCode}");
+                    var parsedError = ErrorMessageParser.ParseYtDlpError(result.StandardError, result.StandardOutput);
+                    throw new InvalidOperationException(parsedError);
                 }
 
                 await Task.Delay(1000); // Sleep for 1 second before retrying
@@ -397,7 +399,8 @@ namespace ClipYT.Services
 
             if (!result.IsSuccess)
             {
-                throw new InvalidOperationException($"FFmpeg process exited with code {result.ExitCode}");
+                var parsedError = ErrorMessageParser.ParseFfmpegError(result.StandardError);
+                throw new InvalidOperationException(parsedError);
             }
 
             return outputFilePath;

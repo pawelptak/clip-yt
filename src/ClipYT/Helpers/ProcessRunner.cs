@@ -74,6 +74,8 @@ namespace ClipYT.Helpers
 
                 result.ExitCode = process.ExitCode;
                 result.IsSuccess = process.ExitCode == 0;
+                result.StandardOutput = outputBuilder.ToString();
+                result.StandardError = errorBuilder.ToString();
 
                 if (result.IsSuccess)
                 {
@@ -123,5 +125,7 @@ namespace ClipYT.Helpers
     {
         public int ExitCode { get; set; }
         public bool IsSuccess { get; set; }
+        public string StandardOutput { get; set; } = string.Empty;
+        public string StandardError { get; set; } = string.Empty;
     }
 }

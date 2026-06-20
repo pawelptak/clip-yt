@@ -198,6 +198,9 @@ async function updateVideoFrame(videoUrl, shouldLoadPreview = true) {
         toggleSubmitButton(false);
         if (shouldLoadPreview) {
             showPlayer();
+            const errorMessage = error.message || "Unable to load video preview.";
+            setPlayerErrorMessage(errorMessage);
+            toggleYtVideoValidationError(false);
         }
         clearVideoFrame();
         console.log(error);
