@@ -116,7 +116,7 @@ namespace ClipYT.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> PreviewInfo(string url)
+        public async Task<IActionResult> PreviewInfo(string url, string? connectionId = null)
         {
             if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))
             {
@@ -136,7 +136,7 @@ namespace ClipYT.Controllers
                 });
             }
 
-            var result = await _mediaFileProcessingService.GetPreviewMediaAsync(mediaUrl);
+            var result = await _mediaFileProcessingService.GetPreviewMediaAsync(mediaUrl, connectionId);
             if (!result.IsSuccessful)
             {
                 return BadRequest(result);

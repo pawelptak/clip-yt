@@ -272,7 +272,8 @@ async function getPreviewInfo(videoUrl) {
     await connectToHub();
     const appData = document.getElementById("app-data");
     const previewInfoUrl = appData.getAttribute("data-preview-info-url");
-    const response = await fetch(`${previewInfoUrl}?url=${encodeURIComponent(videoUrl)}`);
+    const connectionId = connection.connectionId || '';
+    const response = await fetch(`${previewInfoUrl}?url=${encodeURIComponent(videoUrl)}&connectionId=${encodeURIComponent(connectionId)}`);
 
     const payload = await response.json();
     if (!response.ok || !payload.isSuccessful || !payload.streamUrl) {

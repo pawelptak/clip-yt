@@ -74,7 +74,7 @@ namespace ClipYT.Tests
 
             var mediaFileProcessingServiceMock = new Mock<IMediaFileProcessingService>();
             mediaFileProcessingServiceMock
-                .Setup(service => service.GetPreviewMediaAsync(mediaUrl))
+                .Setup(service => service.GetPreviewMediaAsync(mediaUrl, It.IsAny<string>()))
                 .ReturnsAsync(previewMediaResult);
 
             var responseHandler = new TestHttpMessageHandler(new HttpResponseMessage(HttpStatusCode.OK)
@@ -98,7 +98,7 @@ namespace ClipYT.Tests
             // Assert
             Assert.IsType<JsonResult>(previewInfoResult);
             Assert.IsType<EmptyResult>(previewStreamResult);
-            mediaFileProcessingServiceMock.Verify(service => service.GetPreviewMediaAsync(mediaUrl), Times.Once);
+            mediaFileProcessingServiceMock.Verify(service => service.GetPreviewMediaAsync(mediaUrl, It.IsAny<string>()), Times.Once);
         }
 
         [Theory]

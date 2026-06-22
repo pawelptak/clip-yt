@@ -133,7 +133,7 @@ namespace ClipYT.Services
             return result;
         }
 
-        public async Task<PreviewMediaResult> GetPreviewMediaAsync(Uri url)
+        public async Task<PreviewMediaResult> GetPreviewMediaAsync(Uri url, string? connectionId = null)
         {
             var result = new PreviewMediaResult();
 
@@ -149,7 +149,7 @@ namespace ClipYT.Services
                         url.ToString(),
                         Format.MP4,
                         previewQuality,
-                        onProgress: async (progress) => await SendPreviewProgressToHubAsync(progress),
+                        onProgress: async (progress) => await SendPreviewProgressToHubAsync(progress, connectionId),
                         maxRetries: isTikTokUrl ? 3 : 1,
                         outputFolder: _previewCacheFolder,
                         fileNamePrefix: previewCacheKey);
@@ -192,9 +192,18 @@ namespace ClipYT.Services
             }
         }
 
-        private async Task SendPreviewProgressToHubAsync(string progress)
+        private async Task SendPreviewProgressToHubAsync(string progress, string? connectionId = null)
         {
-            if (_hubContext?.Clients?.All != null)
+            if (_hubContext?.Clients == null)
+            {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(connectionId))
+            {
+                await _hubContext.Clients.Client(connectionId).SendAsync("ReceivePreviewProgress", progress);
+            }
+            else
             {
                 await _hubContext.Clients.All.SendAsync("ReceivePreviewProgress", progress);
             }
