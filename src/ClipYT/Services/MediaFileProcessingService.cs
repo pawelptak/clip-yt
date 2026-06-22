@@ -144,6 +144,7 @@ namespace ClipYT.Services
 
                 if (!TryGetCachedPreviewFilePath(previewCacheKey, out var cachedFilePath))
                 {
+                    await SendProgressToHubAsync("Loading video info...");
                     var previewQuality = Quality.Minimal;
                     cachedFilePath = await DownloadMediaFileAsync(
                         url.ToString(),
@@ -299,6 +300,7 @@ namespace ClipYT.Services
 
             argsList.Add("--no-playlist");
             argsList.Add("--no-warnings");
+            argsList.Add("--no-config");
 
             argsList.Add(urlArg);
             argsList.Add(outputArg);
