@@ -48,7 +48,8 @@ namespace ClipYT.Controllers
                 return View("Index", model);
             }
 
-            var result = await _mediaFileProcessingService.ProcessMediaFileAsync(model);
+            var connectionId = Request.Form["signalRConnectionId"].FirstOrDefault();
+            var result = await _mediaFileProcessingService.ProcessMediaFileAsync(model, connectionId);
 
             if (!result.IsSuccessful)
             {

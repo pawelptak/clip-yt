@@ -37,7 +37,7 @@ namespace ClipYT.Services
             }
         }
 
-        public async Task<ProcessingResult> ProcessMediaFileAsync(MediaFileModel model)
+        public async Task<ProcessingResult> ProcessMediaFileAsync(MediaFileModel model, string? connectionId = null)
         {
             if (model.Url == null)
             {
@@ -55,13 +55,13 @@ namespace ClipYT.Services
 
             try
             {
-                await SendProgressToHubAsync("Starting processing...");
+                await SendProgressToHubAsync("Starting processing...", connectionId);
 
                 var previewCacheKey = GetPreviewCacheKey(model.Url.ToString());
                 var previewCachePath = string.Empty;
                 var hasClipTimestamps = HasClipTimestamps(model);
 
-                await SendProgressToHubAsync("Checking preview cache...");
+                await SendProgressToHubAsync("Checking preview cache...", connectionId);
                 var previewFileExists = TryGetCachedPreviewFilePath(previewCacheKey, out previewCachePath);
 
                 var canReusePreview = previewFileExists
@@ -76,20 +76,20 @@ namespace ClipYT.Services
                     var isTikTokUrl = Regex.IsMatch(model.Url.ToString(), Constants.RegexConstants.TiktokUrlRegex);
                     var maxRetries = isTikTokUrl ? 3 : 1;
 
-                    await SendProgressToHubAsync("Starting download...");
+                    await SendProgressToHubAsync("Starting download...", connectionId);
                     filePath = await DownloadMediaFileAsync(
                         model.Url.ToString(),
                         model.Format,
                         model.Quality,
-                        async (progress) => await SendProgressToHubAsync(progress),
+                        async (progress) => await SendProgressToHubAsync(progress, connectionId),
                         maxRetries,
                         outputFolder: sessionFolder);
-                    await SendProgressToHubAsync("Download completed.");
+                    await SendProgressToHubAsync("Download completed.", connectionId);
                 }
 
                 if (hasClipTimestamps)
                 {
-                    await SendProgressToHubAsync("Cutting clip...");
+                    await SendProgressToHubAsync("Cutting clip...", connectionId);
                     filePath = await CutFileAsync(
                         filePath,
                         model.Url.ToString(),
@@ -97,18 +97,18 @@ namespace ClipYT.Services
                         model.EndTimestamp!,
                         model.Format,
                         sessionFolder,
-                        async (progress) => await SendProgressToHubAsync(progress));
-                    await SendProgressToHubAsync("Clip cutting completed.");
+                        async (progress) => await SendProgressToHubAsync(progress, connectionId));
+                    await SendProgressToHubAsync("Clip cutting completed.", connectionId);
                 }
 
                 if (model.Format == Format.MP3 && Path.GetExtension(filePath)?.ToLower() != ".mp3")
                 {
-                    await SendProgressToHubAsync("Converting to MP3...");
-                    filePath = await ConvertToAudioAsync(filePath, sessionFolder, async (progress) => await SendProgressToHubAsync(progress));
-                    await SendProgressToHubAsync("MP3 conversion completed.");
+                    await SendProgressToHubAsync("Converting to MP3...", connectionId);
+                    filePath = await ConvertToAudioAsync(filePath, sessionFolder, async (progress) => await SendProgressToHubAsync(progress, connectionId));
+                    await SendProgressToHubAsync("MP3 conversion completed.", connectionId);
                 }
 
-                await SendProgressToHubAsync("Preparing file for download...");
+                await SendProgressToHubAsync("Preparing file for download...", connectionId);
 
                 var fileModel = new FileModel
                 {
@@ -119,7 +119,7 @@ namespace ClipYT.Services
                 result.IsSuccessful = true;
                 result.FileModel = fileModel;
 
-                await SendProgressToHubAsync("Processing completed successfully!");
+                await SendProgressToHubAsync("Processing completed successfully!", connectionId);
             }
             catch (Exception ex)
             {
@@ -144,13 +144,12 @@ namespace ClipYT.Services
 
                 if (!TryGetCachedPreviewFilePath(previewCacheKey, out var cachedFilePath))
                 {
-                    await SendProgressToHubAsync("Loading video info...");
                     var previewQuality = Quality.Minimal;
                     cachedFilePath = await DownloadMediaFileAsync(
                         url.ToString(),
                         Format.MP4,
                         previewQuality,
-                        async (progress) => await SendProgressToHubAsync(progress),
+                        onProgress: async (progress) => await SendPreviewProgressToHubAsync(progress),
                         maxRetries: isTikTokUrl ? 3 : 1,
                         outputFolder: _previewCacheFolder,
                         fileNamePrefix: previewCacheKey);
@@ -176,15 +175,32 @@ namespace ClipYT.Services
             return result;
         }
 
-        private async Task SendProgressToHubAsync(string progress)
+        private async Task SendProgressToHubAsync(string progress, string? connectionId = null)
         {
-            if (_hubContext?.Clients?.All != null)
+            if (_hubContext?.Clients == null)
+            {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(connectionId))
+            {
+                await _hubContext.Clients.Client(connectionId).SendAsync("ReceiveProgress", progress);
+            }
+            else
             {
                 await _hubContext.Clients.All.SendAsync("ReceiveProgress", progress);
             }
         }
 
-        private async Task<string> CutFileAsync(string filePath, string inputUrl, string startTime, string endTime, Format format, string sessionFolder, Action<string> onProgress)
+        private async Task SendPreviewProgressToHubAsync(string progress)
+        {
+            if (_hubContext?.Clients?.All != null)
+            {
+                await _hubContext.Clients.All.SendAsync("ReceivePreviewProgress", progress);
+            }
+        }
+
+        private async Task<string> CutFileAsync(string filePath, string inputUrl, string startTime, string endTime, Format format, string sessionFolder, Func<string, Task>? onProgress)
         {
             var argsList = new List<string>();
             var clipDuration = GetClipDuration(startTime, endTime, inputUrl);
@@ -232,7 +248,7 @@ namespace ClipYT.Services
                     if (match.Success)
                     {
                         var time = match.Groups[1].Value;
-                        onProgress?.Invoke($"Processing your clip: {time} / {clipLength}");
+                        onProgress?.Invoke($"Processing your clip: {time} / {clipLength}").GetAwaiter().GetResult();
                     }
                 }
             });
@@ -285,7 +301,7 @@ namespace ClipYT.Services
             string inputUrl,
             Format outputFormat,
             Quality outputQuality,
-            Action<string> onProgress,
+            Func<string, Task>? onProgress,
             int maxRetries = 1,
             string? outputFolder = null,
             string? fileNamePrefix = null)
@@ -300,7 +316,6 @@ namespace ClipYT.Services
 
             argsList.Add("--no-playlist");
             argsList.Add("--no-warnings");
-            argsList.Add("--no-config");
 
             argsList.Add(urlArg);
             argsList.Add(outputArg);
@@ -349,7 +364,7 @@ namespace ClipYT.Services
                         {
                             var parts = output.Split(' ');
                             var trimmed = string.Join(" ", parts.Skip(1)); // Skip the '[download]' prefix
-                            onProgress?.Invoke($"Downloading: {trimmed}");
+                            onProgress?.Invoke($"Downloading: {trimmed}").GetAwaiter().GetResult();
                         }
                     }
                 });
@@ -373,7 +388,7 @@ namespace ClipYT.Services
             throw new InvalidOperationException("Unexpected error occurred during download.");
         }
 
-        private async Task<string> ConvertToAudioAsync(string inputFilePath, string sessionFolder, Action<string> onProgress)
+        private async Task<string> ConvertToAudioAsync(string inputFilePath, string sessionFolder, Func<string, Task>? onProgress)
         {
             var outputFileName = Path.GetFileNameWithoutExtension(inputFilePath) + ".mp3";
             var outputFilePath = Path.Combine(sessionFolder, outputFileName);
@@ -396,7 +411,7 @@ namespace ClipYT.Services
                 Arguments = argsString,
                 ErrorDataHandler = (output) =>
                 {
-                    onProgress?.Invoke($"Converting to audio: {output}");
+                    onProgress?.Invoke($"Converting to audio: {output}").GetAwaiter().GetResult();
                 }
             });
 

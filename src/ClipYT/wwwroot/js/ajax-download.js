@@ -2,7 +2,7 @@
     const appData = document.getElementById('app-data');
     const downloadMethodUrl = appData.getAttribute('data-download-url');
 
-    $('form').on('submit', function (e) {
+    $('form').on('submit', async function (e) {
         e.preventDefault();
 
         if (!$(this).valid()) {
@@ -18,14 +18,14 @@
         if (isStartEmpty) preciseStartInput.prop('disabled', true);
         if (isEndEmpty) preciseEndInput.prop('disabled', true);
 
-        connectToHub();
+        await connectToHub();
         var $button = $('#submit-button');
         $button.addClass('rotating');
 
         $("#progressText").text("Download is starting");
         $("#progress-container").css('display', 'flex');
 
-        var formData = $(this).serialize();
+        var formData = $(this).serialize() + '&signalRConnectionId=' + encodeURIComponent(connection.connectionId || '');
 
         // Re-enable inputs after serialization
         if (isStartEmpty) preciseStartInput.prop('disabled', false);

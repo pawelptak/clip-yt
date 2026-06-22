@@ -137,7 +137,9 @@ function getPreciseTimeFromInput(inputElementId) {
 
 async function updateVideoFrame(videoUrl, shouldLoadPreview = true) {
     await waitForPlayerToBeLoaded();
-    const hubPromise = (typeof connectToHub === 'function') ? connectToHub() : Promise.resolve();
+    if (typeof connectToHub === 'function') {
+        connectToHub();
+    }
     toggleYtVideoValidationError(true);
 
     hidePlayer();
@@ -172,7 +174,6 @@ async function updateVideoFrame(videoUrl, shouldLoadPreview = true) {
 
         let previewPromise;
         if (shouldLoadPreview) {
-            await hubPromise;
             previewPromise = getPreviewInfo(videoUrl).then(previewInfo => {
                 loadPlayerSource(previewInfo.streamUrl, previewInfo.contentType);
                 return previewInfo;
@@ -268,6 +269,7 @@ async function getVideoTitle(videoUrl) {
 }
 
 async function getPreviewInfo(videoUrl) {
+    await connectToHub();
     const appData = document.getElementById("app-data");
     const previewInfoUrl = appData.getAttribute("data-preview-info-url");
     const response = await fetch(`${previewInfoUrl}?url=${encodeURIComponent(videoUrl)}`);
