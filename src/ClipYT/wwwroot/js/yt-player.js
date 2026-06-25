@@ -154,41 +154,38 @@ async function updateVideoFrame(videoUrl, shouldLoadPreview = true) {
     showLoadingOverlay();
 
     try {
-        const thumbnailPromise = getThumbnailUrl(videoUrl).then(thumbnailUrl => {
-            if (thumbnailUrl) {
-                return showThumbnail(thumbnailUrl).catch(error => {
-                    console.log("Thumbnail failed to load:", error);
-                    return null;
-                });
-            }
-            return null;
-        });
-
-        const titlePromise = getVideoTitle(videoUrl).then(title => {
-            if (title) {
-                showVideoTitle(title);
-            }
-        }).catch(error => {
-            console.log("Title failed to load:", error);
-        });
-
-        let previewPromise;
-        if (shouldLoadPreview) {
-            previewPromise = getPreviewInfo(videoUrl).then(previewInfo => {
-                loadPlayerSource(previewInfo.streamUrl, previewInfo.contentType);
-                return previewInfo;
-            });
-        } else {
-            // For platforms without preview wait for thumbnail and hide loading when done
-            previewPromise = thumbnailPromise.then(() => {
-                hideLoadingOverlay();
-                $("#video-details").show();
-                toggleSubmitButton(true);
+        // Thumbnail i title pobierają się w tle - nie blokujemy na nich
+        getThumbnailUrl(videoUrl)
+            .then(thumbnailUrl => {
+                if (thumbnailUrl) {
+                    return showThumbnail(thumbnailUrl);
+                }
                 return null;
+            })
+            .catch(error => {
+                console.log("Thumbnail failed to load:", error);
             });
-        }
 
-        await Promise.all([thumbnailPromise, titlePromise, previewPromise]);
+        getVideoTitle(videoUrl)
+            .then(title => {
+                if (title) {
+                    showVideoTitle(title);
+                }
+            })
+            .catch(error => {
+                console.log("Title failed to load:", error);
+            });
+
+        // Czekamy TYLKO na preview - to najważniejsze
+        if (shouldLoadPreview) {
+            const previewInfo = await getPreviewInfo(videoUrl);
+            loadPlayerSource(previewInfo.streamUrl, previewInfo.contentType);
+        } else {
+            // Dla platform bez preview - od razu pokazujemy UI
+            hideLoadingOverlay();
+            $("#video-details").show();
+            toggleSubmitButton(true);
+        }
 
     } catch (error) {
         hideLoadingOverlay();
