@@ -4,9 +4,7 @@
 <div class="d-flex flex-column align-items-center">
     <form id="app-form" method="post">
         <div class="d-flex flex-column mb-3">
-            <div class="d-flex gap-2">
-                <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.Url, new { id = "urlInput", placeholder = "Paste YouTube video URL", inputmode = "url" }) }" />
-            </div>
+            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.Url, new { id = "urlInput", placeholder = "Paste YouTube video URL", inputmode = "url" }) }" />
             <span id="url-validation-message" class="text-danger validation-message">@Html.ValidationMessageFor(m => m.Url)</span>
         </div>
 
