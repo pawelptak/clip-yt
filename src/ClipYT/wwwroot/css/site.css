@@ -235,10 +235,6 @@ body {
     }
 }
 
-.clear-input-container:has(.time-input) {
-    max-width: 130px;
-}
-
 .clear-input-container:has(#videoLengthInput) {
     max-width: 90px;
 }
@@ -559,7 +555,7 @@ input[type=text] {
 }
 
 #clip-preview-button {
-    align-self: center;
+    justify-content: center;
 }
 
 [data-bs-toggle="collapse"] {

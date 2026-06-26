@@ -45,27 +45,29 @@
             </button>
 
             <div id="advanced-options-container" class="collapse">
-                <div class="d-flex gap-3 justify-content-between mb-3 flex-wrap">
-                    <div class="d-flex flex-column">
-                        <div class="input-wrapper">
-                            <div class="d-flex justify-content-between mb-1">
-                                <span class="label-text">Clip start</span>
-                                <button type="button" id="get-current-start-btn" title="Get current time" class="btn clip-btn" onclick="updateInputFromPlayer('videoStartInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
+                <div class="d-flex gap-3 mb-3 flex-wrap flex-lg-nowrap">
+                    <div class="d-flex gap-3 flex-nowrap">
+                        <div class="d-flex flex-column">
+                            <div class="input-wrapper">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="label-text">Clip start</span>
+                                    <button type="button" id="get-current-start-btn" title="Get current time" class="btn clip-btn" onclick="updateInputFromPlayer('videoStartInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
+                                </div>
+                                <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "time-input", inputmode = "numeric", data_val = "true", data_val_timestamp = "Timestamp exceeds the video length." }) }" />
                             </div>
-                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "time-input", inputmode = "numeric", data_val = "true", data_val_timestamp = "Timestamp exceeds the video length." }) }" />
+                            <span class="text-danger ">@Html.ValidationMessageFor(m => m.StartTimestamp)</span>
                         </div>
-                        <span class="text-danger ">@Html.ValidationMessageFor(m => m.StartTimestamp)</span>
-                    </div>
 
-                    <div class="d-flex flex-column">
-                        <div class="input-wrapper">
-                            <div class="d-flex justify-content-between mb-1">
-                                <span class="label-text">Clip end</span>
-                                <button type="button" id="get-current-end-btn" title="Get current time" class="btn clip-btn" onclick="updateInputFromPlayer('videoEndInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
+                        <div class="d-flex flex-column">
+                            <div class="input-wrapper">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span class="label-text">Clip end</span>
+                                    <button type="button" id="get-current-end-btn" title="Get current time" class="btn clip-btn" onclick="updateInputFromPlayer('videoEndInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
+                                </div>
+                                <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "time-input", inputmode = "numeric" }) }" />
                             </div>
-                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "time-input", inputmode = "numeric" }) }" />
+                            <span class="text-danger ">@Html.ValidationMessageFor(m => m.EndTimestamp)</span>
                         </div>
-                        <span class="text-danger ">@Html.ValidationMessageFor(m => m.EndTimestamp)</span>
                     </div>
 
                     <div class="d-flex flex-column">
