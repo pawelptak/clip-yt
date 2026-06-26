@@ -71,7 +71,14 @@ body {
 
     .play-button:disabled {
         filter: brightness(0.5);
+        cursor: not-allowed;
     }
+
+        .play-button:disabled:hover,
+        .play-button:disabled:focus {
+            box-shadow: none;
+            filter: brightness(0.5);
+        }
 
     .play-button:hover,
     .play-button:focus {
@@ -190,9 +197,12 @@ body {
 
 .loading-text {
     color: rgba(255, 255, 255, 0.8);
-    font-size: 1rem;
+    font-size: 0.875rem;
     font-weight: 500;
     letter-spacing: 0.5px;
+    max-width: 85%;
+    text-align: center;
+    overflow-wrap: break-word;
 }
 
 @keyframes shimmer {

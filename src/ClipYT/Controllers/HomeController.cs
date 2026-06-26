@@ -1,4 +1,5 @@
-﻿using ClipYT.Interfaces;
+﻿using ClipYT.Constants;
+using ClipYT.Interfaces;
 using ClipYT.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -47,7 +48,8 @@ namespace ClipYT.Controllers
                 return View("Index", model);
             }
 
-            var result = await _mediaFileProcessingService.ProcessMediaFileAsync(model);
+            var connectionId = Request.Form["signalRConnectionId"].FirstOrDefault();
+            var result = await _mediaFileProcessingService.ProcessMediaFileAsync(model, connectionId);
 
             if (!result.IsSuccessful)
             {
@@ -69,7 +71,12 @@ namespace ClipYT.Controllers
                 });
             }
 
-            return File(fileModel.Data, System.Net.Mime.MediaTypeNames.Application.Octet, fileModel.Name);
+            var stream = new FileStream(fileModel.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read, 
+                bufferSize: FileStreamConstants.StreamBufferSize, useAsync: true);
+
+            Response.RegisterForDispose(new CleanupCallback(_mediaFileProcessingService, result.SessionFolder!));
+
+            return File(stream, System.Net.Mime.MediaTypeNames.Application.Octet, fileModel.Name);
         }
 
         [HttpGet]
@@ -109,7 +116,7 @@ namespace ClipYT.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> PreviewInfo(string url)
+        public async Task<IActionResult> PreviewInfo(string url, string? connectionId = null)
         {
             if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))
             {
@@ -129,7 +136,7 @@ namespace ClipYT.Controllers
                 });
             }
 
-            var result = await _mediaFileProcessingService.GetPreviewMediaAsync(mediaUrl);
+            var result = await _mediaFileProcessingService.GetPreviewMediaAsync(mediaUrl, connectionId);
             if (!result.IsSuccessful)
             {
                 return BadRequest(result);
@@ -175,6 +182,11 @@ namespace ClipYT.Controllers
             if (!previewResult.IsSuccessful || string.IsNullOrWhiteSpace(previewResult.StreamUrl))
             {
                 return NotFound();
+            }
+
+            if (previewResult.IsLocalFile)
+            {
+                return ServeLocalFile(previewResult);
             }
 
             var client = _httpClientFactory.CreateClient();
@@ -258,7 +270,8 @@ namespace ClipYT.Controllers
             {
                 IsSuccessful = true,
                 StreamUrl = previewMediaResult.StreamUrl,
-                ContentType = previewMediaResult.ContentType
+                ContentType = previewMediaResult.ContentType,
+                IsLocalFile = previewMediaResult.IsLocalFile
             };
 
             _memoryCache.Set(cacheKey, cachedPreviewMediaResult, TimeSpan.FromMinutes(5));
@@ -267,6 +280,44 @@ namespace ClipYT.Controllers
         private static string GetPreviewCacheKey(Uri mediaUrl)
         {
             return $"preview-media:{mediaUrl}";
+        }
+
+        private IActionResult ServeLocalFile(PreviewMediaResult previewResult)
+        {
+            if (!System.IO.File.Exists(previewResult.StreamUrl))
+            {
+                return NotFound();
+            }
+
+            var fileStream = new FileStream(
+                previewResult.StreamUrl, 
+                FileMode.Open, 
+                FileAccess.Read, 
+                FileShare.Read, 
+                FileStreamConstants.StreamBufferSize,
+                FileOptions.Asynchronous);
+
+            return new FileStreamResult(fileStream, previewResult.ContentType ?? "video/mp4")
+            {
+                EnableRangeProcessing = true
+            };
+        }
+    }
+
+    internal class CleanupCallback : IDisposable
+    {
+        private readonly IMediaFileProcessingService _service;
+        private readonly string _sessionFolder;
+
+        public CleanupCallback(IMediaFileProcessingService service, string sessionFolder)
+        {
+            _service = service;
+            _sessionFolder = sessionFolder;
+        }
+
+        public void Dispose()
+        {
+            _service.CleanupSessionFolder(_sessionFolder);
         }
     }
 }

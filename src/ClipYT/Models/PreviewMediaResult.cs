@@ -9,5 +9,7 @@ namespace ClipYT.Models
         public string? ContentType { get; set; }
 
         public string? ErrorMessage { get; set; }
+
+        public bool IsLocalFile { get; set; }
     }
 }

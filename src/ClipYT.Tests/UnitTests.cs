@@ -1,3 +1,4 @@
+using ClipYT.Helpers;
 using ClipYT.Models;
 using ClipYT.Controllers;
 using ClipYT.Interfaces;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System.Net;
 using System.Net.Http.Headers;
@@ -20,7 +22,6 @@ namespace ClipYT.Tests
     public class UnitTests
     {
         private readonly MediaFileProcessingService _mediaFileProcessingService;
-        private readonly string _outputFolder;
 
         public UnitTests()
         {
@@ -53,8 +54,10 @@ namespace ClipYT.Tests
             clientProxyMock.Setup(cp => cp.SendCoreAsync(It.IsAny<string>(), It.IsAny<object[]>(), It.IsAny<CancellationToken>()))
                            .Returns(Task.CompletedTask); // Thx https://stackoverflow.com/a/56269592
 
-            _mediaFileProcessingService = new MediaFileProcessingService(configuration, hubContextMock.Object);
-            _outputFolder = outputFolder;
+            var loggerMock = new Mock<ILogger<ProcessRunner>>();
+            var processRunner = new ProcessRunner(loggerMock.Object);
+
+            _mediaFileProcessingService = new MediaFileProcessingService(configuration, hubContextMock.Object, processRunner);
         }
 
         [Fact]
@@ -71,7 +74,7 @@ namespace ClipYT.Tests
 
             var mediaFileProcessingServiceMock = new Mock<IMediaFileProcessingService>();
             mediaFileProcessingServiceMock
-                .Setup(service => service.GetPreviewMediaAsync(mediaUrl))
+                .Setup(service => service.GetPreviewMediaAsync(mediaUrl, It.IsAny<string>()))
                 .ReturnsAsync(previewMediaResult);
 
             var responseHandler = new TestHttpMessageHandler(new HttpResponseMessage(HttpStatusCode.OK)
@@ -95,7 +98,7 @@ namespace ClipYT.Tests
             // Assert
             Assert.IsType<JsonResult>(previewInfoResult);
             Assert.IsType<EmptyResult>(previewStreamResult);
-            mediaFileProcessingServiceMock.Verify(service => service.GetPreviewMediaAsync(mediaUrl), Times.Once);
+            mediaFileProcessingServiceMock.Verify(service => service.GetPreviewMediaAsync(mediaUrl, It.IsAny<string>()), Times.Once);
         }
 
         [Theory]
@@ -104,17 +107,18 @@ namespace ClipYT.Tests
         [InlineData("https://x.com/i/status/invalid")]
         [InlineData("https://www.instagram.com/invalid")]
         [InlineData("https://www.facebook.com/reel/invalid")]
-        public async Task Invalid_Input_Url_Should_Return_Error_Message(string invalidUrl)
+        public async Task Invalid_Input_Url_Should_Return_Error(string invalidUrl)
         {
             // Arrange
             var mediaFileModel = new MediaFileModel { Url = new Uri(invalidUrl) };
 
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<InvalidOperationException>(
-                () => _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel)
-            );
+            // Act
+            var result = await _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel);
 
-            Assert.Equal("Yt-dlp process exited with code 1", exception.Message);
+            // Assert
+            Assert.False(result.IsSuccessful);
+            Assert.NotNull(result.ErrorMessage);
+            Assert.NotEmpty(result.ErrorMessage);
         }
 
         [Theory]
@@ -134,7 +138,8 @@ namespace ClipYT.Tests
 
             // Assert
             Assert.NotNull(fileModel);
-            Assert.True(fileModel.Data.Length > 0);
+            Assert.True(File.Exists(fileModel.FilePath));
+            Assert.True(new FileInfo(fileModel.FilePath).Length > 0);
         }
 
 
@@ -155,7 +160,8 @@ namespace ClipYT.Tests
 
             // Assert
             Assert.NotNull(fileModel);
-            Assert.True(fileModel.Data.Length > 0);
+            Assert.True(File.Exists(fileModel.FilePath));
+            Assert.True(new FileInfo(fileModel.FilePath).Length > 0);
         }
 
         [Theory]
@@ -164,35 +170,17 @@ namespace ClipYT.Tests
         [InlineData("https://x.com/i/status/1842206140693664182")]
         [InlineData("https://www.instagram.com/p/DAEQq8lvpvD/")]
         [InlineData("https://www.facebook.com/reel/713709415093896")]
-        public async Task Invalid_Cut_Times_Should_Throw_Exception(string inputUrl)
+        public async Task Invalid_Cut_Times_Should_Return_Error(string inputUrl)
         {
             // Arrange
             var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = "00:00:20", EndTimestamp = "00:00:10" };
 
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(
-                () => _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel)
-            );
-        }
-
-        [Theory]
-        [InlineData("https://www.youtube.com/watch?v=dQw4w9WgXcQ")]
-        [InlineData("https://www.tiktok.com/@rickastleyofficial/video/7081656622094929158")]
-        [InlineData("https://x.com/i/status/1842206140693664182")]
-        [InlineData("https://www.instagram.com/p/DAEQq8lvpvD/")]
-        [InlineData("https://www.facebook.com/reel/713709415093896")]
-        public async Task Output_Folder_Should_Be_Empty_After_Processing_Completes(string inputUrl) // Except the .gitkeep file
-        {
-            // Arrange
-            var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = "00:00:10", EndTimestamp = "00:00:20" };
 
             // Act
-            await _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel);
+            var result = await _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel);
 
             // Assert
-            var outputFilesExist = Directory.GetFiles(_outputFolder).Any(file => !file.EndsWith(".gitkeep"));
-            Assert.False(outputFilesExist, "Output folder is not empty.");
+            Assert.False(result.IsSuccessful);
         }
 
         [Theory]
@@ -201,21 +189,26 @@ namespace ClipYT.Tests
         [InlineData("https://x.com/i/status/1842206140693664182")]
         [InlineData("https://www.instagram.com/p/DAEQq8lvpvD/")]
         [InlineData("https://www.facebook.com/reel/713709415093896")]
-        public async Task Output_Folder_Should_Be_Empty_After_Processing_Fails(string inputUrl) // Except the .gitkeep file
+        public async Task Output_Folder_Should_Not_Exist_After_Processing_Fails(string inputUrl)
         {
             // Arrange
             var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = "00:00:20", EndTimestamp = "00:00:10" };
+            string? sessionFolder = null;
 
             // Act
             try
             {
-                await _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel);
+            var result = await _mediaFileProcessingService.ProcessMediaFileAsync(mediaFileModel);
+                sessionFolder = result.SessionFolder;
             }
             catch (ArgumentException)
             {
-                // Assert
-                var outputFilesExist = Directory.GetFiles(_outputFolder).Any(file => !file.EndsWith(".gitkeep"));
-                Assert.False(outputFilesExist, "Output folder is not empty.");
+            }
+
+            if (sessionFolder != null)
+            {
+                var sessionFolderExists = Directory.Exists(sessionFolder);
+                Assert.False(sessionFolderExists, $"Session folder {sessionFolder} was not cleaned up after error.");
             }
         }
 
@@ -236,7 +229,8 @@ namespace ClipYT.Tests
 
             // Assert
             Assert.NotNull(fileModel);
-            Assert.True(fileModel.Data.Length > 0);
+            Assert.True(File.Exists(fileModel.FilePath));
+            Assert.True(new FileInfo(fileModel.FilePath).Length > 0);
         }
 
         private static HomeController CreateHomeController(IMediaFileProcessingService mediaFileProcessingService, IHttpClientFactory httpClientFactory)

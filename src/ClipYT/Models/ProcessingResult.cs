@@ -5,6 +5,7 @@
         public bool IsSuccessful { get; set; }
         public FileModel? FileModel { get; set; }
         public string? ErrorMessage { get; set; }
+        public string? SessionFolder { get; set; }
     }
 
 }

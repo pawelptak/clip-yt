@@ -1,61 +1,125 @@
 ﻿using ClipYT.Enums;
+using ClipYT.Helpers;
 using ClipYT.Interfaces;
 using ClipYT.Models;
 using Microsoft.AspNetCore.SignalR;
 using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ClipYT.Services
 {
     public class MediaFileProcessingService : IMediaFileProcessingService
     {
-        private const string PreviewFormatSelector = "b[height<=360][ext=mp4]/b[height<=360]/b[ext=mp4]/b";
         private readonly string _youtubeDlpPath;
         private readonly string _ffmpegPath;
         private readonly string _outputFolder;
+        private readonly string _previewCacheFolder;
         private readonly IHubContext<ProgressHub> _hubContext;
+        private readonly IProcessRunner _processRunner;
 
-        public MediaFileProcessingService(IConfiguration configuration, IHubContext<ProgressHub> hubContext)
+        public MediaFileProcessingService(
+            IConfiguration configuration, 
+            IHubContext<ProgressHub> hubContext,
+            IProcessRunner processRunner)
         {
             _ffmpegPath = configuration["Config:FFmpegPath"] ?? throw new ArgumentNullException(nameof(configuration), "Config:FFmpegPath is missing");
             _youtubeDlpPath = configuration["Config:YoutubeDlpPath"] ?? throw new ArgumentNullException(nameof(configuration), "Config:YoutubeDlpPath is missing");
             _outputFolder = configuration["Config:OutputFolder"] ?? throw new ArgumentNullException(nameof(configuration), "Config:OutputFolder is missing");
+            _previewCacheFolder = Path.Combine(_outputFolder, "preview-cache");
             _hubContext = hubContext;
+            _processRunner = processRunner;
+
+            if (!Directory.Exists(_previewCacheFolder))
+            {
+                Directory.CreateDirectory(_previewCacheFolder);
+            }
         }
 
-        public async Task<ProcessingResult> ProcessMediaFileAsync(MediaFileModel model)
+        public async Task<ProcessingResult> ProcessMediaFileAsync(MediaFileModel model, string? connectionId = null)
         {
-            ClearOutputDirectory();
+            if (model.Url == null)
+            {
+                throw new ArgumentNullException(nameof(model.Url), "URL cannot be null");
+            }
 
             string? filePath = null;
             var result = new ProcessingResult();
 
+            // Create unique session folder for this request
+            var sessionId = Guid.NewGuid().ToString("N");
+            var sessionFolder = Path.Combine(_outputFolder, sessionId);
+            Directory.CreateDirectory(sessionFolder);
+            result.SessionFolder = sessionFolder;
+
             try
             {
-                if (model.Url == null)
+                await SendProgressToHubAsync("Starting processing...", connectionId);
+
+                var previewCacheKey = GetPreviewCacheKey(model.Url.ToString());
+                var previewCachePath = string.Empty;
+                var hasClipTimestamps = HasClipTimestamps(model);
+
+                await SendProgressToHubAsync("Checking preview cache...", connectionId);
+                var previewFileExists = TryGetCachedPreviewFilePath(previewCacheKey, out previewCachePath);
+
+                var canReusePreview = previewFileExists
+                    && ((model.Format == Format.MP4 && model.Quality == Quality.Minimal) || (model.Format == Format.MP3));
+
+                if (canReusePreview)
                 {
-                    throw new ArgumentNullException(nameof(model.Url), "URL cannot be null");
+                    filePath = previewCachePath;
+                }
+                else
+                {
+                    var isTikTokUrl = Regex.IsMatch(model.Url.ToString(), Constants.RegexConstants.TiktokUrlRegex);
+                    var maxRetries = isTikTokUrl ? 3 : 1;
+
+                    await SendProgressToHubAsync("Starting download...", connectionId);
+                    filePath = await DownloadMediaFileAsync(
+                        model.Url.ToString(),
+                        model.Format,
+                        model.Quality,
+                        async (progress) => await SendProgressToHubAsync(progress, connectionId),
+                        maxRetries,
+                        outputFolder: sessionFolder);
+                    await SendProgressToHubAsync("Download completed.", connectionId);
                 }
 
-                var isTikTokUrl = Regex.IsMatch(model.Url.ToString(), Constants.RegexConstants.TiktokUrlRegex);
-                var maxRetires = isTikTokUrl ? 3 : 1; // Downloading TikTok video using yt-dlp sometimes fails, so it is retried
-                filePath = await DownloadMediaFileAsync(model.Url.ToString(), model.Format, model.Quality, async (progress) => await SendProgressToHubAsync(progress), maxRetires);
-
-                if (!string.IsNullOrEmpty(model.StartTimestamp) && !string.IsNullOrEmpty(model.EndTimestamp))
+                if (hasClipTimestamps)
                 {
-                    await CutAndConvertFileAsync(filePath, model.Url.ToString(), model.StartTimestamp, model.EndTimestamp, model.Format, async (progress) => await SendProgressToHubAsync(progress));
+                    await SendProgressToHubAsync("Cutting clip...", connectionId);
+                    filePath = await CutFileAsync(
+                        filePath,
+                        model.Url.ToString(),
+                        model.StartTimestamp!,
+                        model.EndTimestamp!,
+                        model.Format,
+                        sessionFolder,
+                        async (progress) => await SendProgressToHubAsync(progress, connectionId));
+                    await SendProgressToHubAsync("Clip cutting completed.", connectionId);
                 }
 
-                var fileBytes = await File.ReadAllBytesAsync(filePath);
+                if (model.Format == Format.MP3 && Path.GetExtension(filePath)?.ToLower() != ".mp3")
+                {
+                    await SendProgressToHubAsync("Converting to MP3...", connectionId);
+                    filePath = await ConvertToAudioAsync(filePath, sessionFolder, async (progress) => await SendProgressToHubAsync(progress, connectionId));
+                    await SendProgressToHubAsync("MP3 conversion completed.", connectionId);
+                }
+
+                await SendProgressToHubAsync("Preparing file for download...", connectionId);
 
                 var fileModel = new FileModel
                 {
-                    Data = fileBytes,
+                    FilePath = filePath,
                     Name = RemoveIdFromFileName(Path.GetFileName(filePath))
                 };
 
                 result.IsSuccessful = true;
                 result.FileModel = fileModel;
+
+                await SendProgressToHubAsync("Processing completed successfully!", connectionId);
             }
             catch (Exception ex)
             {
@@ -63,33 +127,42 @@ namespace ClipYT.Services
                 result.ErrorMessage = ex.Message;
                 Debug.WriteLine(ex, "An error occurred while processing the file.");
 
-                throw;
-            }
-            finally
-            {
-                if (filePath != null && File.Exists(filePath))
-                {
-                    File.Delete(filePath);
-                }
+                CleanupSessionFolder(sessionFolder);
             }
 
             return result;
         }
 
-        public async Task<PreviewMediaResult> GetPreviewMediaAsync(Uri url)
+        public async Task<PreviewMediaResult> GetPreviewMediaAsync(Uri url, string? connectionId = null)
         {
             var result = new PreviewMediaResult();
 
             try
             {
-                var streamUrl = await ExtractPreviewStreamUrlAsync(url.ToString());
-                result.IsSuccessful = !string.IsNullOrWhiteSpace(streamUrl);
-                result.StreamUrl = streamUrl;
-                result.ContentType = GetPreviewContentType(streamUrl);
+                var isTikTokUrl = Regex.IsMatch(url.ToString(), Constants.RegexConstants.TiktokUrlRegex);
+                var previewCacheKey = GetPreviewCacheKey(url.ToString());
+
+                if (!TryGetCachedPreviewFilePath(previewCacheKey, out var cachedFilePath))
+                {
+                    var previewQuality = Quality.Minimal;
+                    cachedFilePath = await DownloadMediaFileAsync(
+                        url.ToString(),
+                        Format.MP4,
+                        previewQuality,
+                        onProgress: async (progress) => await SendPreviewProgressToHubAsync(progress, connectionId),
+                        maxRetries: isTikTokUrl ? 3 : 1,
+                        outputFolder: _previewCacheFolder,
+                        fileNamePrefix: previewCacheKey);
+                }
+
+                result.IsSuccessful = !string.IsNullOrWhiteSpace(cachedFilePath);
+                result.StreamUrl = cachedFilePath;
+                result.ContentType = "video/mp4";
+                result.IsLocalFile = true;
 
                 if (!result.IsSuccessful)
                 {
-                    result.ErrorMessage = "Unable to resolve preview stream.";
+                    result.ErrorMessage = "Unable to download preview.";
                 }
             }
             catch (Exception ex)
@@ -102,12 +175,41 @@ namespace ClipYT.Services
             return result;
         }
 
-        private async Task SendProgressToHubAsync(string progress)
+        private async Task SendProgressToHubAsync(string progress, string? connectionId = null)
         {
-            await _hubContext.Clients.All.SendAsync("ReceiveProgress", progress);
+            if (_hubContext?.Clients == null)
+            {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(connectionId))
+            {
+                await _hubContext.Clients.Client(connectionId).SendAsync("ReceiveProgress", progress);
+            }
+            else
+            {
+                await _hubContext.Clients.All.SendAsync("ReceiveProgress", progress);
+            }
         }
 
-        private async Task CutAndConvertFileAsync(string filePath, string inputUrl, string startTime, string endTime, Format format, Action<string> onProgress)
+        private async Task SendPreviewProgressToHubAsync(string progress, string? connectionId = null)
+        {
+            if (_hubContext?.Clients == null)
+            {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(connectionId))
+            {
+                await _hubContext.Clients.Client(connectionId).SendAsync("ReceivePreviewProgress", progress);
+            }
+            else
+            {
+                await _hubContext.Clients.All.SendAsync("ReceivePreviewProgress", progress);
+            }
+        }
+
+        private async Task<string> CutFileAsync(string filePath, string inputUrl, string startTime, string endTime, Format format, string sessionFolder, Func<string, Task>? onProgress)
         {
             var argsList = new List<string>();
             var clipDuration = GetClipDuration(startTime, endTime, inputUrl);
@@ -117,9 +219,11 @@ namespace ClipYT.Services
             var cutArg = $"-ss {startTime} -t {clipLength}";
 
             var outputExtension = format == Format.MP3 ? "mp3" : "mp4";
-            var outputFileName = $"{Guid.NewGuid()}.{outputExtension}";
-            var outputArg = Path.Combine(_outputFolder, outputFileName);
+            var baseFileName = Path.GetFileNameWithoutExtension(filePath);
+            var outputFileName = $"{baseFileName}.{outputExtension}";
 
+            var outputFilePath = Path.Combine(sessionFolder, outputFileName);
+            var tempOutputFilePath = Path.Combine(sessionFolder, $"{baseFileName}_temp_{Guid.NewGuid():N}.{outputExtension}");
 
             argsList.Add(inputArg);
             argsList.Add(cutArg);
@@ -138,44 +242,39 @@ namespace ClipYT.Services
                 argsList.Add("-movflags +faststart");
             }
 
-            argsList.Add($"\"{outputArg}\"");
+            argsList.Add($"\"{tempOutputFilePath}\"");
 
             var argsString = string.Join(" ", argsList);
 
-            using (var process = new Process())
+            var result = await _processRunner.RunAsync(new ProcessRunnerOptions
             {
-                process.StartInfo.FileName = _ffmpegPath;
-                process.StartInfo.Arguments = argsString;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-
-                // FFmpeg reports progress as error output
-                process.ErrorDataReceived += (sender, args) =>
+                FileName = _ffmpegPath,
+                Arguments = argsString,
+                ErrorDataHandler = (output) =>
                 {
-                    var output = args.Data;
-                    if (!string.IsNullOrEmpty(output))
+                    var timePattern = @"time=(\d{2}:\d{2}:\d{2})"; // Regex to get the current video time
+                    var match = Regex.Match(output, timePattern);
+                    if (match.Success)
                     {
-                        var timePattern = @"time=(\d{2}:\d{2}:\d{2})"; // Regex to get the current video time
-                        var match = Regex.Match(output, timePattern);
-                        if (match.Success)
-                        {
-                            var time = match.Groups[1].Value;
-                            onProgress?.Invoke($"Processing your clip: {time} / {clipLength}");
-                        }
+                        var time = match.Groups[1].Value;
+                        onProgress?.Invoke($"Processing your clip: {time} / {clipLength}").GetAwaiter().GetResult();
                     }
-                };
-
-                process.Start();
-                process.BeginErrorReadLine();
-                await process.WaitForExitAsync();
-
-                if (process.ExitCode != 0)
-                {
-                    throw new InvalidOperationException($"FFmpeg process exited with code {process.ExitCode}");
                 }
+            });
+
+            if (!result.IsSuccess)
+            {
+                if (File.Exists(tempOutputFilePath))
+                {
+                    File.Delete(tempOutputFilePath);
+                }
+                var parsedError = ErrorMessageParser.ParseFfmpegError(result.StandardError);
+                throw new InvalidOperationException(parsedError);
             }
 
-            File.Replace(outputArg, filePath, null);
+            FinalizeTempFile(tempOutputFilePath, outputFilePath, filePath);
+
+            return outputFilePath;
         }
 
         private static TimeSpan GetClipDuration(string startTime, string endTime, string inputUrl)
@@ -200,13 +299,32 @@ namespace ClipYT.Services
             return timeSpan.ToString(@"hh\:mm\:ss\.fff");
         }
 
-        private async Task<string> DownloadMediaFileAsync(string inputUrl, Format outputFormat, Quality outputQuality, Action<string> onProgress, int maxRetries = 1)
+
+        private static bool HasClipTimestamps(MediaFileModel model)
+        {
+            return !string.IsNullOrEmpty(model.StartTimestamp)
+                && !string.IsNullOrEmpty(model.EndTimestamp);
+        }
+
+        private async Task<string> DownloadMediaFileAsync(
+            string inputUrl,
+            Format outputFormat,
+            Quality outputQuality,
+            Func<string, Task>? onProgress,
+            int maxRetries = 1,
+            string? outputFolder = null,
+            string? fileNamePrefix = null)
         {
             var argsList = new List<string>();
 
             var urlArg = inputUrl;
-            var fileId = Guid.NewGuid();
-            var outputArg = $"-o {_outputFolder}/{fileId}_%(title).90s.%(ext)s";
+            var fileId = fileNamePrefix ?? Guid.NewGuid().ToString();
+            var targetOutputFolder = outputFolder ?? _outputFolder;
+            var outputTemplate = Path.Combine(targetOutputFolder, $"{fileId}_%(title).90s.%(ext)s");
+            var outputArg = $"-o \"{outputTemplate}\"";
+
+            argsList.Add("--no-playlist");
+            argsList.Add("--no-warnings");
 
             argsList.Add(urlArg);
             argsList.Add(outputArg);
@@ -245,141 +363,145 @@ namespace ClipYT.Services
 
             for (int attempt = 1; attempt <= maxRetries; attempt++)
             {
-                using (var process = new Process())
+                var result = await _processRunner.RunAsync(new ProcessRunnerOptions
                 {
-                    process.StartInfo.FileName = _youtubeDlpPath;
-                    process.StartInfo.Arguments = argsString;
-                    process.StartInfo.RedirectStandardOutput = true;
-                    process.StartInfo.RedirectStandardError = true;
-                    process.StartInfo.UseShellExecute = false;
-                    process.StartInfo.CreateNoWindow = true;
-
-                    process.OutputDataReceived += (sender, args) =>
+                    FileName = _youtubeDlpPath,
+                    Arguments = argsString,
+                    OutputDataHandler = (output) =>
                     {
-                        var output = args.Data;
-                        if (!string.IsNullOrEmpty(output))
+                        if (output.StartsWith("[download]"))
                         {
-                            if (output.StartsWith("[download]"))
-                            {
-                                var parts = output.Split(' ');
-                                var trimmed = string.Join(" ", parts.Skip(1)); // Skip the '[download]' prefix
-                                onProgress?.Invoke($"Downloading: {trimmed}");
-                            }
+                            var parts = output.Split(' ');
+                            var trimmed = string.Join(" ", parts.Skip(1)); // Skip the '[download]' prefix
+                            onProgress?.Invoke($"Downloading: {trimmed}").GetAwaiter().GetResult();
                         }
-                    };
-
-                    process.Start();
-                    process.BeginOutputReadLine();
-                    process.BeginErrorReadLine();
-                    await process.WaitForExitAsync();
-
-                    if (process.ExitCode == 0)
-                    {
-                        filePath = Directory.GetFiles(_outputFolder)
-                            .Single(file => Path.GetFileName(file).StartsWith(fileId.ToString()));
-                        return filePath;
                     }
+                });
 
-                    if (attempt == maxRetries)
-                    {
-                        throw new InvalidOperationException($"Yt-dlp process exited with code {process.ExitCode}");
-                    }
-
-                    await Task.Delay(1000); // Sleep for 1 second before retrying
+                if (result.IsSuccess)
+                {
+                    filePath = Directory.GetFiles(targetOutputFolder)
+                        .Single(file => Path.GetFileName(file).StartsWith(fileId));
+                    return filePath;
                 }
+
+                if (attempt == maxRetries)
+                {
+                    var parsedError = ErrorMessageParser.ParseYtDlpError(result.StandardError, result.StandardOutput);
+                    throw new InvalidOperationException(parsedError);
+                }
+
+                await Task.Delay(1000); // Sleep for 1 second before retrying
             }
 
             throw new InvalidOperationException("Unexpected error occurred during download.");
         }
 
-        private async Task<string> ExtractPreviewStreamUrlAsync(string inputUrl)
+        private async Task<string> ConvertToAudioAsync(string inputFilePath, string sessionFolder, Func<string, Task>? onProgress)
         {
+            var outputFileName = Path.GetFileNameWithoutExtension(inputFilePath) + ".mp3";
+            var outputFilePath = Path.Combine(sessionFolder, outputFileName);
+            var tempOutputFilePath = Path.Combine(sessionFolder, $"{Path.GetFileNameWithoutExtension(inputFilePath)}_temp_{Guid.NewGuid():N}.mp3");
+
             var argsList = new List<string>
             {
-                "--no-playlist",
-                "--no-warnings",
-                $"-f \"{PreviewFormatSelector}\"",
-                "-g",
-                inputUrl
+                $"-i \"{inputFilePath}\"",
+                "-vn",
+                "-c:a libmp3lame",
+                "-q:a 7",
+                $"\"{tempOutputFilePath}\""
             };
 
             var argsString = string.Join(" ", argsList);
-            var outputLines = new List<string>();
-            var errorLines = new List<string>();
 
-            using (var process = new Process())
+            var result = await _processRunner.RunAsync(new ProcessRunnerOptions
             {
-                process.StartInfo.FileName = _youtubeDlpPath;
-                process.StartInfo.Arguments = argsString;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.CreateNoWindow = true;
-
-                process.OutputDataReceived += (sender, args) =>
+                FileName = _ffmpegPath,
+                Arguments = argsString,
+                ErrorDataHandler = (output) =>
                 {
-                    if (!string.IsNullOrWhiteSpace(args.Data))
-                    {
-                        outputLines.Add(args.Data.Trim());
-                    }
-                };
-
-                process.ErrorDataReceived += (sender, args) =>
-                {
-                    if (!string.IsNullOrWhiteSpace(args.Data))
-                    {
-                        errorLines.Add(args.Data.Trim());
-                    }
-                };
-
-                process.Start();
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
-                await process.WaitForExitAsync();
-
-                if (process.ExitCode != 0)
-                {
-                    throw new InvalidOperationException("Unable to load video preview.");
+                    onProgress?.Invoke($"Converting to audio: {output}").GetAwaiter().GetResult();
                 }
+            });
+
+            if (!result.IsSuccess)
+            {
+                if (File.Exists(tempOutputFilePath))
+                {
+                    File.Delete(tempOutputFilePath);
+                }
+                var parsedError = ErrorMessageParser.ParseFfmpegError(result.StandardError);
+                throw new InvalidOperationException(parsedError);
             }
 
-            var streamUrl = outputLines.LastOrDefault(line => Uri.TryCreate(line, UriKind.Absolute, out _));
+            FinalizeTempFile(tempOutputFilePath, outputFilePath, inputFilePath);
 
-            return streamUrl ?? throw new InvalidOperationException("Unable to get stream URL from preview.");
+            return outputFilePath;
         }
 
-        private static string GetPreviewContentType(string? streamUrl)
+        private void FinalizeTempFile(string tempFilePath, string outputFilePath, string originalInputFilePath)
         {
-            if (string.IsNullOrWhiteSpace(streamUrl) || !Uri.TryCreate(streamUrl, UriKind.Absolute, out var streamUri))
+            if (File.Exists(outputFilePath))
             {
-                return "video/mp4";
+                File.Delete(outputFilePath);
+            }
+            File.Move(tempFilePath, outputFilePath);
+
+            var isFromPreviewCache = originalInputFilePath.StartsWith(_previewCacheFolder, StringComparison.OrdinalIgnoreCase);
+            if (!isFromPreviewCache 
+                && !string.Equals(originalInputFilePath, outputFilePath, StringComparison.OrdinalIgnoreCase) 
+                && File.Exists(originalInputFilePath))
+            {
+                File.Delete(originalInputFilePath);
+            }
+        }
+
+        private bool TryGetCachedPreviewFilePath(string previewCacheKey, out string previewCachePath)
+        {
+            previewCachePath = string.Empty;
+
+            if (!Directory.Exists(_previewCacheFolder))
+            {
+                return false;
             }
 
-            var extension = Path.GetExtension(streamUri.AbsolutePath).ToLowerInvariant();
+            previewCachePath = Directory.GetFiles(_previewCacheFolder, $"{previewCacheKey}_*.mp4")
+                .OrderByDescending(File.GetLastWriteTimeUtc)
+                .FirstOrDefault() ?? string.Empty;
 
-            return extension switch
-            {
-                ".webm" => "video/webm",
-                ".mov" => "video/quicktime",
-                _ => "video/mp4"
-            };
+            return !string.IsNullOrWhiteSpace(previewCachePath);
         }
 
-        private void ClearOutputDirectory()
+        private static string GetPreviewCacheKey(string inputUrl)
         {
-            if (!Directory.Exists(_outputFolder))
+            var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(inputUrl));
+
+            return Convert.ToHexString(bytes)[..16].ToLowerInvariant();
+        }
+
+        public void CleanupSessionFolder(string sessionFolder)
+        {
+            if (string.IsNullOrEmpty(sessionFolder))
             {
                 return;
             }
 
-            DirectoryInfo di = new(_outputFolder);
-
-            foreach (var file in di.GetFiles())
+            // Don't delete preview cache folder
+            if (sessionFolder.StartsWith(_previewCacheFolder, StringComparison.OrdinalIgnoreCase))
             {
-                if (!file.Name.EndsWith(".gitkeep"))
+                return;
+            }
+
+            try
+            {
+                if (Directory.Exists(sessionFolder))
                 {
-                    file.Delete();
+                    Directory.Delete(sessionFolder, recursive: true);
                 }
+            }   
+            catch (Exception)
+            {
+                // Ignore cleanup errors - the response is already prepared
             }
         }
 

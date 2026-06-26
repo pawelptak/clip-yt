@@ -1,7 +1,31 @@
+using ClipYT.Helpers;
 using ClipYT.Interfaces;
 using ClipYT.Services;
+using Serilog;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog
+const string LogPath = "Output/logs/app-.log";
+const int MaxLogFileSizeBytes = 10 * 1024 * 1024; // 10 MB
+const int MaxRetainedLogFiles = 10;
+
+Directory.CreateDirectory(Path.GetDirectoryName(LogPath)!);
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File(
+        path: LogPath,
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: MaxRetainedLogFiles,
+        fileSizeLimitBytes: MaxLogFileSizeBytes,
+        rollOnFileSizeLimit: true)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -13,12 +37,15 @@ builder.Services.AddHttpClient(string.Empty)
     });
 
 builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<IProcessRunner, ProcessRunner>();
 builder.Services.AddSingleton<IUrlValidationService, UrlValidationService>();
 builder.Services.AddSingleton<IMetadataService, MetadataService>();
 builder.Services.AddSingleton<IMediaFileProcessingService, MediaFileProcessingService>();
 builder.Services.AddSingleton<IRandomCaptionService, RandomCaptionService>();
 builder.Services.AddSingleton<IHolidayService, HolidayService>();
 builder.Services.AddSingleton<ITradingSundayService, TradingSundayService>();
+builder.Services.AddHostedService<PreviewCacheCleanupService>();
+
 builder.Services.AddSignalR();
 var app = builder.Build();
 

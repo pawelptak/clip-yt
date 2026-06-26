@@ -35,6 +35,8 @@ jobs:
           command_timeout: 20m
           script: |
             cd ApkiPawla/clipyt
-            docker compose pull
+            for i in {1..3}; do
+              docker compose pull && break || ([ $i -lt 3 ] && sleep 30)
+            done
             APP_VERSION=${{ steps.version.outputs.VERSION }} docker compose up -d
             docker image prune -f

@@ -16,7 +16,7 @@
     const clipytAccentColorHighlight = getComputedStyle(document.documentElement).getPropertyValue('--accent-color-highlight').trim();
 
     const youtubePlatformSource = new MediaPlatformSource(ytRegex, clipytLogoUrl, true, true, true, clipytAccentColor, clipytAccentColorDark, clipytAccentColorHighlight);
-    const tiktokPlatformSource = new MediaPlatformSource(tiktokRegex, cliptokLogoUrl, false, false, false, "#6020f3", "#351287", "#871248");
+    const tiktokPlatformSource = new MediaPlatformSource(tiktokRegex, cliptokLogoUrl, true, true, false, "#6020f3", "#351287", "#871248");
     const twitterPlatformSource = new MediaPlatformSource(twitterRegex, clipxLogoUrl, true, true, true, "#1DA1F2", "#2f62b5", "#01a55c");
     const instagramPlatformSource = new MediaPlatformSource(instagramRegex, clipstagramLogoUrl, true, true, false, "#a83299", "#8c2a7f", "#017fa5");
     const facebookPlatformSource = new MediaPlatformSource(facebookRegex, clipfbLogoUrl, true, true, false, "#ff3796", "#b80060", "#00c784");
@@ -53,6 +53,7 @@
     function resetUi() {
         $("#player-container").attr("style", "display: none !important");
         $("#video-details").hide();
+        toggleSubmitButton(false);
         toggleYtVideoValidationError(true);
         clearVideoFrame();
 
@@ -103,7 +104,6 @@ class MediaPlatformSource {
     }
 
     setUiMode() {
-        $("#video-details").show();
         document.documentElement.style.setProperty('--accent-color', this.accentColorCode);
         document.documentElement.style.setProperty('--accent-color-dark', this.accentColorDarkCode);
         document.documentElement.style.setProperty('--accent-color-highlight', this.accentColorHighlight);

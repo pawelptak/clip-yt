@@ -3,6 +3,7 @@ var playerReady = false;
 var pauseAtEndTime = false;
 var thumbnail;
 var loadingOverlay;
+var loadingTextEl;
 var videoTitleOverlay;
 var videoTitleText;
 
@@ -12,6 +13,7 @@ function initializePlayer() {
     player = document.getElementById("yt-player");
     thumbnail = document.getElementById("video-thumbnail");
     loadingOverlay = document.getElementById("video-loading-overlay");
+    loadingTextEl = loadingOverlay ? loadingOverlay.querySelector(".loading-text") : null;
     videoTitleOverlay = document.getElementById("video-title-overlay");
     videoTitleText = document.getElementById("video-title-text");
 
@@ -28,6 +30,8 @@ function initializePlayer() {
     player.addEventListener("canplay", function () {
         hideLoadingOverlay();
         showPlayer();
+        $("#video-details").show();
+        toggleSubmitButton(true);
     });
 }
 
@@ -133,6 +137,9 @@ function getPreciseTimeFromInput(inputElementId) {
 
 async function updateVideoFrame(videoUrl, shouldLoadPreview = true) {
     await waitForPlayerToBeLoaded();
+    if (typeof connectToHub === 'function') {
+        connectToHub();
+    }
     toggleYtVideoValidationError(true);
 
     hidePlayer();
@@ -140,51 +147,57 @@ async function updateVideoFrame(videoUrl, shouldLoadPreview = true) {
     hideLoadingOverlay();
     hideVideoTitle();
 
+    $("#video-details").hide();
+    toggleSubmitButton(false);
+
     $("#player-container").show();
     showLoadingOverlay();
 
     try {
-        const thumbnailPromise = getThumbnailUrl(videoUrl).then(thumbnailUrl => {
-            if (thumbnailUrl) {
-                return showThumbnail(thumbnailUrl).catch(error => {
-                    console.log("Thumbnail failed to load:", error);
-                    return null;
-                });
-            }
-            return null;
-        });
-
-        const titlePromise = getVideoTitle(videoUrl).then(title => {
-            if (title) {
-                showVideoTitle(title);
-            }
-        }).catch(error => {
-            console.log("Title failed to load:", error);
-        });
-
-        let previewPromise;
-        if (shouldLoadPreview) {
-            previewPromise = getPreviewInfo(videoUrl).then(previewInfo => {
-                loadPlayerSource(previewInfo.streamUrl, previewInfo.contentType);
-                return previewInfo;
-            });
-        } else {
-            // For platforms without preview (e.g., TikTok)
-            // Just wait for thumbnail and hide loading when done
-            previewPromise = thumbnailPromise.then(() => {
-                hideLoadingOverlay();
+        // Thumbnail i title pobierają się w tle - nie blokujemy na nich
+        getThumbnailUrl(videoUrl)
+            .then(thumbnailUrl => {
+                if (thumbnailUrl) {
+                    return showThumbnail(thumbnailUrl);
+                }
                 return null;
+            })
+            .catch(error => {
+                console.log("Thumbnail failed to load:", error);
             });
-        }
 
-        await Promise.all([thumbnailPromise, titlePromise, previewPromise]);
+        getVideoTitle(videoUrl)
+            .then(title => {
+                if (title) {
+                    showVideoTitle(title);
+                }
+            })
+            .catch(error => {
+                console.log("Title failed to load:", error);
+            });
+
+        // Czekamy TYLKO na preview - to najważniejsze
+        if (shouldLoadPreview) {
+            const previewInfo = await getPreviewInfo(videoUrl);
+            loadPlayerSource(previewInfo.streamUrl, previewInfo.contentType);
+        } else {
+            // Dla platform bez preview - od razu pokazujemy UI
+            hideLoadingOverlay();
+            $("#video-details").show();
+            toggleSubmitButton(true);
+        }
 
     } catch (error) {
         hideLoadingOverlay();
         hideThumbnail();
         hideVideoTitle();
+        $("#video-details").hide();
+        toggleSubmitButton(false);
         if (shouldLoadPreview) {
             showPlayer();
+            const errorMessage = error.message || "Unable to load video preview.";
+            setPlayerErrorMessage(errorMessage);
+            toggleYtVideoValidationError(false);
         }
         clearVideoFrame();
         console.log(error);
@@ -253,9 +266,11 @@ async function getVideoTitle(videoUrl) {
 }
 
 async function getPreviewInfo(videoUrl) {
+    await connectToHub();
     const appData = document.getElementById("app-data");
     const previewInfoUrl = appData.getAttribute("data-preview-info-url");
-    const response = await fetch(`${previewInfoUrl}?url=${encodeURIComponent(videoUrl)}`);
+    const connectionId = connection.connectionId || '';
+    const response = await fetch(`${previewInfoUrl}?url=${encodeURIComponent(videoUrl)}&connectionId=${encodeURIComponent(connectionId)}`);
 
     const payload = await response.json();
     if (!response.ok || !payload.isSuccessful || !payload.streamUrl) {
@@ -343,6 +358,9 @@ function hideLoadingOverlay() {
     }
 
     loadingOverlay.style.display = "none";
+    if (loadingTextEl) {
+        loadingTextEl.textContent = "Loading preview...";
+    }
 }
 
 function showPlayer() {
@@ -353,6 +371,19 @@ function showPlayer() {
     hideThumbnail();
     hideLoadingOverlay();
     player.style.display = "block";
+}
+
+function toggleSubmitButton(enable) {
+    const submitButton = document.getElementById("submit-button");
+    if (!submitButton) {
+        return;
+    }
+
+    if (enable) {
+        submitButton.style.display = "flex";
+    } else {
+        submitButton.style.display = "none";
+    }
 }
 
 function hidePlayer() {
