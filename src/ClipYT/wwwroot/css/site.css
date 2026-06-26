@@ -260,7 +260,7 @@ input[type=text] {
     padding: .3em;
     padding-left: 20px;
     padding-right: 20px;
-    border: 2px outset var(--input-border);
+    border: 1px solid var(--input-border);
     background-color: var(--lighter-grey);
     transition: box-shadow .25s, filter .25s;
 }
@@ -414,7 +414,7 @@ input[type=text] {
     border-radius: 20px;
     display: flex;
     flex-direction: row;
-    border: 2px outset var(--input-border);
+    border: 1px solid var(--input-border);
 }
 
 .radio-option {
@@ -483,7 +483,7 @@ input[type=text] {
     }
 
     input[type=text] {
-        border: 2px inset var(--input-border-darkmode);
+        border: 1px solid var(--input-border-darkmode);
         background-color: var(--dark-grey);
         color: white;
     }
@@ -495,7 +495,7 @@ input[type=text] {
 
     .radio-wrapper {
         --bg-color: var(--dark-grey);
-        border: 2px inset var(--input-border-darkmode);
+        border: 1px solid var(--input-border-darkmode);
     }
 
     .standard-btn:active {
