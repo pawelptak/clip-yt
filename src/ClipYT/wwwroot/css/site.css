@@ -240,7 +240,7 @@ body {
 }
 
 .clear-input-container:has(#videoLengthInput) {
-    max-width: 130px;
+    max-width: 90px;
 }
 
 .input-wrapper {
@@ -252,6 +252,7 @@ body {
     margin-left: 10px;
     font-size: .9em;
     color: var(--light-grey);
+    white-space: nowrap;
 }
 
 input[type=text] {
@@ -376,10 +377,27 @@ input[type=text] {
     }
 }
 
-.rotating {
-    animation: rotate 2s linear infinite;
-    pointer-events: none;
-    opacity: 0.5;
+@keyframes spin-hourglass {
+    0% {
+        transform: rotateZ(0deg);
+    }
+    45% {
+        transform: rotateZ(0deg);
+    }
+    50% {
+        transform: rotateZ(180deg);
+    }
+    95% {
+        transform: rotateZ(180deg);
+    }
+    100% {
+        transform: rotateZ(360deg);
+    }
+}
+
+.hourglass-processing {
+    animation: spin-hourglass 5s linear infinite;
+    display: inline-block;
 }
 
 .radio-wrapper {
@@ -534,4 +552,8 @@ input[type=text] {
 
 #yt-video-validation-message {
     display: none;
+}
+
+#clip-preview-button{
+    align-self: center;
 }

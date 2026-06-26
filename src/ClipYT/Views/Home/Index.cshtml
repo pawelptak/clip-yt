@@ -54,12 +54,14 @@
                 <div class="d-flex flex-column">
                     <div class="input-wrapper">
                         <span class="label-text">Length (s)</span>
-                        <div class="d-flex gap-3">
-                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput", placeholder = "10", inputmode = "numeric" }) }" />
-                            <button type="button" id="clip-preview-button" title="Start clip preview" class="btn standard-btn d-flex align-items-center" onclick="startClipPreview()">Preview clip<i class="ms-2 bi bi-play-btn"></i></button>
-                        </div>
+                        <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput", placeholder = "10", inputmode = "numeric" }) }" />
                     </div>
                     <span class="text-danger">@Html.ValidationMessageFor(m => m.ClipLength)</span>
+                </div>
+
+                <div class="input-wrapper">
+                    <span class="label-text">Clip preview</span>
+                    <button type="button" id="clip-preview-button" title="Start clip preview" class="btn standard-btn d-flex align-items-center" onclick="startClipPreview()">Play<i class="ms-2 bi bi-play-btn"></i></button>
                 </div>
             </div>
 
@@ -95,7 +97,10 @@
             </div>
 
             <div class="d-flex flex-column align-items-center">
-                <button title="Generate clip" id="submit-button" class="play-button btn standard-btn py-2" style="display: none;">Download<i class="ms-2 bi bi-play-fill"></i></button>
+                <button title="Generate clip" id="submit-button" class="play-button btn standard-btn py-2" style="display: none;">
+                    <span id="submit-button-text">Download</span>
+                    <i id="submit-button-icon" class="ms-2 bi bi-download"></i>
+                </button>
                 <div id="progress-container" class="mt-2">
                     <span id="progressText"></span>
                 </div>
@@ -132,7 +137,7 @@
     <script src="~/js/custom-validation.js?v=5.0.8"></script>
     <script src="~/js/url-input-listener.js?v=5.0.9"></script>
     <script src="~/js/video-time-controls.js?v=5.1.1"></script>
-    <script src="~/js/ajax-download.js?v=5.0.9"></script>
+    <script src="~/js/ajax-download.js?v=5.1.0"></script>
     <script src="~/js/clear-input-button.js?v=5.0.8"></script>
     <script src="~/js/signalr/dist/browser/signalr.min.js"></script>
     <script src="~/js/signalr/signalr-setup-hub.js?v=5.1.1"></script>
