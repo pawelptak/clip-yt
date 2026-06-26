@@ -471,7 +471,7 @@ input[type=text] {
 
 .radio-option.disabled {
     pointer-events: none;
-    filter: grayscale(80%) brightness(0.9);
+    filter: brightness(0.5);
     opacity: 0.6;
 }
 
