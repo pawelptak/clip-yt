@@ -7,6 +7,8 @@ namespace ClipYT.Services
 {
     public class UrlValidationService : IUrlValidationService
     {
+        private readonly ILogger<UrlValidationService> _logger;
+
         private static readonly HashSet<string> BlockedHosts = new(StringComparer.OrdinalIgnoreCase)
         {
             "localhost",
@@ -17,6 +19,11 @@ namespace ClipYT.Services
             "*.local",
             "*.localhost"
         };
+
+        public UrlValidationService(ILogger<UrlValidationService> logger)
+        {
+            _logger = logger;
+        }
 
         public async Task<bool> IsUrlValidAsync(Uri url)
         {
@@ -41,29 +48,33 @@ namespace ClipYT.Services
                 }
 
                 // Resolve hostname to IP addresses
-                var hostEntry = await Dns.GetHostEntryAsync(url.Host);
-
-                // Check each resolved IP address
-                foreach (var ipAddress in hostEntry.AddressList)
+                try
                 {
-                    if (IsPrivateOrReservedIp(ipAddress))
+                    var hostEntry = await Dns.GetHostEntryAsync(url.Host);
+
+                    // Check each resolved IP address
+                    foreach (var ipAddress in hostEntry.AddressList)
                     {
-                        return false;
+                        if (IsPrivateOrReservedIp(ipAddress))
+                        {
+                            return false;
+                        }
                     }
                 }
+                catch (SocketException ex)
+                {
+                    _logger.LogWarning("DNS resolution failed for {Host} with SocketException: {Message}. Allowing URL to proceed as yt-dlp may still handle it", url.Host, ex.Message);
+                }
 
-                return true;
+                _logger.LogInformation("URL validation successful for {Url}", url);
             }
-            catch (SocketException)
+            catch (Exception ex)
             {
-                // DNS resolution failed - treat as unsafe
-                return false;
+                _logger.LogError(ex, "Unexpected error during URL validation for {Url}: {Message}", url, ex.Message);
+
             }
-            catch (Exception)
-            {
-                // Any other error - treat as unsafe
-                return false;
-            }
+
+            return true;
         }
 
         private static bool IsUrlFromSupportedPlatform(Uri url)
