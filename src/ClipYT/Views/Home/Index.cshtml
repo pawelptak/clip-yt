@@ -2,32 +2,27 @@
 @model MediaFileModel
 
 <div class="d-flex flex-column align-items-center">
-    <div class="mb-4" id="player-container">
-        <div id="video-loading-overlay" class="video-loading-overlay">
-            <div class="shimmer-effect"></div>
-            <div class="loading-content">
-                <div class="loading-spinner"></div>
-                <span class="loading-text">Loading preview...</span>
-            </div>
-        </div>
-        <div id="video-title-overlay" class="video-title-overlay">
-            <span id="video-title-text"></span>
-        </div>
-        <img id="video-thumbnail" alt="Video thumbnail" />
-        <video id="yt-player" controls playsinline preload="metadata"></video>
-    </div>
-
     <form id="app-form" method="post">
         <div class="d-flex flex-column mb-3">
             <div class="d-flex gap-2">
                 <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.Url, new { id = "urlInput", placeholder = "Paste YouTube video URL", inputmode = "url" }) }" />
-                <button title="Generate clip" id="submit-button" class="play-button" style="display: none;"><i class="bi bi-play-circle-fill"></i></button>
-            </div>
-            <div id="progress-container" class="mt-2">
-                <span id="progressText"></span>
             </div>
             <span id="url-validation-message" class="text-danger validation-message">@Html.ValidationMessageFor(m => m.Url)</span>
-            <span id="yt-video-validation-message" class="text-danger validation-message"></span>
+        </div>
+
+        <div class="mb-4 mt-4" id="player-container">
+            <div id="video-loading-overlay" class="video-loading-overlay">
+                <div class="shimmer-effect"></div>
+                <div class="loading-content">
+                    <div class="loading-spinner"></div>
+                    <span class="loading-text">Loading preview...</span>
+                </div>
+            </div>
+            <div id="video-title-overlay" class="video-title-overlay">
+                <span id="video-title-text"></span>
+            </div>
+            <img id="video-thumbnail" alt="Video thumbnail" />
+            <video id="yt-player" controls playsinline preload="metadata"></video>
         </div>
 
         <div id="video-details" style="display: none;">
@@ -35,25 +30,25 @@
             <input type="hidden" id="preciseStartTimestamp" name="StartTimestamp" value="" />
             <input type="hidden" id="preciseEndTimestamp" name="EndTimestamp" value="" />
 
-            <div class="d-flex gap-3 justify-content-between flex-wrap mb-3">
+            <div class="d-flex gap-3 justify-content-between mb-3 flex-wrap">
                 <div class="d-flex flex-column">
                     <div class="input-wrapper">
-                        <span class="label-text">Clip start</span>
-                        <div class="d-flex gap-1">
-                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "time-input", inputmode = "numeric", data_val = "true", data_val_timestamp = "Timestamp exceeds the video length." }) }" />
-                            <button type="button" id="get-current-start-btn" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoStartInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
+                        <div class="d-flex justify-content-between">
+                            <span class="label-text">Clip start</span>
+                            <button type="button" id="get-current-start-btn" title="Get current time" class="btn clip-btn" onclick="updateInputFromPlayer('videoStartInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                         </div>
+                        <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.StartTimestamp, new { id = "videoStartInput", placeholder = "hh:mm:ss", @class = "time-input", inputmode = "numeric", data_val = "true", data_val_timestamp = "Timestamp exceeds the video length." }) }" />
                     </div>
                     <span class="text-danger ">@Html.ValidationMessageFor(m => m.StartTimestamp)</span>
                 </div>
 
                 <div class="d-flex flex-column">
                     <div class="input-wrapper">
-                        <span class="label-text">Clip end</span>
-                        <div class="d-flex gap-1">
-                            <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "time-input", inputmode = "numeric" }) }" />
-                            <button type="button" id="get-current-end-btn" title="Get current time" class="btn standard-btn" onclick="updateInputFromPlayer('videoEndInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
+                        <div class="d-flex justify-content-between">
+                            <span class="label-text">Clip end</span>
+                            <button type="button" id="get-current-end-btn" title="Get current time" class="btn clip-btn" onclick="updateInputFromPlayer('videoEndInput')"><i class="bi bi-box-arrow-in-down-left"></i></button>
                         </div>
+                        <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.EndTimestamp, new { id = "videoEndInput", placeholder = "hh:mm:ss", @class = "time-input", inputmode = "numeric" }) }" />
                     </div>
                     <span class="text-danger ">@Html.ValidationMessageFor(m => m.EndTimestamp)</span>
                 </div>
@@ -61,16 +56,16 @@
                 <div class="d-flex flex-column">
                     <div class="input-wrapper">
                         <span class="label-text">Length (s)</span>
-                        <div class="d-flex gap-1">
+                        <div class="d-flex gap-3">
                             <partial name="_ClearInput" model="new ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m => m.ClipLength, new { id = "videoLengthInput", placeholder = "10", inputmode = "numeric" }) }" />
-                            <button type="button" id="clip-preview-button" title="Start clip preview" class="btn standard-btn" onclick="startClipPreview()"><i class="bi bi-play-btn"></i></button>
+                            <button type="button" id="clip-preview-button" title="Start clip preview" class="btn standard-btn d-flex align-items-center" onclick="startClipPreview()">Preview clip<i class="ms-2 bi bi-play-btn"></i></button>
                         </div>
                     </div>
                     <span class="text-danger">@Html.ValidationMessageFor(m => m.ClipLength)</span>
                 </div>
             </div>
 
-            <div class="d-flex justify-content-between flex-wrap gap-3">
+            <div class="d-flex justify-content-between flex-wrap gap-3 mb-3">
                 <div class="input-wrapper">
                     <span class="label-text">Format</span>
                     <div class="radio-wrapper">
@@ -85,7 +80,7 @@
                         }
                     </div>
                 </div>
-                <div class="input-wrapper">
+                <div class="input-wrapper mb-3">
                     <span class="label-text">Quality</span>
                     <div class="radio-wrapper" id="quality-select-container">
                         @foreach (var value in Enum.GetValues(typeof(ClipYT.Enums.Quality)))
@@ -99,6 +94,14 @@
                         }
                     </div>
                 </div>
+            </div>
+
+            <div class="d-flex flex-column align-items-center">
+                <button title="Generate clip" id="submit-button" class="play-button btn standard-btn py-2" style="display: none;">Download<i class="ms-2 bi bi-play-fill"></i></button>
+                <div id="progress-container" class="mt-2">
+                    <span id="progressText"></span>
+                </div>
+                <span id="yt-video-validation-message" class="text-danger validation-message"></span>
             </div>
         </div>
     </form>
@@ -130,7 +133,7 @@
     <script src="~/js/helpers.js?v=5.0.8"></script>
     <script src="~/js/custom-validation.js?v=5.0.8"></script>
     <script src="~/js/url-input-listener.js?v=5.0.9"></script>
-    <script src="~/js/video-time-controls.js?v=5.1.0"></script>
+    <script src="~/js/video-time-controls.js?v=5.1.1"></script>
     <script src="~/js/ajax-download.js?v=5.0.9"></script>
     <script src="~/js/clear-input-button.js?v=5.0.8"></script>
     <script src="~/js/signalr/dist/browser/signalr.min.js"></script>
