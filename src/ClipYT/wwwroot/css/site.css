@@ -381,15 +381,19 @@ input[type=text] {
     0% {
         transform: rotateZ(0deg);
     }
+
     45% {
         transform: rotateZ(0deg);
     }
+
     50% {
         transform: rotateZ(180deg);
     }
+
     95% {
         transform: rotateZ(180deg);
     }
+
     100% {
         transform: rotateZ(360deg);
     }
@@ -554,6 +558,33 @@ input[type=text] {
     display: none;
 }
 
-#clip-preview-button{
+#clip-preview-button {
     align-self: center;
+}
+
+[data-bs-toggle="collapse"] {
+    color: var(--light-grey);
+    transition: color 0.25s;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+}
+
+    [data-bs-toggle="collapse"]:hover {
+        color: var(--accent-color);
+    }
+
+    [data-bs-toggle="collapse"]:focus {
+        box-shadow: none;
+        outline: none;
+    }
+
+    [data-bs-toggle="collapse"] i {
+        transition: transform 0.3s ease;
+        font-size: 0.8rem;
+        line-height: 0;
+    }
+
+    [data-bs-toggle="collapse"][aria-expanded="true"] i {
+        transform: rotate(180deg);
+    }
 }
