@@ -12,7 +12,6 @@
     --accent-color-highlight: #a50189;
     --accent-color-dark: #91143a; /*TODO: consider removing this attribute, as it has not much use*/
     --accent-gradient: linear-gradient(to top, var(--accent-color), var(--accent-color-highlight));
-
     --shadow-glow-sm: 0 0 4px var(--accent-color), 0 0 8px var(--accent-color-highlight);
     --shadow-glow-md: 0 0 6px var(--accent-color), 0 0 14px var(--accent-color-highlight);
     --shadow-glow-lg: 0 0 8px var(--accent-color), 0 0 18px var(--accent-color-highlight);
@@ -48,12 +47,12 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 38px;
-    height: 38px;
     border: none;
-    background-color: transparent;
     border-radius: 100px;
+    width: 100%;
     transition: box-shadow .25s, filter .25s;
+    background: var(--accent-gradient);
+    color: white;
 }
 
     .play-button:focus {
@@ -61,12 +60,9 @@ body {
     }
 
     .play-button i {
-        font-size: 30pt;
         line-height: 0;
-        background: var(--accent-gradient);
         -webkit-background-clip: text;
         background-clip: text;
-        color: transparent;
     }
 
     .play-button:disabled {
@@ -111,9 +107,9 @@ body {
     transition: opacity 0.4s ease-in-out;
 }
 
-#video-thumbnail.fade-in {
-    opacity: 1;
-}
+    #video-thumbnail.fade-in {
+        opacity: 1;
+    }
 
 .video-title-overlay {
     position: absolute;
@@ -135,9 +131,9 @@ body {
     transition: opacity 0.3s ease-in-out;
 }
 
-.video-title-overlay.fade-in {
-    opacity: 1;
-}
+    .video-title-overlay.fade-in {
+        opacity: 1;
+    }
 
 #player-container:hover .video-title-overlay {
     opacity: 0.5;
@@ -168,12 +164,7 @@ body {
 .shimmer-effect {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.08) 50%,
-        rgba(255, 255, 255, 0) 100%
-    );
+    background: linear-gradient( 90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0) 100% );
     animation: shimmer 2s infinite;
     transform: translateX(-100%);
 }
@@ -182,13 +173,13 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 5px;
     z-index: 1;
 }
 
 .loading-spinner {
-    width: 48px;
-    height: 48px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     border: 4px solid rgba(255, 255, 255, 0.1);
     border-top-color: var(--accent-color);
@@ -209,6 +200,7 @@ body {
     0% {
         transform: translateX(-100%);
     }
+
     100% {
         transform: translateX(100%);
     }
@@ -218,6 +210,7 @@ body {
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
@@ -242,12 +235,8 @@ body {
     }
 }
 
-.clear-input-container:has(.time-input) {
-    max-width: 130px;
-}
-
 .clear-input-container:has(#videoLengthInput) {
-    max-width: 85px;
+    max-width: 90px;
 }
 
 .input-wrapper {
@@ -259,6 +248,7 @@ body {
     margin-left: 10px;
     font-size: .9em;
     color: var(--light-grey);
+    white-space: nowrap;
 }
 
 input[type=text] {
@@ -266,7 +256,7 @@ input[type=text] {
     padding: .3em;
     padding-left: 20px;
     padding-right: 20px;
-    border: 2px outset var(--input-border);
+    border: 1px solid var(--input-border);
     background-color: var(--lighter-grey);
     transition: box-shadow .25s, filter .25s;
 }
@@ -308,6 +298,51 @@ input[type=text] {
         box-shadow: var(--shadow-glow-md);
     }
 
+    .standard-btn i {
+        line-height: 0;
+    }
+
+    .standard-btn:disabled {
+        filter: brightness(0.5);
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+        .standard-btn:disabled:hover,
+        .standard-btn:disabled:focus {
+            box-shadow: none;
+            filter: brightness(0.5);
+        }
+
+
+.clip-btn {
+    border: none;
+    border-radius: 100px;
+    color: var(--light-grey);
+    vertical-align: baseline;
+    transition: 0.25s;
+    padding: 0px 5px;
+}
+
+    .clip-btn:hover {
+        filter: brightness(1.15);
+        color: var(--accent-color);
+        box-shadow: none;
+    }
+
+    .clip-btn:active {
+        outline: none;
+        filter: brightness(1.25);
+        box-shadow: none;
+    }
+
+    .clip-btn:focus {
+        filter: brightness(1.1);
+        outline: none;
+        box-shadow: none;
+    }
+
+
 .field-validation-error {
     font-size: .9em;
     margin-left: 5px;
@@ -338,10 +373,31 @@ input[type=text] {
     }
 }
 
-.rotating {
-    animation: rotate 2s linear infinite;
-    pointer-events: none;
-    opacity: 0.5;
+@keyframes spin-hourglass {
+    0% {
+        transform: rotateZ(0deg);
+    }
+
+    45% {
+        transform: rotateZ(0deg);
+    }
+
+    50% {
+        transform: rotateZ(180deg);
+    }
+
+    95% {
+        transform: rotateZ(180deg);
+    }
+
+    100% {
+        transform: rotateZ(360deg);
+    }
+}
+
+.hourglass-processing {
+    animation: spin-hourglass 5s linear infinite;
+    display: inline-block;
 }
 
 .radio-wrapper {
@@ -354,7 +410,7 @@ input[type=text] {
     border-radius: 20px;
     display: flex;
     flex-direction: row;
-    border: 2px outset var(--input-border);
+    border: 1px solid var(--input-border);
 }
 
 .radio-option {
@@ -411,7 +467,7 @@ input[type=text] {
 
 .radio-option.disabled {
     pointer-events: none;
-    filter: grayscale(80%) brightness(0.9);
+    filter: brightness(0.5);
     opacity: 0.6;
 }
 
@@ -423,7 +479,7 @@ input[type=text] {
     }
 
     input[type=text] {
-        border: 2px inset var(--input-border-darkmode);
+        border: 1px solid var(--input-border-darkmode);
         background-color: var(--dark-grey);
         color: white;
     }
@@ -435,7 +491,7 @@ input[type=text] {
 
     .radio-wrapper {
         --bg-color: var(--dark-grey);
-        border: 2px inset var(--input-border-darkmode);
+        border: 1px solid var(--input-border-darkmode);
     }
 
     .standard-btn:active {
@@ -496,4 +552,35 @@ input[type=text] {
 
 #yt-video-validation-message {
     display: none;
+}
+
+#clip-preview-button {
+    justify-content: center;
+}
+
+[data-bs-toggle="collapse"] {
+    color: var(--light-grey);
+    transition: color 0.25s;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+}
+
+    [data-bs-toggle="collapse"]:hover {
+        color: var(--accent-color);
+    }
+
+    [data-bs-toggle="collapse"]:focus {
+        box-shadow: none;
+        outline: none;
+    }
+
+    [data-bs-toggle="collapse"] i {
+        transition: transform 0.3s ease;
+        font-size: 0.8rem;
+        line-height: 0;
+    }
+
+    [data-bs-toggle="collapse"][aria-expanded="true"] i {
+        transform: rotate(180deg);
+    }
 }
