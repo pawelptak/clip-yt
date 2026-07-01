@@ -10,9 +10,11 @@ USER root
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     python3 \
+    python3-pip \
     curl \
     && curl -L https://github.com/yt-dlp/yt-dlp-master-builds/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp \
     && chmod a+rx /usr/local/bin/yt-dlp \
+    && pip3 install --no-cache-dir --break-system-packages curl-cffi \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /app/Output \
