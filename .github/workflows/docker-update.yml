@@ -14,7 +14,7 @@ jobs:
 
     steps:          
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0  # Fetch all history, including tags
         
@@ -23,8 +23,9 @@ jobs:
         run: |
           # Try to get the latest tag; if no tag, get the short commit SHA
           VERSION=$(git tag --sort=-creatordate | head -n 1)
+          VERSION=${VERSION:-$(git rev-parse --short HEAD)}
           echo "VERSION=$VERSION"
-          echo "::set-output name=VERSION::$VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
     
       - name: SSH to Server and Update Container
         uses: appleboy/ssh-action@master

@@ -23,14 +23,15 @@ namespace ClipYT.Tests
         {
             // Arrange
             var url = new Uri(inputUrl);
+            var cancellationToken = TestContext.Current.CancellationToken;
 
             // Act
             var thumbnailUrl = await _metadataService.GetThumbnailUrlAsync(url);
 
             using var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(thumbnailUrl);
+            var response = await httpClient.GetAsync(thumbnailUrl, cancellationToken);
             var contentType = response.Content.Headers.ContentType?.MediaType;
-            var imageData = await response.Content.ReadAsByteArrayAsync();
+            var imageData = await response.Content.ReadAsByteArrayAsync(cancellationToken);
 
             // Assert
             Assert.NotNull(thumbnailUrl);

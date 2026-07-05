@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../ClipYT.Tests/ClipYT.Tests.csproj" />
+  <Project Path="ClipYT.csproj" />
+</Solution>
