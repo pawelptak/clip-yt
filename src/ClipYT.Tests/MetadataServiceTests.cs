@@ -23,7 +23,7 @@ namespace ClipYT.Tests
         {
             // Arrange
             var url = new Uri(inputUrl);
-            var cancellationToken = new CancellationToken();
+            var cancellationToken = TestContext.Current.CancellationToken;
 
             // Act
             var thumbnailUrl = await _metadataService.GetThumbnailUrlAsync(url);
