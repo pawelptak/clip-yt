@@ -23,18 +23,20 @@ ENV XDG_CACHE_HOME=/app/Output/.cache
 
 # This stage is used to build the service project
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0 AS build-env
+ARG TARGETARCH
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["ClipYT.csproj", "."]
-RUN dotnet restore "./ClipYT.csproj"
+RUN dotnet restore "./ClipYT.csproj" -a $TARGETARCH
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "./ClipYT.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./ClipYT.csproj" -c $BUILD_CONFIGURATION -a $TARGETARCH -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build-env AS publish
+ARG TARGETARCH
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./ClipYT.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./ClipYT.csproj" -c $BUILD_CONFIGURATION -a $TARGETARCH -o /app/publish /p:UseAppHost=false
 
 # Accept the version as a build argument
 ARG VERSION
