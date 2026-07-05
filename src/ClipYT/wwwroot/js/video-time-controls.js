@@ -80,6 +80,22 @@
         return timeInputValue;
     }
 
+    function validatePreviewButton() {
+        const form = $("#app-form");
+        const videoStartInput = $("#videoStartInput");
+        const videoEndInput = $("#videoEndInput");
+        const videoLengthInput = $("#videoLengthInput");
+        const previewButton = $("#clip-preview-button");
+
+        // Use jQuery validation to check if fields are valid
+        const isStartValid = videoStartInput.val() && videoStartInput.valid();
+        const isEndValid = videoEndInput.val() && videoEndInput.valid();
+        const isLengthValid = videoLengthInput.val() && videoLengthInput.valid();
+
+        const isValid = isStartValid && isEndValid && isLengthValid;
+        previewButton.prop('disabled', !isValid);
+    }
+
     $("#videoEndInput").on("change", autoFillVideoStartInput);
     $("#videoEndInput").on("change", updateVideoLengthInput);
     $("#videoEndInput").on("change", function () {
@@ -93,6 +109,10 @@
     $("#videoStartInput").on("change", updateVideoLengthInput);
     $("#videoStartInput").on("change", updateVideoEndInput);
     $("#videoLengthInput").on("change", updateVideoEndInput);
+
+    $("#videoStartInput").on("input change", validatePreviewButton);
+    $("#videoEndInput").on("input change", validatePreviewButton);
+    $("#videoLengthInput").on("input change", validatePreviewButton);
 
     // Clear precise timestamps when user manually edits time inputs
     $(".time-input").on("input change", function () {
@@ -109,4 +129,6 @@
         showMaskOnHover: false,
         clearIncomplete: true,
     }).mask($(".time-input"));
+
+    validatePreviewButton();
 });

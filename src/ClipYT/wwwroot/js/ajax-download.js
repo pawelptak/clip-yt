@@ -2,6 +2,13 @@
     const appData = document.getElementById('app-data');
     const downloadMethodUrl = appData.getAttribute('data-download-url');
 
+    function restoreButtonState($button, $buttonText, $buttonIcon) {
+        $button.prop('disabled', false);
+        $buttonText.text('Download');
+        $buttonIcon.removeClass('bi-hourglass-split hourglass-processing').addClass('bi-download');
+        $("#progress-container").hide();
+    }
+
     $('form').on('submit', async function (e) {
         e.preventDefault();
 
@@ -20,7 +27,13 @@
 
         await connectToHub();
         var $button = $('#submit-button');
-        $button.addClass('rotating');
+        var $buttonIcon = $('#submit-button-icon');
+        var $buttonText = $('#submit-button-text');
+
+        // Disable button and change to processing state
+        $button.prop('disabled', true);
+        $buttonText.text('Processing...');
+        $buttonIcon.removeClass('bi-download').addClass('bi-hourglass-split hourglass-processing');
 
         $("#progressText").text("Download is starting");
         $("#progress-container").css('display', 'flex');
@@ -59,16 +72,14 @@
                 link.click();
                 document.body.removeChild(link);
 
-                $button.removeClass('rotating');
-                $("#progress-container").hide();
+                restoreButtonState($button, $buttonText, $buttonIcon);
             },
             error: function (xhr, status, error) {
                 console.error('AJAX Request failed:', status, error);
                 console.error('Response Text:', xhr.responseText);
                 $('#url-validation-message').text('An error occurred. Please try again.').show();
 
-                $button.removeClass('rotating');
-                $("#progress-container").hide();
+                restoreButtonState($button, $buttonText, $buttonIcon);
             }
         });
     });

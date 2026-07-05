@@ -284,7 +284,8 @@ namespace ClipYT.Tests
         public async Task UrlValidationService_BlocksUnsupportedPlatforms()
         {
             // Arrange
-            var urlValidationService = new UrlValidationService();
+            var loggerMock = new Mock<ILogger<UrlValidationService>>();
+            var urlValidationService = new UrlValidationService(loggerMock.Object);
 
             // Act & Assert - Should block arbitrary URLs
             var maliciousUrl = new Uri("https://evil.com/malicious");
@@ -310,7 +311,8 @@ namespace ClipYT.Tests
         public async Task UrlValidationService_AllowsSupportedPlatforms(string inputUrl)
         {
             // Arrange
-            var urlValidationService = new UrlValidationService();
+            var loggerMock = new Mock<ILogger<UrlValidationService>>();
+            var urlValidationService = new UrlValidationService(loggerMock.Object);
 
             // Act & Assert - Should allow supported platforms
             var url = new Uri(inputUrl);

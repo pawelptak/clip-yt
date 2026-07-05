@@ -191,14 +191,16 @@ async function updateVideoFrame(videoUrl, shouldLoadPreview = true) {
         hideLoadingOverlay();
         hideThumbnail();
         hideVideoTitle();
-        $("#video-details").hide();
-        toggleSubmitButton(false);
         if (shouldLoadPreview) {
             showPlayer();
             const errorMessage = error.message || "Unable to load video preview.";
             setPlayerErrorMessage(errorMessage);
             toggleYtVideoValidationError(false);
+            $("#video-details").show();
+        } else {
+            $("#video-details").hide();
         }
+        toggleSubmitButton(false);
         clearVideoFrame();
         console.log(error);
     }
@@ -265,19 +267,50 @@ async function getVideoTitle(videoUrl) {
     return null;
 }
 
-async function getPreviewInfo(videoUrl) {
+async function getPreviewInfo(videoUrl, retryCount = 0, maxRetries = 2) {
     await connectToHub();
     const appData = document.getElementById("app-data");
     const previewInfoUrl = appData.getAttribute("data-preview-info-url");
     const connectionId = connection.connectionId || '';
-    const response = await fetch(`${previewInfoUrl}?url=${encodeURIComponent(videoUrl)}&connectionId=${encodeURIComponent(connectionId)}`);
 
-    const payload = await response.json();
-    if (!response.ok || !payload.isSuccessful || !payload.streamUrl) {
-        throw new Error(payload.errorMessage || "Unable to resolve preview stream.");
+    try {
+        const response = await fetch(`${previewInfoUrl}?url=${encodeURIComponent(videoUrl)}&connectionId=${encodeURIComponent(connectionId)}`);
+
+        if (!response.ok) {
+            const payload = await response.json().catch(() => ({ errorMessage: null }));
+            const errorMessage = payload.errorMessage || `Server returned error: ${response.status}`;
+
+            if (response.status === 400) {
+                throw new Error(errorMessage);
+            }
+
+            if (retryCount < maxRetries && (response.status === 500 || response.status === 503)) {
+                console.log(`Preview failed (${response.status}), retrying... (${retryCount + 1}/${maxRetries})`);
+                await sleep(1000 * (retryCount + 1));
+                return getPreviewInfo(videoUrl, retryCount + 1, maxRetries);
+            }
+
+            throw new Error(errorMessage);
+        }
+
+        const payload = await response.json();
+        if (!payload.isSuccessful || !payload.streamUrl) {
+            throw new Error(payload.errorMessage || "Unable to resolve preview stream.");
+        }
+
+        return payload;
+    } catch (error) {
+        if (retryCount < maxRetries && error.name === 'TypeError') {
+            console.log(`Network error, retrying... (${retryCount + 1}/${maxRetries})`);
+            await sleep(1000 * (retryCount + 1));
+            return getPreviewInfo(videoUrl, retryCount + 1, maxRetries);
+        }
+        throw error;
     }
+}
 
-    return payload;
+function sleep(milliseconds) {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
 }
 
 function loadPlayerSource(streamUrl, contentType) {
