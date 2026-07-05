@@ -1,0 +1,2943 @@
+{
+  "settings": {
+    "components": {
+      "code": true,
+      "binaries": false
+    },
+    "targetId": "net10.0",
+    "targetDisplayName": ".NETCoreApp,Version=v10.0"
+  },
+  "analysisStartTime": "2026-07-05T09:00:47.0264305Z",
+  "analysisEndTime": "2026-07-05T09:00:49.6132099Z",
+  "privacyModeHelpUrl": "https://go.microsoft.com/fwlink/?linkid=2270980",
+  "stats": {
+    "summary": {
+      "projects": 2,
+      "issues": 6,
+      "incidents": 103,
+      "effort": 103
+    },
+    "charts": {
+      "severity": {
+        "Mandatory": 4,
+        "Optional": 1,
+        "Potential": 98,
+        "Information": 0
+      },
+      "category": {
+        "NuGet": 2,
+        "Project": 2,
+        "Api": 99
+      }
+    }
+  },
+  "projects": [
+    {
+      "path": "ClipYT.csproj",
+      "startingProject": true,
+      "issues": 5,
+      "storyPoints": 60,
+      "properties": {
+        "appName": "ClipYT",
+        "projectKind": "AspNetCore",
+        "frameworks": [
+          "net8.0"
+        ],
+        "languages": [
+          "C#"
+        ],
+        "tools": [
+          "MSBuild"
+        ],
+        "isSdkStyle": true,
+        "numberOfFiles": 68,
+        "numberOfCodeFiles": 36,
+        "linesTotal": 9164,
+        "linesOfCode": 2523,
+        "totalApiScanned": 4330,
+        "minLinesOfCodeToChange": 58,
+        "maxLinesOfCodeToChange": 58
+      },
+      "ruleInstances": [
+        {
+          "incidentId": "14f13ce4-ecb6-4c1c-8166-d4f9a5d8f1cb",
+          "ruleId": "NuGet.0001",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Microsoft.VisualStudio.Azure.Containers.Tools.Targets, 1.21.0\n\nRecommendation:\n\nNo supported version found",
+              "protected": "Microsoft.VisualStudio.Azure.Containers.Tools.Targets, 1.21.0\n\nRecommendation:\n\nNo supported version found"
+            },
+            "kind": "File",
+            "path": "ClipYT.csproj",
+            "snippet": "Microsoft.VisualStudio.Azure.Containers.Tools.Targets, 1.21.0\n\nRecommendation:\n\nNo supported version found",
+            "protectedSnippet": "Microsoft.VisualStudio.Azure.Containers.Tools.Targets, 1.21.0\n\nRecommendation:\n\nNo supported version found",
+            "label": "Microsoft.VisualStudio.Azure.Containers.Tools.Targets 1.21.0",
+            "properties": {
+              "PackageId": "Microsoft.VisualStudio.Azure.Containers.Tools.Targets",
+              "PackageVersion": "1.21.0",
+              "PackageNewVersion": null,
+              "PackageReplacements": null
+            }
+          }
+        },
+        {
+          "incidentId": "0f2e8b1d-7138-45d0-847c-5af7bce6e79b",
+          "ruleId": "Project.0002",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Current target framework: net8.0\nRecommended target framework: net10.0",
+              "protected": "Current target framework: net8.0\nRecommended target framework: net10.0"
+            },
+            "kind": "File",
+            "path": "ClipYT.csproj",
+            "snippet": "Current target framework: net8.0\nRecommended target framework: net10.0",
+            "protectedSnippet": "Current target framework: net8.0\nRecommended target framework: net10.0",
+            "properties": {
+              "CurrentTargetFramework": "net8.0",
+              "RecommendedTargetFramework": "net10.0"
+            }
+          }
+        },
+        {
+          "incidentId": "ef57a9b1-e6c0-4a18-b567-856af89644dd",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Write(\r\n#nullable restore\r\n#line (8,87)-(8,124) \u0022P:\\Projects\\clip-yt\\src\\ClipYT\\Views\\Home\\Index.cshtml\u0022\r\nHtml.ValidationMessageFor(m =\u003E m.Url)\r\n\r\n#line default\r\n#line hidden\r\n#nullable disable\r\n                );",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "obj\\Debug\\net8.0\\Microsoft.CodeAnalysis.Razor.Compiler\\Microsoft.NET.Sdk.Razor.SourceGenerators.RazorSourceGenerator\\Views/Home/Index_cshtml.g.cs",
+            "snippet": "Write(\r\n#nullable restore\r\n#line (8,87)-(8,124) \u0022P:\\Projects\\clip-yt\\src\\ClipYT\\Views\\Home\\Index.cshtml\u0022\r\nHtml.ValidationMessageFor(m =\u003E m.Url)\r\n\r\n#line default\r\n#line hidden\r\n#nullable disable\r\n                );",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 115,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "9fc7df81-9884-4215-9d28-703cbecd6592",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "__Microsoft_AspNetCore_Mvc_TagHelpers_PartialTagHelper.Model = \r\n#nullable restore\r\n#line (7,48)-(7,203) \u0022P:\\Projects\\clip-yt\\src\\ClipYT\\Views\\Home\\Index.cshtml\u0022\r\nnew ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m =\u003E m.Url, new { id = \u0022urlInput\u0022, placeholder = \u0022Paste YouTube video URL\u0022, inputmode = \u0022url\u0022 }) }\r\n\r\n#line default\r\n#line hidden\r\n#nullable disable\r\n                ;",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "obj\\Debug\\net8.0\\Microsoft.CodeAnalysis.Razor.Compiler\\Microsoft.NET.Sdk.Razor.SourceGenerators.RazorSourceGenerator\\Views/Home/Index_cshtml.g.cs",
+            "snippet": "__Microsoft_AspNetCore_Mvc_TagHelpers_PartialTagHelper.Model = \r\n#nullable restore\r\n#line (7,48)-(7,203) \u0022P:\\Projects\\clip-yt\\src\\ClipYT\\Views\\Home\\Index.cshtml\u0022\r\nnew ClearInputViewModel { HtmlTextBox = @Html.TextBoxFor(m =\u003E m.Url, new { id = \u0022urlInput\u0022, placeholder = \u0022Paste YouTube video URL\u0022, inputmode = \u0022url\u0022 }) }\r\n\r\n#line default\r\n#line hidden\r\n#nullable disable\r\n                ;",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 97,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "5bea9094-f502-4011-a049-4a18750541ee",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "private static string GetPreviewCacheKey(Uri mediaUrl)",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Controllers\\HomeController.cs",
+            "snippet": "private static string GetPreviewCacheKey(Uri mediaUrl)",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 279,
+            "column": 8
+          }
+        },
+        {
+          "incidentId": "e59fef4f-f489-424e-a5a1-b3c2b03e8d85",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "private void CachePreviewMediaResult(Uri mediaUrl, PreviewMediaResult previewMediaResult)",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Controllers\\HomeController.cs",
+            "snippet": "private void CachePreviewMediaResult(Uri mediaUrl, PreviewMediaResult previewMediaResult)",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 260,
+            "column": 8
+          }
+        },
+        {
+          "incidentId": "e733d27c-73ac-4ac6-8362-87c1082dcae4",
+          "ruleId": "Api.0002",
+          "description": "Breaking change: New TimeSpan.From*() overloads that take integers ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "_memoryCache.Set(cacheKey, cachedPreviewMediaResult, TimeSpan.FromMinutes(5));",
+              "protected": "M:System.TimeSpan.FromMinutes(System.Double)"
+            },
+            "kind": "File",
+            "path": "Controllers\\HomeController.cs",
+            "snippet": "_memoryCache.Set(cacheKey, cachedPreviewMediaResult, TimeSpan.FromMinutes(5));",
+            "protectedSnippet": "M:System.TimeSpan.FromMinutes(System.Double)",
+            "label": "M:System.TimeSpan.FromMinutes(System.Double)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/core-libraries/9.0/timespan-from-overloads.md",
+                "isCustom": false
+              }
+            ],
+            "line": 276,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "74c999f7-bc1c-46c3-94a4-504c3e8103e5",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "private PreviewMediaResult? GetCachedPreviewMediaResult(Uri mediaUrl)",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Controllers\\HomeController.cs",
+            "snippet": "private PreviewMediaResult? GetCachedPreviewMediaResult(Uri mediaUrl)",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 248,
+            "column": 8
+          }
+        },
+        {
+          "incidentId": "e6191b19-8a9e-4009-aee1-1eaa2125c0e4",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "await using var responseStream = await responseMessage.Content.ReadAsStreamAsync(HttpContext.RequestAborted);",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "Controllers\\HomeController.cs",
+            "snippet": "await using var responseStream = await responseMessage.Content.ReadAsStreamAsync(HttpContext.RequestAborted);",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 214,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "fda488b7-6c7d-4856-a339-c488177725fd",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "await using var responseStream = await responseMessage.Content.ReadAsStreamAsync(HttpContext.RequestAborted);",
+              "protected": "M:System.Net.Http.HttpContent.ReadAsStreamAsync(System.Threading.CancellationToken)"
+            },
+            "kind": "File",
+            "path": "Controllers\\HomeController.cs",
+            "snippet": "await using var responseStream = await responseMessage.Content.ReadAsStreamAsync(HttpContext.RequestAborted);",
+            "protectedSnippet": "M:System.Net.Http.HttpContent.ReadAsStreamAsync(System.Threading.CancellationToken)",
+            "label": "M:System.Net.Http.HttpContent.ReadAsStreamAsync(System.Threading.CancellationToken)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 214,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "74633fa6-a02b-4ded-bb32-04b41d971d0a",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "CopyResponseHeader(responseMessage.Content.Headers.LastModified?.ToString(\u0022R\u0022), \u0022Last-Modified\u0022);",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "Controllers\\HomeController.cs",
+            "snippet": "CopyResponseHeader(responseMessage.Content.Headers.LastModified?.ToString(\u0022R\u0022), \u0022Last-Modified\u0022);",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 212,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "d9e56a5f-16b5-4f62-8a6f-085ffd97aa8c",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "CopyResponseHeader(responseMessage.Content.Headers.ContentRange?.ToString(), \u0022Content-Range\u0022);",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "Controllers\\HomeController.cs",
+            "snippet": "CopyResponseHeader(responseMessage.Content.Headers.ContentRange?.ToString(), \u0022Content-Range\u0022);",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 209,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "393174b7-b37c-4edd-855d-5d6736b9279f",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "CopyResponseHeader(responseMessage.Content.Headers.ContentLength, \u0022Content-Length\u0022);",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "Controllers\\HomeController.cs",
+            "snippet": "CopyResponseHeader(responseMessage.Content.Headers.ContentLength, \u0022Content-Length\u0022);",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 208,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "2b9d3aee-6cf5-4d1d-ae9c-fd332bbbfc94",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Response.ContentType = responseMessage.Content.Headers.ContentType?.ToString() ?? previewResult.ContentType ?? \u0022video/mp4\u0022;",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "Controllers\\HomeController.cs",
+            "snippet": "Response.ContentType = responseMessage.Content.Headers.ContentType?.ToString() ?? previewResult.ContentType ?? \u0022video/mp4\u0022;",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 206,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "5251b463-94ab-41c3-b340-ed6bde178a15",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))\r\n            {\r\n                return BadRequest();\r\n            }",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Controllers\\HomeController.cs",
+            "snippet": "if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))\r\n            {\r\n                return BadRequest();\r\n            }",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 157,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "c867f9e8-4246-49cb-8bc0-5a2120867c16",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))\r\n            {\r\n                return BadRequest();\r\n            }",
+              "protected": "M:System.Uri.TryCreate(System.String,System.UriKind,System.Uri@)"
+            },
+            "kind": "File",
+            "path": "Controllers\\HomeController.cs",
+            "snippet": "if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))\r\n            {\r\n                return BadRequest();\r\n            }",
+            "protectedSnippet": "M:System.Uri.TryCreate(System.String,System.UriKind,System.Uri@)",
+            "label": "M:System.Uri.TryCreate(System.String,System.UriKind,System.Uri@)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 157,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "89ba4388-8a81-426c-9927-ddf242d4a7d9",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))\r\n            {\r\n                return BadRequest(new PreviewMediaResult\r\n                {\r\n                    IsSuccessful = false,\r\n                    ErrorMessage = \u0022The provided URL is invalid.\u0022\r\n                });\r\n            }",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Controllers\\HomeController.cs",
+            "snippet": "if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))\r\n            {\r\n                return BadRequest(new PreviewMediaResult\r\n                {\r\n                    IsSuccessful = false,\r\n                    ErrorMessage = \u0022The provided URL is invalid.\u0022\r\n                });\r\n            }",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 120,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "9d0c291b-5d54-4398-a299-eb8488354169",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))\r\n            {\r\n                return BadRequest(new PreviewMediaResult\r\n                {\r\n                    IsSuccessful = false,\r\n                    ErrorMessage = \u0022The provided URL is invalid.\u0022\r\n                });\r\n            }",
+              "protected": "M:System.Uri.TryCreate(System.String,System.UriKind,System.Uri@)"
+            },
+            "kind": "File",
+            "path": "Controllers\\HomeController.cs",
+            "snippet": "if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))\r\n            {\r\n                return BadRequest(new PreviewMediaResult\r\n                {\r\n                    IsSuccessful = false,\r\n                    ErrorMessage = \u0022The provided URL is invalid.\u0022\r\n                });\r\n            }",
+            "protectedSnippet": "M:System.Uri.TryCreate(System.String,System.UriKind,System.Uri@)",
+            "label": "M:System.Uri.TryCreate(System.String,System.UriKind,System.Uri@)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 120,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "aadac6e7-95c2-4d9e-86c9-56dcf517f56c",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))\r\n            {\r\n                return BadRequest(new { isSuccessful = false, errorMessage = \u0022The provided URL is invalid.\u0022 });\r\n            }",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Controllers\\HomeController.cs",
+            "snippet": "if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))\r\n            {\r\n                return BadRequest(new { isSuccessful = false, errorMessage = \u0022The provided URL is invalid.\u0022 });\r\n            }",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 102,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "61af3a4b-2cf4-4b99-a8ba-482397896d29",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))\r\n            {\r\n                return BadRequest(new { isSuccessful = false, errorMessage = \u0022The provided URL is invalid.\u0022 });\r\n            }",
+              "protected": "M:System.Uri.TryCreate(System.String,System.UriKind,System.Uri@)"
+            },
+            "kind": "File",
+            "path": "Controllers\\HomeController.cs",
+            "snippet": "if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))\r\n            {\r\n                return BadRequest(new { isSuccessful = false, errorMessage = \u0022The provided URL is invalid.\u0022 });\r\n            }",
+            "protectedSnippet": "M:System.Uri.TryCreate(System.String,System.UriKind,System.Uri@)",
+            "label": "M:System.Uri.TryCreate(System.String,System.UriKind,System.Uri@)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 102,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "d2ee9b60-159b-474b-8b91-8440ea21f21d",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))\r\n            {\r\n                return BadRequest(new { isSuccessful = false, errorMessage = \u0022The provided URL is invalid.\u0022 });\r\n            }",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Controllers\\HomeController.cs",
+            "snippet": "if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))\r\n            {\r\n                return BadRequest(new { isSuccessful = false, errorMessage = \u0022The provided URL is invalid.\u0022 });\r\n            }",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 84,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "c800cd33-314c-4201-8ede-f5cc56188ca8",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))\r\n            {\r\n                return BadRequest(new { isSuccessful = false, errorMessage = \u0022The provided URL is invalid.\u0022 });\r\n            }",
+              "protected": "M:System.Uri.TryCreate(System.String,System.UriKind,System.Uri@)"
+            },
+            "kind": "File",
+            "path": "Controllers\\HomeController.cs",
+            "snippet": "if (!Uri.TryCreate(url, UriKind.Absolute, out var mediaUrl))\r\n            {\r\n                return BadRequest(new { isSuccessful = false, errorMessage = \u0022The provided URL is invalid.\u0022 });\r\n            }",
+            "protectedSnippet": "M:System.Uri.TryCreate(System.String,System.UriKind,System.Uri@)",
+            "label": "M:System.Uri.TryCreate(System.String,System.UriKind,System.Uri@)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 84,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "47f67339-ccdc-4788-90ef-47c6a3bddc07",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "set;",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Models\\VideoModel.cs",
+            "snippet": "set;",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 10,
+            "column": 31
+          }
+        },
+        {
+          "incidentId": "a8e0d44b-9ca2-41c5-a7cf-fa69cc260c93",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "get;",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Models\\VideoModel.cs",
+            "snippet": "get;",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 10,
+            "column": 26
+          }
+        },
+        {
+          "incidentId": "ac661d4d-8764-44e0-97fd-c7bd650e2b88",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "public Uri? Url",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Models\\VideoModel.cs",
+            "snippet": "public Uri? Url",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 8,
+            "column": 8
+          }
+        },
+        {
+          "incidentId": "0ab43854-5e7c-4a54-b15a-505d72305f6c",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": " Task\u003Cstring?\u003E GetTitleAsync(Uri inputUri)",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Interfaces\\IMetadataService.cs",
+            "snippet": " Task\u003Cstring?\u003E GetTitleAsync(Uri inputUri)",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 5,
+            "column": 8
+          }
+        },
+        {
+          "incidentId": "4ae42cd2-713c-42da-a023-38d6c7220831",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": " Task\u003Cstring?\u003E GetThumbnailUrlAsync(Uri inputUri)",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Interfaces\\IMetadataService.cs",
+            "snippet": " Task\u003Cstring?\u003E GetThumbnailUrlAsync(Uri inputUri)",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 4,
+            "column": 8
+          }
+        },
+        {
+          "incidentId": "2d5aca70-8596-4e20-a71e-3dc8a19214c6",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": " Task\u003CPreviewMediaResult\u003E GetPreviewMediaAsync(Uri url, string? connectionId = null)",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Interfaces\\IMediaFileProcessingService.cs",
+            "snippet": " Task\u003CPreviewMediaResult\u003E GetPreviewMediaAsync(Uri url, string? connectionId = null)",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 8,
+            "column": 8
+          }
+        },
+        {
+          "incidentId": "aab4b49d-8984-44d4-9c3a-1d107574a106",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": " Task\u003Cbool\u003E IsUrlValidAsync(Uri url)",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Interfaces\\IUrlValidationService.cs",
+            "snippet": " Task\u003Cbool\u003E IsUrlValidAsync(Uri url)",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 4,
+            "column": 8
+          }
+        },
+        {
+          "incidentId": "079b26ef-7a0d-446f-a5d5-1a309d010eea",
+          "ruleId": "Api.0002",
+          "description": "Breaking change: New TimeSpan.From*() overloads that take integers ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "diff = diff.Add(TimeSpan.FromMilliseconds(200));",
+              "protected": "M:System.TimeSpan.FromMilliseconds(System.Double)"
+            },
+            "kind": "File",
+            "path": "Services\\MediaFileProcessingService.cs",
+            "snippet": "diff = diff.Add(TimeSpan.FromMilliseconds(200));",
+            "protectedSnippet": "M:System.TimeSpan.FromMilliseconds(System.Double)",
+            "label": "M:System.TimeSpan.FromMilliseconds(System.Double)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/core-libraries/9.0/timespan-from-overloads.md",
+                "isCustom": false
+              }
+            ],
+            "line": 291,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "c9f0568b-fd57-4e35-a071-d191634b5364",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "public async Task\u003CPreviewMediaResult\u003E GetPreviewMediaAsync(Uri url, string? connectionId = null)",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Services\\MediaFileProcessingService.cs",
+            "snippet": "public async Task\u003CPreviewMediaResult\u003E GetPreviewMediaAsync(Uri url, string? connectionId = null)",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 135,
+            "column": 8
+          }
+        },
+        {
+          "incidentId": "d74905ba-e4e5-4752-828e-18b83700875f",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "filePath = await CutFileAsync(\r\n                        filePath,\r\n                        model.Url.ToString(),\r\n                        model.StartTimestamp!,\r\n                        model.EndTimestamp!,\r\n                        model.Format,\r\n                        sessionFolder,\r\n                        async (progress) =\u003E await SendProgressToHubAsync(progress, connectionId));",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Services\\MediaFileProcessingService.cs",
+            "snippet": "filePath = await CutFileAsync(\r\n                        filePath,\r\n                        model.Url.ToString(),\r\n                        model.StartTimestamp!,\r\n                        model.EndTimestamp!,\r\n                        model.Format,\r\n                        sessionFolder,\r\n                        async (progress) =\u003E await SendProgressToHubAsync(progress, connectionId));",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 92,
+            "column": 20
+          }
+        },
+        {
+          "incidentId": "3a07ca8d-9cc0-4ce0-befe-dcd82671901f",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "filePath = await DownloadMediaFileAsync(\r\n                        model.Url.ToString(),\r\n                        model.Format,\r\n                        model.Quality,\r\n                        async (progress) =\u003E await SendProgressToHubAsync(progress, connectionId),\r\n                        maxRetries,\r\n                        outputFolder: sessionFolder);",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Services\\MediaFileProcessingService.cs",
+            "snippet": "filePath = await DownloadMediaFileAsync(\r\n                        model.Url.ToString(),\r\n                        model.Format,\r\n                        model.Quality,\r\n                        async (progress) =\u003E await SendProgressToHubAsync(progress, connectionId),\r\n                        maxRetries,\r\n                        outputFolder: sessionFolder);",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 79,
+            "column": 20
+          }
+        },
+        {
+          "incidentId": "b8cec89c-866a-4f5d-a64d-e72f82ccf652",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var isTikTokUrl = Regex.IsMatch(model.Url.ToString(), Constants.RegexConstants.TiktokUrlRegex);",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Services\\MediaFileProcessingService.cs",
+            "snippet": "var isTikTokUrl = Regex.IsMatch(model.Url.ToString(), Constants.RegexConstants.TiktokUrlRegex);",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 75,
+            "column": 20
+          }
+        },
+        {
+          "incidentId": "51374347-74d9-4a4e-a477-ac9ee65cd7fb",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var previewCacheKey = GetPreviewCacheKey(model.Url.ToString());",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Services\\MediaFileProcessingService.cs",
+            "snippet": "var previewCacheKey = GetPreviewCacheKey(model.Url.ToString());",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 59,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "aaef4c1e-eb64-487f-881c-9b27d0d6f6a6",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "throw new ArgumentNullException(nameof(model.Url), \u0022URL cannot be null\u0022);",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Services\\MediaFileProcessingService.cs",
+            "snippet": "throw new ArgumentNullException(nameof(model.Url), \u0022URL cannot be null\u0022);",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 43,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "767325ef-c250-41ea-851c-0385c0c12f2c",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "if (model.Url == null)\r\n            {\r\n                throw new ArgumentNullException(nameof(model.Url), \u0022URL cannot be null\u0022);\r\n            }",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Services\\MediaFileProcessingService.cs",
+            "snippet": "if (model.Url == null)\r\n            {\r\n                throw new ArgumentNullException(nameof(model.Url), \u0022URL cannot be null\u0022);\r\n            }",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 41,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "b494429a-a131-49cc-a27a-f97b97d7bdd2",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "private static bool IsUrlFromSupportedPlatform(Uri url)",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Services\\UrlValidationService.cs",
+            "snippet": "private static bool IsUrlFromSupportedPlatform(Uri url)",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 79,
+            "column": 8
+          }
+        },
+        {
+          "incidentId": "0a596bec-3365-4056-87fb-7ef9fe95b57f",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "public async Task\u003Cbool\u003E IsUrlValidAsync(Uri url)",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Services\\UrlValidationService.cs",
+            "snippet": "public async Task\u003Cbool\u003E IsUrlValidAsync(Uri url)",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 27,
+            "column": 8
+          }
+        },
+        {
+          "incidentId": "2fc52d27-e01c-42bb-bcc7-2981ab45a9b3",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "if (url.Scheme != Uri.UriSchemeHttp \u0026\u0026 url.Scheme != Uri.UriSchemeHttps)\r\n                {\r\n                    return false;\r\n                }",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Services\\UrlValidationService.cs",
+            "snippet": "if (url.Scheme != Uri.UriSchemeHttp \u0026\u0026 url.Scheme != Uri.UriSchemeHttps)\r\n                {\r\n                    return false;\r\n                }",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 32,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "494896b1-ba36-4e52-9016-abe314bebdb4",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "if (url.Scheme != Uri.UriSchemeHttp \u0026\u0026 url.Scheme != Uri.UriSchemeHttps)\r\n                {\r\n                    return false;\r\n                }",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Services\\UrlValidationService.cs",
+            "snippet": "if (url.Scheme != Uri.UriSchemeHttp \u0026\u0026 url.Scheme != Uri.UriSchemeHttps)\r\n                {\r\n                    return false;\r\n                }",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 32,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "b793df17-910e-43b4-9e7a-3a142b4c0336",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var json = await response.Content.ReadAsStringAsync();",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "Services\\MetadataService.cs",
+            "snippet": "var json = await response.Content.ReadAsStringAsync();",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 287,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "5c908645-2145-4f01-b93a-69221c94453f",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var oembedUrl = string.Format(TikTokOEmbedUrl, Uri.EscapeDataString(url));",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Services\\MetadataService.cs",
+            "snippet": "var oembedUrl = string.Format(TikTokOEmbedUrl, Uri.EscapeDataString(url));",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 277,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "98ef2677-e47d-4026-8b7d-c4e0ac603af4",
+          "ruleId": "Api.0002",
+          "description": "Breaking change: New TimeSpan.From*() overloads that take integers ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "client.Timeout = TimeSpan.FromSeconds(TimeoutSeconds);",
+              "protected": "M:System.TimeSpan.FromSeconds(System.Double)"
+            },
+            "kind": "File",
+            "path": "Services\\MetadataService.cs",
+            "snippet": "client.Timeout = TimeSpan.FromSeconds(TimeoutSeconds);",
+            "protectedSnippet": "M:System.TimeSpan.FromSeconds(System.Double)",
+            "label": "M:System.TimeSpan.FromSeconds(System.Double)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/core-libraries/9.0/timespan-from-overloads.md",
+                "isCustom": false
+              }
+            ],
+            "line": 275,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "d4f91c9d-a846-457d-916a-3106570e08e1",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var html = await response.Content.ReadAsStringAsync();",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "Services\\MetadataService.cs",
+            "snippet": "var html = await response.Content.ReadAsStringAsync();",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 260,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "89efc40c-bc64-40c3-80c3-0f546ffd9a20",
+          "ruleId": "Api.0002",
+          "description": "Breaking change: New TimeSpan.From*() overloads that take integers ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "client.Timeout = TimeSpan.FromSeconds(TimeoutSeconds);",
+              "protected": "M:System.TimeSpan.FromSeconds(System.Double)"
+            },
+            "kind": "File",
+            "path": "Services\\MetadataService.cs",
+            "snippet": "client.Timeout = TimeSpan.FromSeconds(TimeoutSeconds);",
+            "protectedSnippet": "M:System.TimeSpan.FromSeconds(System.Double)",
+            "label": "M:System.TimeSpan.FromSeconds(System.Double)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/core-libraries/9.0/timespan-from-overloads.md",
+                "isCustom": false
+              }
+            ],
+            "line": 250,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "b72d7985-f354-4d5b-ab14-6c1217482e9c",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var html = await response.Content.ReadAsStringAsync();",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "Services\\MetadataService.cs",
+            "snippet": "var html = await response.Content.ReadAsStringAsync();",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 235,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "0f32d8fd-d532-48f3-ad8e-1b7694ba1063",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var json = await response.Content.ReadAsStringAsync();",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "Services\\MetadataService.cs",
+            "snippet": "var json = await response.Content.ReadAsStringAsync();",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 204,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "b281185b-fa53-48ce-8846-4d59f004af90",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var oembedUrl = string.Format(TikTokOEmbedUrl, Uri.EscapeDataString(url));",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Services\\MetadataService.cs",
+            "snippet": "var oembedUrl = string.Format(TikTokOEmbedUrl, Uri.EscapeDataString(url));",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 194,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "bdf5d8db-9f86-4af5-a1a5-cba8b727b801",
+          "ruleId": "Api.0002",
+          "description": "Breaking change: New TimeSpan.From*() overloads that take integers ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "client.Timeout = TimeSpan.FromSeconds(TimeoutSeconds);",
+              "protected": "M:System.TimeSpan.FromSeconds(System.Double)"
+            },
+            "kind": "File",
+            "path": "Services\\MetadataService.cs",
+            "snippet": "client.Timeout = TimeSpan.FromSeconds(TimeoutSeconds);",
+            "protectedSnippet": "M:System.TimeSpan.FromSeconds(System.Double)",
+            "label": "M:System.TimeSpan.FromSeconds(System.Double)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/core-libraries/9.0/timespan-from-overloads.md",
+                "isCustom": false
+              }
+            ],
+            "line": 192,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "4950c18b-e7ca-48c9-8704-fda44125e7eb",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var html = await response.Content.ReadAsStringAsync();",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "Services\\MetadataService.cs",
+            "snippet": "var html = await response.Content.ReadAsStringAsync();",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 177,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "268c3e2e-f7aa-43be-8dc9-ffc803d1a112",
+          "ruleId": "Api.0002",
+          "description": "Breaking change: New TimeSpan.From*() overloads that take integers ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "client.Timeout = TimeSpan.FromSeconds(TimeoutSeconds);",
+              "protected": "M:System.TimeSpan.FromSeconds(System.Double)"
+            },
+            "kind": "File",
+            "path": "Services\\MetadataService.cs",
+            "snippet": "client.Timeout = TimeSpan.FromSeconds(TimeoutSeconds);",
+            "protectedSnippet": "M:System.TimeSpan.FromSeconds(System.Double)",
+            "label": "M:System.TimeSpan.FromSeconds(System.Double)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/core-libraries/9.0/timespan-from-overloads.md",
+                "isCustom": false
+              }
+            ],
+            "line": 167,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "bcc36db3-e56b-4d42-8e78-021107597441",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var html = await response.Content.ReadAsStringAsync();",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "Services\\MetadataService.cs",
+            "snippet": "var html = await response.Content.ReadAsStringAsync();",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 152,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "ce1d539a-0fce-4dd2-b6f9-60a9dcf285b5",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var html = await response.Content.ReadAsStringAsync();",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "Services\\MetadataService.cs",
+            "snippet": "var html = await response.Content.ReadAsStringAsync();",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 123,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "6d85aa57-dea3-4c55-913f-781ac8c5b6a0",
+          "ruleId": "Api.0002",
+          "description": "Breaking change: New TimeSpan.From*() overloads that take integers ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "client.Timeout = TimeSpan.FromSeconds(TimeoutSeconds);",
+              "protected": "M:System.TimeSpan.FromSeconds(System.Double)"
+            },
+            "kind": "File",
+            "path": "Services\\MetadataService.cs",
+            "snippet": "client.Timeout = TimeSpan.FromSeconds(TimeoutSeconds);",
+            "protectedSnippet": "M:System.TimeSpan.FromSeconds(System.Double)",
+            "label": "M:System.TimeSpan.FromSeconds(System.Double)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/core-libraries/9.0/timespan-from-overloads.md",
+                "isCustom": false
+              }
+            ],
+            "line": 113,
+            "column": 16
+          }
+        },
+        {
+          "incidentId": "e3c99fa4-d053-426f-a6d4-ce02210df978",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "public async Task\u003Cstring?\u003E GetThumbnailUrlAsync(Uri inputUri)",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Services\\MetadataService.cs",
+            "snippet": "public async Task\u003Cstring?\u003E GetThumbnailUrlAsync(Uri inputUri)",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 69,
+            "column": 8
+          }
+        },
+        {
+          "incidentId": "7063b9a7-3237-4c44-8a45-ef1594333d24",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "public async Task\u003Cstring?\u003E GetTitleAsync(Uri inputUri)",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "Services\\MetadataService.cs",
+            "snippet": "public async Task\u003Cstring?\u003E GetTitleAsync(Uri inputUri)",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 28,
+            "column": 8
+          }
+        },
+        {
+          "incidentId": "d6497c04-66c8-4a16-bb73-18a61347ff9a",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: Exception diagnostics are suppressed when IExceptionHandler.TryHandleAsync returns true ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "app.UseExceptionHandler(\u0022/Home/Error\u0022);",
+              "protected": "M:Microsoft.AspNetCore.Builder.ExceptionHandlerExtensions.UseExceptionHandler(Microsoft.AspNetCore.Builder.IApplicationBuilder,System.String)"
+            },
+            "kind": "File",
+            "path": "Program.cs",
+            "snippet": "app.UseExceptionHandler(\u0022/Home/Error\u0022);",
+            "protectedSnippet": "M:Microsoft.AspNetCore.Builder.ExceptionHandlerExtensions.UseExceptionHandler(Microsoft.AspNetCore.Builder.IApplicationBuilder,System.String)",
+            "label": "M:Microsoft.AspNetCore.Builder.ExceptionHandlerExtensions.UseExceptionHandler(Microsoft.AspNetCore.Builder.IApplicationBuilder,System.String)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/aspnet-core/10/exception-handler-diagnostics-suppressed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 63,
+            "column": 4
+          }
+        },
+        {
+          "incidentId": "b5f76e2f-6dd9-4a0e-b9f9-0d2f35bbd1e1",
+          "ruleId": "Api.0001",
+          "description": "Breaking change: DynamicallyAccessedMembers annotation removed from trim-unsafe configuration APIs ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var basePath = builder.Configuration.GetValue\u003Cstring\u003E(\u0022Config:BasePath\u0022);",
+              "protected": "M:Microsoft.Extensions.Configuration.ConfigurationBinder.GetValue\u0060\u00601(Microsoft.Extensions.Configuration.IConfiguration,System.String)"
+            },
+            "kind": "File",
+            "path": "Program.cs",
+            "snippet": "var basePath = builder.Configuration.GetValue\u003Cstring\u003E(\u0022Config:BasePath\u0022);",
+            "protectedSnippet": "M:Microsoft.Extensions.Configuration.ConfigurationBinder.GetValue\u0060\u00601(Microsoft.Extensions.Configuration.IConfiguration,System.String)",
+            "label": "M:Microsoft.Extensions.Configuration.ConfigurationBinder.GetValue\u0060\u00601(Microsoft.Extensions.Configuration.IConfiguration,System.String)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/extensions/10.0/dynamically-accessed-members-configuration.md",
+                "isCustom": false
+              }
+            ],
+            "line": 51,
+            "column": 0
+          }
+        },
+        {
+          "incidentId": "1617ca06-99da-4bf3-9c05-0d93652b806e",
+          "ruleId": "Api.0003",
+          "description": "URI query redaction in IHttpClientFactory logs ",
+          "projectPath": "ClipYT.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "builder.Services.AddHttpClient(string.Empty)\r\n    .ConfigurePrimaryHttpMessageHandler(() =\u003E new HttpClientHandler\r\n    {\r\n        AutomaticDecompression = System.Net.DecompressionMethods.All\r\n    });",
+              "protected": "M:Microsoft.Extensions.DependencyInjection.HttpClientFactoryServiceCollectionExtensions.AddHttpClient(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String)"
+            },
+            "kind": "File",
+            "path": "Program.cs",
+            "snippet": "builder.Services.AddHttpClient(string.Empty)\r\n    .ConfigurePrimaryHttpMessageHandler(() =\u003E new HttpClientHandler\r\n    {\r\n        AutomaticDecompression = System.Net.DecompressionMethods.All\r\n    });",
+            "protectedSnippet": "M:Microsoft.Extensions.DependencyInjection.HttpClientFactoryServiceCollectionExtensions.AddHttpClient(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String)",
+            "label": "M:Microsoft.Extensions.DependencyInjection.HttpClientFactoryServiceCollectionExtensions.AddHttpClient(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/9.0/query-redaction-logs.md",
+                "isCustom": false
+              }
+            ],
+            "line": 32,
+            "column": 0
+          }
+        }
+      ],
+      "features": []
+    },
+    {
+      "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+      "startingProject": true,
+      "issues": 3,
+      "storyPoints": 43,
+      "properties": {
+        "appName": "ClipYT.Tests",
+        "projectKind": "DotNetCoreApp",
+        "frameworks": [
+          "net8.0"
+        ],
+        "languages": [
+          "C#"
+        ],
+        "tools": [
+          "MSBuild"
+        ],
+        "isSdkStyle": true,
+        "numberOfFiles": 4,
+        "numberOfCodeFiles": 2,
+        "linesTotal": 2184,
+        "linesOfCode": 396,
+        "totalApiScanned": 655,
+        "minLinesOfCodeToChange": 41,
+        "maxLinesOfCodeToChange": 41
+      },
+      "ruleInstances": [
+        {
+          "incidentId": "92288878-487c-441b-974e-8b4a4eabeafe",
+          "ruleId": "NuGet.0005",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "xunit, 2.9.0\n\nRecommendation:\n\nThis package will only be updated for security issues. All future feature work has moved onto v3.\n\nGuide for migrating from xUnit.net v2 to v3: https://xunit.net/docs/getting-started/v3/migration\nRemove xunit, and replace with new package xunit, 2.9.3",
+              "protected": "xunit, 2.9.0\n\nRecommendation:\n\nThis package will only be updated for security issues. All future feature work has moved onto v3.\n\nGuide for migrating from xUnit.net v2 to v3: https://xunit.net/docs/getting-started/v3/migration\nRemove xunit, and replace with new package xunit, 2.9.3"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+            "snippet": "xunit, 2.9.0\n\nRecommendation:\n\nThis package will only be updated for security issues. All future feature work has moved onto v3.\n\nGuide for migrating from xUnit.net v2 to v3: https://xunit.net/docs/getting-started/v3/migration\nRemove xunit, and replace with new package xunit, 2.9.3",
+            "protectedSnippet": "xunit, 2.9.0\n\nRecommendation:\n\nThis package will only be updated for security issues. All future feature work has moved onto v3.\n\nGuide for migrating from xUnit.net v2 to v3: https://xunit.net/docs/getting-started/v3/migration\nRemove xunit, and replace with new package xunit, 2.9.3",
+            "label": "xunit 2.9.0",
+            "properties": {
+              "PackageId": "xunit",
+              "PackageVersion": "2.9.0",
+              "PackageNewVersion": null,
+              "PackageReplacements": null
+            }
+          }
+        },
+        {
+          "incidentId": "d340b572-bac9-4eeb-b676-9e7860d620b9",
+          "ruleId": "Project.0002",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Current target framework: net8.0\nRecommended target framework: net10.0",
+              "protected": "Current target framework: net8.0\nRecommended target framework: net10.0"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+            "snippet": "Current target framework: net8.0\nRecommended target framework: net10.0",
+            "protectedSnippet": "Current target framework: net8.0\nRecommended target framework: net10.0",
+            "properties": {
+              "CurrentTargetFramework": "net8.0",
+              "RecommendedTargetFramework": "net10.0"
+            }
+          }
+        },
+        {
+          "incidentId": "568f8f86-a803-43ac-a5a5-952ece7693da",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var url = new Uri(inputUrl);",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\MetadataServiceTests.cs",
+            "snippet": "var url = new Uri(inputUrl);",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 53,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "cd89d2ba-1424-4b6b-8740-620afabd3e47",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var url = new Uri(inputUrl);",
+              "protected": "M:System.Uri.#ctor(System.String)"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\MetadataServiceTests.cs",
+            "snippet": "var url = new Uri(inputUrl);",
+            "protectedSnippet": "M:System.Uri.#ctor(System.String)",
+            "label": "M:System.Uri.#ctor(System.String)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 53,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "85bf5154-f94d-4b73-88aa-68c9f3049047",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Assert.True(resultUri.Scheme == Uri.UriSchemeHttp || resultUri.Scheme == Uri.UriSchemeHttps, \u0022Thumbnail URL must use HTTP or HTTPS scheme\u0022);",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\MetadataServiceTests.cs",
+            "snippet": "Assert.True(resultUri.Scheme == Uri.UriSchemeHttp || resultUri.Scheme == Uri.UriSchemeHttps, \u0022Thumbnail URL must use HTTP or HTTPS scheme\u0022);",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 37,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "6c720465-5634-41c2-bbec-5b3a3d23a501",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Assert.True(resultUri.Scheme == Uri.UriSchemeHttp || resultUri.Scheme == Uri.UriSchemeHttps, \u0022Thumbnail URL must use HTTP or HTTPS scheme\u0022);",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\MetadataServiceTests.cs",
+            "snippet": "Assert.True(resultUri.Scheme == Uri.UriSchemeHttp || resultUri.Scheme == Uri.UriSchemeHttps, \u0022Thumbnail URL must use HTTP or HTTPS scheme\u0022);",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 37,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "56b0c52a-5d54-41fa-8a0a-9c6a54e7957d",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Assert.True(Uri.TryCreate(thumbnailUrl, UriKind.Absolute, out var resultUri), $\u0022Thumbnail URL is not a valid URI: {thumbnailUrl}\u0022);",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\MetadataServiceTests.cs",
+            "snippet": "Assert.True(Uri.TryCreate(thumbnailUrl, UriKind.Absolute, out var resultUri), $\u0022Thumbnail URL is not a valid URI: {thumbnailUrl}\u0022);",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 36,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "609be273-08b1-4d50-ba2f-639c6c57c93a",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Assert.True(Uri.TryCreate(thumbnailUrl, UriKind.Absolute, out var resultUri), $\u0022Thumbnail URL is not a valid URI: {thumbnailUrl}\u0022);",
+              "protected": "M:System.Uri.TryCreate(System.String,System.UriKind,System.Uri@)"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\MetadataServiceTests.cs",
+            "snippet": "Assert.True(Uri.TryCreate(thumbnailUrl, UriKind.Absolute, out var resultUri), $\u0022Thumbnail URL is not a valid URI: {thumbnailUrl}\u0022);",
+            "protectedSnippet": "M:System.Uri.TryCreate(System.String,System.UriKind,System.Uri@)",
+            "label": "M:System.Uri.TryCreate(System.String,System.UriKind,System.Uri@)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 36,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "f344181e-64fa-4dec-93de-19dfa984da45",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var imageData = await response.Content.ReadAsByteArrayAsync();",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\MetadataServiceTests.cs",
+            "snippet": "var imageData = await response.Content.ReadAsByteArrayAsync();",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 32,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "038b7f20-2278-4994-a157-6a9741dc17e7",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var contentType = response.Content.Headers.ContentType?.MediaType;",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\MetadataServiceTests.cs",
+            "snippet": "var contentType = response.Content.Headers.ContentType?.MediaType;",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 31,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "f13aa06f-ad5d-40ae-9f5f-e50607ce564f",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var url = new Uri(inputUrl);",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\MetadataServiceTests.cs",
+            "snippet": "var url = new Uri(inputUrl);",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 24,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "439efef8-62ac-4099-a551-0ff2df27d8e6",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var url = new Uri(inputUrl);",
+              "protected": "M:System.Uri.#ctor(System.String)"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\MetadataServiceTests.cs",
+            "snippet": "var url = new Uri(inputUrl);",
+            "protectedSnippet": "M:System.Uri.#ctor(System.String)",
+            "label": "M:System.Uri.#ctor(System.String)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 24,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "126e2517-1f3b-43f9-a822-0f484b88441d",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var url = new Uri(inputUrl);",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var url = new Uri(inputUrl);",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 317,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "6364e07b-d271-4600-9c53-05ce6ca708ce",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var url = new Uri(inputUrl);",
+              "protected": "M:System.Uri.#ctor(System.String)"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var url = new Uri(inputUrl);",
+            "protectedSnippet": "M:System.Uri.#ctor(System.String)",
+            "label": "M:System.Uri.#ctor(System.String)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 317,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "ff8c2a98-233f-43dd-af5f-c9468b5fcab8",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var localhostUrl = new Uri(\u0022http://localhost:8080/api\u0022);",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var localhostUrl = new Uri(\u0022http://localhost:8080/api\u0022);",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 299,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "dfb2c8fa-b16c-4516-95bc-1dc2ac770ca0",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var localhostUrl = new Uri(\u0022http://localhost:8080/api\u0022);",
+              "protected": "M:System.Uri.#ctor(System.String)"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var localhostUrl = new Uri(\u0022http://localhost:8080/api\u0022);",
+            "protectedSnippet": "M:System.Uri.#ctor(System.String)",
+            "label": "M:System.Uri.#ctor(System.String)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 299,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "2393dd10-b998-4a79-8a08-9773cf0768f3",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var internalUrl = new Uri(\u0022http://192.168.1.1/admin\u0022);",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var internalUrl = new Uri(\u0022http://192.168.1.1/admin\u0022);",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 295,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "aa21aa43-dd95-419b-adde-35bcc4358e05",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var internalUrl = new Uri(\u0022http://192.168.1.1/admin\u0022);",
+              "protected": "M:System.Uri.#ctor(System.String)"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var internalUrl = new Uri(\u0022http://192.168.1.1/admin\u0022);",
+            "protectedSnippet": "M:System.Uri.#ctor(System.String)",
+            "label": "M:System.Uri.#ctor(System.String)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 295,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "bc653139-e7e9-4ef7-8829-0abdb5e26d8b",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var maliciousUrl = new Uri(\u0022https://evil.com/malicious\u0022);",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var maliciousUrl = new Uri(\u0022https://evil.com/malicious\u0022);",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 290,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "6747ce5e-6aca-41bc-a73b-8940cfe43a64",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var maliciousUrl = new Uri(\u0022https://evil.com/malicious\u0022);",
+              "protected": "M:System.Uri.#ctor(System.String)"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var maliciousUrl = new Uri(\u0022https://evil.com/malicious\u0022);",
+            "protectedSnippet": "M:System.Uri.#ctor(System.String)",
+            "label": "M:System.Uri.#ctor(System.String)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 290,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "90874996-5d10-4d39-9ef2-0ca23e9b9823",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "urlValidationServiceMock.Setup(x =\u003E x.IsUrlValidAsync(It.IsAny\u003CUri\u003E())).ReturnsAsync(true);",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "urlValidationServiceMock.Setup(x =\u003E x.IsUrlValidAsync(It.IsAny\u003CUri\u003E())).ReturnsAsync(true);",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 240,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "3196ba9e-2d65-4a52-9966-bc377f627189",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:10\u0022, EndTimestamp = \u002200:00:20\u0022, Format = Enums.Format.MP3 };",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:10\u0022, EndTimestamp = \u002200:00:20\u0022, Format = Enums.Format.MP3 };",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 223,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "ac7f9cb9-82b5-45a4-92ea-1053f6420aa7",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:10\u0022, EndTimestamp = \u002200:00:20\u0022, Format = Enums.Format.MP3 };",
+              "protected": "M:System.Uri.#ctor(System.String)"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:10\u0022, EndTimestamp = \u002200:00:20\u0022, Format = Enums.Format.MP3 };",
+            "protectedSnippet": "M:System.Uri.#ctor(System.String)",
+            "label": "M:System.Uri.#ctor(System.String)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 223,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "fd0e1c62-6b9d-41f9-a479-2d710e14c5d8",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:10\u0022, EndTimestamp = \u002200:00:20\u0022, Format = Enums.Format.MP3 };",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:10\u0022, EndTimestamp = \u002200:00:20\u0022, Format = Enums.Format.MP3 };",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 223,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "8fda18cd-f0c4-4ef1-b088-7d18dd879f62",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:20\u0022, EndTimestamp = \u002200:00:10\u0022 };",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:20\u0022, EndTimestamp = \u002200:00:10\u0022 };",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 194,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "f48b701f-19b3-495a-9ab5-0d73cca07584",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:20\u0022, EndTimestamp = \u002200:00:10\u0022 };",
+              "protected": "M:System.Uri.#ctor(System.String)"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:20\u0022, EndTimestamp = \u002200:00:10\u0022 };",
+            "protectedSnippet": "M:System.Uri.#ctor(System.String)",
+            "label": "M:System.Uri.#ctor(System.String)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 194,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "036f9eb4-12e6-40b5-8d6d-2dd944172990",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:20\u0022, EndTimestamp = \u002200:00:10\u0022 };",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:20\u0022, EndTimestamp = \u002200:00:10\u0022 };",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 194,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "574df3b6-900f-4080-9cfd-850d3a17dafc",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:20\u0022, EndTimestamp = \u002200:00:10\u0022 };",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:20\u0022, EndTimestamp = \u002200:00:10\u0022 };",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 175,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "6a8e5346-a129-4701-b7c7-36bcf4461df3",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:20\u0022, EndTimestamp = \u002200:00:10\u0022 };",
+              "protected": "M:System.Uri.#ctor(System.String)"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:20\u0022, EndTimestamp = \u002200:00:10\u0022 };",
+            "protectedSnippet": "M:System.Uri.#ctor(System.String)",
+            "label": "M:System.Uri.#ctor(System.String)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 175,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "14bbe234-c766-4444-a44f-082fd59c9972",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:20\u0022, EndTimestamp = \u002200:00:10\u0022 };",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:20\u0022, EndTimestamp = \u002200:00:10\u0022 };",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 175,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "adc03a48-4587-4ca3-9c8e-0859f2e3fb1b",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:10\u0022, EndTimestamp = \u002200:00:20\u0022 };",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:10\u0022, EndTimestamp = \u002200:00:20\u0022 };",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 154,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "cb3feb1c-a1d4-4c2a-87d6-096fef5dfc61",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:10\u0022, EndTimestamp = \u002200:00:20\u0022 };",
+              "protected": "M:System.Uri.#ctor(System.String)"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:10\u0022, EndTimestamp = \u002200:00:20\u0022 };",
+            "protectedSnippet": "M:System.Uri.#ctor(System.String)",
+            "label": "M:System.Uri.#ctor(System.String)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 154,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "ef1a17b5-3930-4e56-ad24-64811b88553b",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:10\u0022, EndTimestamp = \u002200:00:20\u0022 };",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl), StartTimestamp = \u002200:00:10\u0022, EndTimestamp = \u002200:00:20\u0022 };",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 154,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "cc0d9886-24ed-4e74-9a9c-f655a1564715",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl) };",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl) };",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 132,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "695999d7-bbfc-4b64-80f9-18591a066355",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl) };",
+              "protected": "M:System.Uri.#ctor(System.String)"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl) };",
+            "protectedSnippet": "M:System.Uri.#ctor(System.String)",
+            "label": "M:System.Uri.#ctor(System.String)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 132,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "e4b6bb11-9859-4b01-8ad5-330bdde31f5f",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl) };",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var mediaFileModel = new MediaFileModel { Url = new Uri(inputUrl) };",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 132,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "5067237d-077b-4861-9563-b009baf8325b",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var mediaFileModel = new MediaFileModel { Url = new Uri(invalidUrl) };",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var mediaFileModel = new MediaFileModel { Url = new Uri(invalidUrl) };",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 112,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "7eecfd6a-610b-4ab7-b309-b4b1d08c2712",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var mediaFileModel = new MediaFileModel { Url = new Uri(invalidUrl) };",
+              "protected": "M:System.Uri.#ctor(System.String)"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var mediaFileModel = new MediaFileModel { Url = new Uri(invalidUrl) };",
+            "protectedSnippet": "M:System.Uri.#ctor(System.String)",
+            "label": "M:System.Uri.#ctor(System.String)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 112,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "1625bf7a-8a7c-44c1-89ed-4e958b628dcf",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var mediaFileModel = new MediaFileModel { Url = new Uri(invalidUrl) };",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var mediaFileModel = new MediaFileModel { Url = new Uri(invalidUrl) };",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 112,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "3177bee8-d135-4e95-99c2-6f713669001d",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "responseHandler.ResponseMessage.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(\u0022video/mp4\u0022);",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "responseHandler.ResponseMessage.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(\u0022video/mp4\u0022);",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 83,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "2ba00a41-691a-413e-ba35-c5bf37eb4876",
+          "ruleId": "Api.0003",
+          "description": "Breaking change - Streaming HTTP responses enabled by default in browser HTTP clients ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var responseHandler = new TestHttpMessageHandler(new HttpResponseMessage(HttpStatusCode.OK)\r\n            {\r\n                Content = new ByteArrayContent(Encoding.UTF8.GetBytes(\u0022video content\u0022))\r\n            });",
+              "protected": "T:System.Net.Http.HttpContent"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var responseHandler = new TestHttpMessageHandler(new HttpResponseMessage(HttpStatusCode.OK)\r\n            {\r\n                Content = new ByteArrayContent(Encoding.UTF8.GetBytes(\u0022video content\u0022))\r\n            });",
+            "protectedSnippet": "T:System.Net.Http.HttpContent",
+            "label": "T:System.Net.Http.HttpContent",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/default-http-streaming.md",
+                "isCustom": false
+              }
+            ],
+            "line": 79,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "412043f1-d9b6-4bad-a094-afcf347a9227",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var mediaUrl = new Uri(\u0022https://www.youtube.com/watch?v=dQw4w9WgXcQ\u0022);",
+              "protected": "T:System.Uri"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var mediaUrl = new Uri(\u0022https://www.youtube.com/watch?v=dQw4w9WgXcQ\u0022);",
+            "protectedSnippet": "T:System.Uri",
+            "label": "T:System.Uri",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 66,
+            "column": 12
+          }
+        },
+        {
+          "incidentId": "f87dfbfa-7a0e-4d30-9daf-29eadf6f6257",
+          "ruleId": "Api.0003",
+          "description": "Breaking change: URI length limits removed ",
+          "projectPath": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\ClipYT.Tests.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "var mediaUrl = new Uri(\u0022https://www.youtube.com/watch?v=dQw4w9WgXcQ\u0022);",
+              "protected": "M:System.Uri.#ctor(System.String)"
+            },
+            "kind": "File",
+            "path": "P:\\Projects\\clip-yt\\src\\ClipYT.Tests\\UnitTests.cs",
+            "snippet": "var mediaUrl = new Uri(\u0022https://www.youtube.com/watch?v=dQw4w9WgXcQ\u0022);",
+            "protectedSnippet": "M:System.Uri.#ctor(System.String)",
+            "label": "M:System.Uri.#ctor(System.String)",
+            "links": [
+              {
+                "title": "API documentation",
+                "url": "https://github.com/dotnet/docs/blob/main/docs/core/compatibility/networking/10.0/uri-length-limits-removed.md",
+                "isCustom": false
+              }
+            ],
+            "line": 66,
+            "column": 12
+          }
+        }
+      ],
+      "features": []
+    }
+  ],
+  "rules": {
+    "NuGet.0001": {
+      "id": "NuGet.0001",
+      "isFeature": false,
+      "description": "NuGet package is incompatible with selected target framework.\n\nPackage needs to be upgraded to a version supporting selected project target framework. If there no new package versions supporting new target framework, different package needs to be used and all code needs to be upgraded to new API.",
+      "label": "NuGet package is incompatible",
+      "severity": "Mandatory",
+      "effort": 1,
+      "links": [
+        {
+          "url": "https://go.microsoft.com/fwlink/?linkid=2262529",
+          "isCustom": false
+        }
+      ]
+    },
+    "Project.0002": {
+      "id": "Project.0002",
+      "isFeature": false,
+      "description": "Project\u0027s target framework(s) needs to be changed to the new target framework that you selected for this upgrade.\n\nDuring upgrade target framework will be adjusted to corresponding platform when applicable. In some cases project would result in multiple target frameworks after the upgrade if it was using features that now have their own platforms in modern .NET frameworks (windows, iOS, Android etc).",
+      "label": "Project\u0027s target framework(s) needs to be changed",
+      "severity": "Mandatory",
+      "effort": 1,
+      "links": [
+        {
+          "title": "Overview of porting from .NET Framework to .NET",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2265227",
+          "isCustom": false
+        },
+        {
+          "title": ".NET project SDKs",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2265226",
+          "isCustom": false
+        }
+      ]
+    },
+    "Api.0003": {
+      "id": "Api.0003",
+      "isFeature": false,
+      "description": "API has a behavioral change in selected .NET version: code and binaries may behave differently at runtime without needing recompilation, but the new behavior might be undesirable and require updates.",
+      "label": "Behavioral change in selected .NET version",
+      "severity": "Potential",
+      "effort": 1
+    },
+    "Api.0002": {
+      "id": "Api.0002",
+      "isFeature": false,
+      "description": "API is source incompatible for selected .NET version: requires code changes to compile successfully when targeting a new version, such as removing obsolete APIs or changing method signatures.",
+      "label": "Source incompatible for selected .NET version",
+      "severity": "Potential",
+      "effort": 1,
+      "links": [
+        {
+          "title": "Breaking changes in .NET",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2262679",
+          "isCustom": false
+        }
+      ]
+    },
+    "Api.0001": {
+      "id": "Api.0001",
+      "isFeature": false,
+      "description": "API is binary incompatible for selected .NET version: affects existing binaries, often requiring recompilation, because the API has changed in a way that prevents older binaries from loading or executing.",
+      "label": "Binary incompatible for selected .NET version",
+      "severity": "Mandatory",
+      "effort": 1,
+      "links": [
+        {
+          "title": "Breaking changes in .NET",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2262679",
+          "isCustom": false
+        }
+      ]
+    },
+    "NuGet.0005": {
+      "id": "NuGet.0005",
+      "isFeature": false,
+      "description": "NuGet package is deprecated.\n\nGo to its documentation and if there is a guidance for replacement of functionality provided by this package.",
+      "label": "NuGet package is deprecated",
+      "severity": "Optional",
+      "effort": 1,
+      "links": [
+        {
+          "url": "https://go.microsoft.com/fwlink/?linkid=2262531",
+          "isCustom": false
+        }
+      ]
+    }
+  }
+}
