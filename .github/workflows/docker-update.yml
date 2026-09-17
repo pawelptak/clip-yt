@@ -33,7 +33,7 @@ jobs:
           host: ${{ secrets.RASPBERRY_SSH_HOST }}
           username: ${{ secrets.RASPBERRY_SSH_USER }}
           key: ${{ secrets.RASPBERRY_SSH_PRIVATE_KEY }}
-          command_timeout: 20m
+          command_timeout: 30m
           script: |
             cd ApkiPawla/clipyt
             for i in {1..3}; do
