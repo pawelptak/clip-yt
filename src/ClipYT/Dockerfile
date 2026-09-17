@@ -10,7 +10,7 @@ USER root
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     python3-pip \
-    && pip3 install yt-dlp --break-system-packages \
+    && pip3 install yt-dlp curl-cffi --break-system-packages \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p /app/Output \
