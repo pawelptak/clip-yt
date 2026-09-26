@@ -1,4 +1,9 @@
-﻿$(document).ready(function () {
+﻿const Quality = Object.freeze({
+    Minimal: "Minimal",
+    High: "High"
+});
+
+$(document).ready(function () {
     const appData = document.getElementById('app-data');
     const ytRegex = appData.getAttribute('data-yt-regex');
     const tiktokRegex = appData.getAttribute('data-tiktok-regex');
@@ -17,7 +22,7 @@
 
     const youtubePlatformSource = new MediaPlatformSource(ytRegex, clipytLogoUrl, true, true, true, clipytAccentColor, clipytAccentColorDark, clipytAccentColorHighlight);
     const tiktokPlatformSource = new MediaPlatformSource(tiktokRegex, cliptokLogoUrl, true, true, false, "#6020f3", "#351287", "#871248");
-    const twitterPlatformSource = new MediaPlatformSource(twitterRegex, clipxLogoUrl, true, true, true, "#1DA1F2", "#2f62b5", "#01a55c");
+    const twitterPlatformSource = new MediaPlatformSource(twitterRegex, clipxLogoUrl, true, true, true, "#1DA1F2", "#2f62b5", "#01a55c", Quality.High);
     const instagramPlatformSource = new MediaPlatformSource(instagramRegex, clipstagramLogoUrl, true, true, false, "#a83299", "#8c2a7f", "#017fa5");
     const facebookPlatformSource = new MediaPlatformSource(facebookRegex, clipfbLogoUrl, true, true, false, "#ff3796", "#b80060", "#00c784");
 
@@ -25,17 +30,13 @@
 
     $("#urlInput").on('input', function () {
         var inputUrl = $(this).val();
+        var currentPlatform = platforms.find(platform => inputUrl.match(platform.regex));
 
-        for (let platform of platforms) {
-            if (inputUrl.match(platform.regex)) {
-                handlePlatformPreview(platform, inputUrl);
-                platform.setUiMode();
-
-                break;
-            }
-            else {
-                resetUi();
-            }
+        if (currentPlatform) {
+            handlePlatformPreview(currentPlatform, inputUrl);
+            currentPlatform.setUiMode();
+        } else {
+            resetUi();
         }
     });
 
@@ -91,8 +92,9 @@ class MediaPlatformSource {
      * @param {string} accentColorCode - Primary accent color
      * @param {string} accentColorDarkCode - Dark accent color
      * @param {string} accentColorHighlight - Highlight accent color
+     * @param {Quality} defaultQuality - Quality value pre-selected by default for this platform
      */
-    constructor(regex, logoUrl, showPlayer, showClipButtons, enableQualitySelector, accentColorCode, accentColorDarkCode, accentColorHighlight) {
+    constructor(regex, logoUrl, showPlayer, showClipButtons, enableQualitySelector, accentColorCode, accentColorDarkCode, accentColorHighlight, defaultQuality = Quality.Minimal) {
         this.regex = regex;
         this.logoUrl = logoUrl;
         this.showPlayer = showPlayer;
@@ -101,6 +103,7 @@ class MediaPlatformSource {
         this.accentColorCode = accentColorCode;
         this.accentColorDarkCode = accentColorDarkCode;
         this.accentColorHighlight = accentColorHighlight;
+        this.defaultQuality = defaultQuality;
     }
 
     setUiMode() {
@@ -121,5 +124,12 @@ class MediaPlatformSource {
         }
 
         toggleQualitySelectorAvailability(this.showQualitySelector);
+
+        if (this.showQualitySelector) {
+            const defaultQualityInput = document.querySelector(`#quality-select-container input[type='radio'][value='${this.defaultQuality}']`);
+            if (defaultQualityInput) {
+                defaultQualityInput.checked = true;
+            }
+        }
     }
 }

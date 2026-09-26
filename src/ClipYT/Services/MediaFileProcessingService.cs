@@ -64,8 +64,9 @@ namespace ClipYT.Services
                 await SendProgressToHubAsync("Checking preview cache...", connectionId);
                 var previewFileExists = TryGetCachedPreviewFilePath(previewCacheKey, out previewCachePath);
 
+                var cachedPreviewQuality = GetPreviewQualityForUrl(model.Url.ToString());
                 var canReusePreview = previewFileExists
-                    && ((model.Format == Format.MP4 && model.Quality == Quality.Minimal) || (model.Format == Format.MP3));
+                    && ((model.Format == Format.MP4 && model.Quality == cachedPreviewQuality) || (model.Format == Format.MP3));
 
                 if (canReusePreview)
                 {
@@ -140,11 +141,11 @@ namespace ClipYT.Services
             try
             {
                 var isTikTokUrl = Regex.IsMatch(url.ToString(), Constants.RegexConstants.TiktokUrlRegex);
+                var previewQuality = GetPreviewQualityForUrl(url.ToString());
                 var previewCacheKey = GetPreviewCacheKey(url.ToString());
 
                 if (!TryGetCachedPreviewFilePath(previewCacheKey, out var cachedFilePath))
                 {
-                    var previewQuality = Quality.Minimal;
                     cachedFilePath = await DownloadMediaFileAsync(
                         url.ToString(),
                         Format.MP4,
@@ -477,6 +478,12 @@ namespace ClipYT.Services
             var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(inputUrl));
 
             return Convert.ToHexString(bytes)[..16].ToLowerInvariant();
+        }
+
+        private static Quality GetPreviewQualityForUrl(string url)
+        {
+            var isTwitterUrl = Regex.IsMatch(url, Constants.RegexConstants.TwitterUrlRegex);
+            return isTwitterUrl ? Quality.High : Quality.Minimal;
         }
 
         public void CleanupSessionFolder(string sessionFolder)
