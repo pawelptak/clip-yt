@@ -27,7 +27,7 @@ An ASP.NET Core MVC web application for creating clips from YouTube videos.
 - Select the start and end timestamp if you'd like to download a section of the whole video.
 - Press the "Start" button to start processing and download the file.
 
- <img height="500" src="https://github.com/user-attachments/assets/a684d4e1-7a8b-43e5-bcbb-8cdc41863217">
+ <img height="500" src="https://github.com/user-attachments/assets/542a9919-a9ed-4cc7-85c7-14efb0ce949c">
 
 
 ## Credits
