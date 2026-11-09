@@ -96,6 +96,12 @@ namespace ClipYT.Services
                 {
                     return tiktokThumbnail;
                 }
+
+                var tiktokPageThumbnail = await TryGetTikTokPageThumbnailAsync(uriString);
+                if (!string.IsNullOrWhiteSpace(tiktokPageThumbnail))
+                {
+                    return tiktokPageThumbnail;
+                }
             }
 
             var ogThumbnail = await TryGetOpenGraphThumbnailAsync(uriString);
@@ -234,6 +240,36 @@ namespace ClipYT.Services
                 }
 
                 var html = await response.Content.ReadAsStringAsync();
+
+                return ExtractOpenGraphImage(html);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private async Task<string?> TryGetTikTokPageThumbnailAsync(string url)
+        {
+            try
+            {
+                var client = _httpClientFactory.CreateClient();
+                client.Timeout = TimeSpan.FromSeconds(TimeoutSeconds);
+                using var request = CreateBrowserLikeRequest(url);
+                using var response = await client.SendAsync(request);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+
+                var html = await response.Content.ReadAsStringAsync();
+
+                var match = Regex.Match(html, @"""cover""\s*:\s*""(https:[^""]+)""");
+                if (match.Success)
+                {
+                    return Regex.Unescape(match.Groups[1].Value);
+                }
 
                 return ExtractOpenGraphImage(html);
             }
